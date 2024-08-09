@@ -41,3 +41,20 @@ Organization/Client to split data between them.
 - Making creds to be the same?  
 - How to make connection strings different?
 
+## Why do we want to make our own single Client Inner Circle to be a Multi-Tenant app?
+- Split Access. Isolated access to data. For instance, developers cannot access real production data;
+- Testability. Separate Tenants for tests execution and users (at least);
+- Prod Only Vision. Instead of Dev and Prod envs where we don't need Multi-Tenancy;
+- We have an open-source showcase and example => gain practical experience.
+
+## What do we have now about Multi-Tenancy?
+- Can manage tenants;
+- Testing tenant where against which we execute tests.
+
+## Which tenants we need?
+- Tourmaline Core - main, with real Employees;
+- TESTE2E Pipelines - tenant which has Accounts for E2E tests execution against Prod.
+
+## Naming Conventions
+- All tests related Tenants starts with TEST;
+- All tests related only Roles/Permissions startes with TEST_.
