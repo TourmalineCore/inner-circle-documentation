@@ -6,65 +6,67 @@
 
 ## Containers Diagram 
 
-```plantuml
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+```mermaid
+C4Container
+    Boundary(InnerCircleBoundary, "Inner Circle"){
+        Boundary(AuthBoundary, "Auth") {
+            Container(AuthUI, "Auth UI", ".net 8", "Pages for registration, authentication and password reset.")
+            Container(AuthAPI, "Auth API", ".net 8", "API for authentication and token generation with user permissions.")
+            ContainerDb(AuthDB, "Auth DB", "PostgreSQL", "Stores authentication information: login, password hash, etc.")
+        }
 
-Container(AuthAPI, "Auth API", ".net 8 Docker-container", "Check login and password, after connect to AccountManagementAPI generate token with permissions inside.")
-Container(AuthUI, "Auth UI", ".net Docker-container", "Pages for registration, authentication and password reset.")
-ContainerDb(AuthDB, "Auth DB", "PostgreSQL", "Stores information for authentication: login, password hash, etc.")
+        Boundary(AccountsBoundary, "Accounts") {
+            Container(AccountsUI, "Accounts UI", "React/JS", "Pages for managing accounts, roles and tenants.")
+            Container(AccountsAPI, "Accounts API", ".net 8", "API for managing accounts, roles and tenants.")
+            ContainerDb(AccountsDB, "Accounts DB", "PostgreSQL", "Stores accounts, roles with permissions, tenants information.")
+        }
 
+        Boundary(EmployeesBoundary, "Employees") {
+            Container(UI, "UI", "React/JS", "Pages for managing profile and list of employees.")
+            Container(EmployeesAPI, "Employees API", ".net 8", "API for managing profile and list of employees.")
+            ContainerDb(EmployeesDB, "Employees DB", "PostgreSQL", "Stores employee's information: name, corporate and personal email, etc.")
+        }
 
-Container(AccountsAPI, "Accounts API", ".net 8 Docker-container", "API contains endpoint for accounts, roles, tenants.")
-Container(AccountsUI, "Accounts UI", "React", "Pages for managing accounts, roles and tenants.")
-ContainerDb(AccountsDB, "Accounts DB", "PostgreSQL", "Contains accounts, roles with permissions, tenants.")
+        Boundary(DocumentsBoundary, "Documents") {
+            Container(DocumentsUI, "Documents UI", "React/JS", "Pages for documents uploading and validation.")
+            Container(DocumentsAPI, "Documents API", ".net 8", "API for documents validation.")
+            ContainerDb(DocumentsDB, "Documents DB", "PostgreSQL", "Empty database.")
+        }
 
+        Boundary(CompensationsBoundary, "Compensations") {
+            Container(CompensationsUI, "Compensations UI", "React/JS", "Pages for managing and requesting compensation.")
+            Container(CompensationsAPI, "Compensations API", ".net 8", "API for managing and requesting compensation.")
+            ContainerDb(CompensationsDB, "Compensations DB", "PostgreSQL", "Stores compensations information.")
+        }
 
-Container(InnerCircleEmailSender, "Inner Circle Email Sender", ".net 8 Docker-container", "Send emails to employees corporate mail.")
-Container(Mail, "Mail.ru", "External Service", "...")
+        Container(EmailSender, "Email Sender", ".net 8", "Sends emails to employees on corporate email.")
+    }
 
+    Container_Ext(MailBox, "Mail.ru mailbox", "External Service", "")
 
-Container(InnerCircleEmployeesAPI, "Inner Circle Employees API", ".net Docker-container", "API contains endpoints for get from db information about employees...")
-ContainerDb(InnerCircleEmployeesDB, "Inner Circle Employees DB", "PostgreSQL", "Stores employees information: name, GitHub/GitLab accounts, corporate and personal email, etc.")
+    Rel(AuthUI, AuthAPI, "Makes API calls to", "REST")
+    Rel(AuthAPI, AccountsAPI, "Get permissions for user with correct creds", "REST")
+    Rel(AccountsAPI, AuthAPI, "Create user after account creation", "REST")
+    Rel(AuthAPI, AuthDB, "Read from and write to")
+    Rel(AuthAPI, EmailSender, "Sends password-related emails")
 
-Container(InnerCircleUI, "Inner Circle UI", "React/JS Docker-container", "Pages for managing profile and employees list.")
+    Rel(AccountsUI, AccountsAPI, "Makes API calls to", "REST")
+    Rel(AccountsAPI, AccountsDB, "Read from and write to")
+    Rel(AccountsAPI, EmployeesAPI, "Request for creation employee")
 
-Container(InnerCircleCompensationsAPI, "Inner Circle Compensations API", ".net 8 Docker-container", "API contains endpoint for working with compensations.")
-Container(InnerCircleCompensationsUI, "Inner Circle Compensations UI", "React", "Pages for managing and request compensations.")
-ContainerDb(InnerCircleCompensationsDB, "Inner Circle Compensations DB", "PostgreSQL", "Contains information about compensation: amount, dates, tenant, etc.")
+    Rel(EmployeesAPI, EmployeesDB, "Read from and write to", "REST")
 
-
-Container(InnerCircleDocumentsAPI, "Inner Circle Documents API", ".net 8 Docker-container", "API validate documents.")
-Container(InnerCircleDocumentsUI, "Inner Circle Documents UI", "React", "Pages for documents upload and validation.")
-ContainerDb(InnerCircleDocumentsDB, "Inner Circle Documents DB", "PostgreSQL", "Contains empty database.")
-
-
-Rel(AuthUI, AuthAPI, "Request for authentication.", "http")
-Rel(AuthAPI, AccountsAPI, "Get permissions for user with correct creds.", "http")
-Rel(AuthAPI, AuthDB, "Read and write information.")
-Rel(AuthAPI, InnerCircleEmailSender, "Send letters related with password.")
-
-Rel(AccountsUI, AccountsAPI, "Request for account, tenant, role creation, editing, etc. Request for lists with account, tenant, role, etc.", "http")
-Rel(AccountsAPI, AccountsDB, "Read and write information.")
-Rel(AccountsAPI, InnerCircleEmployeesAPI, "Request for creation employee.")
-
-Rel(InnerCircleEmployeesAPI, InnerCircleEmployeesDB, "Read and write information", "REST")
-
-Rel(InnerCircleUI, InnerCircleEmployeesAPI, "Request information about employee, all employees, edit information in profile about employee, all employees.", "REST")
-
-
-Rel(InnerCircleDocumentsUI, InnerCircleDocumentsAPI, "Request employee data and send documents files after validation.")
-Rel(InnerCircleDocumentsAPI, InnerCircleEmailSender, "Send files for letters related with employee documents.")
-Rel(InnerCircleDocumentsAPI, InnerCircleEmployeesAPI, "Request for personal data of employee for sending documents.")
-
-
-Rel(InnerCircleCompensationsUI, InnerCircleCompensationsAPI, "Request for compensation information and managing compensations.", "http")
-Rel(InnerCircleCompensationsAPI, InnerCircleCompensationsDB, "Read and write information.")
-Rel(InnerCircleCompensationsAPI, InnerCircleEmployeesAPI, "Get information about employees and them compensations.")
-
-Rel(InnerCircleEmailSender, Mail, "Send letters.", "SMTP")
+    Rel(UI, EmployeesAPI, "Makes API calls to", "REST")
 
 
-SHOW_LEGEND()
-@enduml
+    Rel(DocumentsUI, DocumentsAPI, "Makes API calls to")
+    Rel(DocumentsAPI, EmailSender, "Sends document-related emails")
+    Rel(DocumentsAPI, EmployeesAPI, "Requests employee data")
+
+
+    Rel(CompensationsUI, CompensationsAPI, "Makes API calls to", "REST")
+    Rel(CompensationsAPI, CompensationsDB, "Read from and write to")
+    Rel(CompensationsAPI, EmployeesAPI, "Requests employee data")
+
+    Rel(EmailSender, MailBox, "Sends emails", "SMTP")
 ```
