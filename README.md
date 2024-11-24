@@ -2,30 +2,30 @@
 
 ## Links to all project repositories
 
-| Repository                                                                                          | Comment    |
-|-----------------------------------------------------------------------------------------------------|------------|
+| Repository                                                                                         | Comment    |
+|----------------------------------------------------------------------------------------------------|------------|
 | [auth-ui](https://github.com/TourmalineCore/auth-ui)                                               |            |
-| [auth-api] (https://github.com/TourmalineCore/auth-api)                                             |            |
-| [accounts-ui] (https://github.com/TourmalineCore/accounts-ui)                                       |            |
-| [accounts-api] (https://github.com/TourmalineCore/accounts-api)                                     |            |
-| [inner-circle-documents-ui] (https://github.com/TourmalineCore/inner-circle-documents-ui)           |            |
-| [inner-circle-documents-api] (https://github.com/TourmalineCore/inner-circle-documents-api)         |            |
-| [inner-circle-ui] (https://github.com/TourmalineCore/inner-circle-ui)                               |            |
-| [inner-circle-employees-api] (https://github.com/TourmalineCore/inner-circle-employees-api)         |            |
-| [inner-circle-compensations-ui] (https://github.com/TourmalineCore/inner-circle-compensations-ui)   |            |
-| [inner-circle-compensations-api] (https://github.com/TourmalineCore/inner-circle-compensations-api) |            |
-| [inner-circle-email-sender] (https://github.com/TourmalineCore/inner-circle-email-sender)           |            |
-| [inner-circle-books-ui] (https://github.com/TourmalineCore/inner-circle-books-ui)                   |            |
-| [inner-circle-books-api] (https://github.com/TourmalineCore/inner-circle-books-api)                 |            |
-| [inner-circle-layout-ui] (https://github.com/TourmalineCore/inner-circle-layout-ui)                 |            |
-| [inner-circle-local-env] (https://github.com/TourmalineCore/inner-circle-local-env)                 |            |
-| [inner-circle-reverse-proxy] (https://github.com/TourmalineCore/inner-circle-reverse-proxy)         | Deprecated |
+| [auth-api](https://github.com/TourmalineCore/auth-api)                                             |            |
+| [accounts-ui](https://github.com/TourmalineCore/accounts-ui)                                       |            |
+| [accounts-api](https://github.com/TourmalineCore/accounts-api)                                     |            |
+| [inner-circle-documents-ui](https://github.com/TourmalineCore/inner-circle-documents-ui)           |            |
+| [inner-circle-documents-api](https://github.com/TourmalineCore/inner-circle-documents-api)         |            |
+| [inner-circle-ui](https://github.com/TourmalineCore/inner-circle-ui)                               |            |
+| [inner-circle-employees-api](https://github.com/TourmalineCore/inner-circle-employees-api)         |            |
+| [inner-circle-compensations-ui](https://github.com/TourmalineCore/inner-circle-compensations-ui)   |            |
+| [inner-circle-compensations-api](https://github.com/TourmalineCore/inner-circle-compensations-api) |            |
+| [inner-circle-email-sender](https://github.com/TourmalineCore/inner-circle-email-sender)           |            |
+| [inner-circle-books-ui](https://github.com/TourmalineCore/inner-circle-books-ui)                   |            |
+| [inner-circle-books-api](https://github.com/TourmalineCore/inner-circle-books-api)                 |            |
+| [inner-circle-layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui)                 |            |
+| [inner-circle-local-env](https://github.com/TourmalineCore/inner-circle-local-env)                 |            |
+| [inner-circle-reverse-proxy](https://github.com/TourmalineCore/inner-circle-reverse-proxy)         | Deprecated |
 
 
 ## C4 model
 
-At the time the architectural diagrams were created, [Mermaid] (https://mermaid.js.org/) did not yet fully and beautifully support C4 drawing. 
-Therefore, [PlantUML] (https://plantuml.com/en/stdlib) is used to draw C4 diagrams in this repository. Since C4 is not natively rendered with PlantUML in GitHub at the time the diagrams were published, the option of rendering the diagram as a photo is used, with the original `.puml` file with the diagrams saved in the `c4-architecture-diagrams` folder.
+At the time the architectural diagrams were created, [Mermaid](https://mermaid.js.org/) did not yet fully and beautifully support C4 drawing. 
+Therefore, [PlantUML](https://plantuml.com/en/stdlib) is used to draw C4 diagrams in this repository. Since C4 is not natively rendered with PlantUML in GitHub at the time the diagrams were published, the option of rendering the diagram as a photo is used, with the original `.puml` file with the diagrams saved in the `c4-architecture-diagrams` folder.
 
 
 ### Containers Diagram 
