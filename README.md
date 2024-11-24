@@ -4,7 +4,7 @@
 
 | Repository                                                                                          | Comment    |
 |-----------------------------------------------------------------------------------------------------|------------|
-| [auth-ui] (https://github.com/TourmalineCore/auth-ui)                                               |            |
+| [auth-ui](https://github.com/TourmalineCore/auth-ui)                                               |            |
 | [auth-api] (https://github.com/TourmalineCore/auth-api)                                             |            |
 | [accounts-ui] (https://github.com/TourmalineCore/accounts-ui)                                       |            |
 | [accounts-api] (https://github.com/TourmalineCore/accounts-api)                                     |            |
