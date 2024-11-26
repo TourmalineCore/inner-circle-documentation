@@ -30,8 +30,8 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
         }
 
         Boundary(CompensationsBoundary, "Compensations") {
-            Container(CompensationsUI, "Compensations UI", "React/JS", "Pages for managing and requesting compensation.")
-            Container(CompensationsAPI, "Compensations API", ".net 8", "API for managing and requesting compensation.")
+            Container(CompensationsUI, "Compensations UI", "React/JS", "Pages for managing and requesting compensations.")
+            Container(CompensationsAPI, "Compensations API", ".net 8", "API for managing and requesting compensations.")
             ContainerDb(CompensationsDB, "Compensations DB", "PostgreSQL", "Stores compensations information.")
         }
 
@@ -47,8 +47,8 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
 
     Rel(AccountsUI, AccountsAPI, "Makes API calls to", "REST")
     Rel(AccountsAPI, AccountsDB, "Read from and write to")
-    Rel(AccountsAPI, EmployeesAPI, "Request for creation employee")
-    Rel(AccountsAPI, AuthAPI, "Create user after account creation", "REST")
+    Rel(AccountsAPI, EmployeesAPI, "Request for creation and deletion of an employee")
+    Rel(AccountsAPI, AuthAPI, "Create/delete user after account creation/deletion", "REST")
 
     Rel(EmployeesAPI, EmployeesDB, "Read from and write to", "REST")
 
