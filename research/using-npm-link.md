@@ -14,7 +14,7 @@ terminal in react-tc-auth folder
 
 terminal in React-Packages folder
 
-5. npm i (для установки общих пакетов для выполнения билда пакетов)
+5. npm ci (для установки общих пакетов для выполнения билда пакетов)
 
 terminal in react-tc-auth folder
 
