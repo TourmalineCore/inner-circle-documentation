@@ -28,4 +28,4 @@ As a different table named “Author” with M:M relation to “Book” table.
 - It is still unclear whether a filter by the author will be needed;
 - The list of authors is not planned to be managed in the first iteration.
 ## Decision
-We decided to use the second option with the creation of a separate table. This will help to further implement a filter by authors and this solution corresponds to the third normal form and affects simplified editing of data related to other tables (correcting the author's name will correct errors in several lines with books where the author was indicated with a typo in the name).
+?
