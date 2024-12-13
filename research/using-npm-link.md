@@ -27,7 +27,7 @@ terminal in [react-tc-auth](https://github.com/TourmalineCore/React-Packages/tre
 
 terminal in [React-Packages](https://github.com/TourmalineCore/React-Packages) folder
 
-5. npm ci (для установки общих пакетов для выполнения билда пакетов)
+4. npm ci (для установки общих пакетов для выполнения билда пакетов)
 
 terminal in [react-tc-auth](https://github.com/TourmalineCore/React-Packages/tree/master/packages/react-tc-auth) folder
 
