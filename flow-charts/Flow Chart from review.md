@@ -32,5 +32,8 @@ graph TD;
     P --> Q[Change author name];
     Q --> R[Save change to the database];
 ```
+# A prototype for creating a book, on which the implemented solution is based
+![](createBookModalWindowPrototype.png)
+
 # A prototype for editing a book/authors, on which the implemented solution is based
-![](update%20book%20modal.png)
+![](updateBookModalWindowPrototype.png)
