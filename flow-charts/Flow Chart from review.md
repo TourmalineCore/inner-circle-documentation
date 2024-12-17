@@ -10,16 +10,20 @@ graph TD;
     E --> G[Add book to the database];
     F --> G[Add book to the database];
 ```
-## Adding a New Author to the Book
+## Adding a New Author to the Book, delete old one from it, rename old one
 ```mermaid
 graph TD;
-    H[While editing book, add new author to authors field] --> I[Send request to update the book];
-    I --> J[Iterate through the new list of authors];
-    J --> K{Is the author in the database?};
-    K --> |Yes| L[Add author to book's authors list];
-    K --> |No| M[Add author to database, save, and add author to book's authors list];
-    L --> N[Save new book data to the database];
-    M --> N[Save new book data to the database];
+    A[While editing a book, add a new author in the form] --> B[Remove the old author];
+    B --> C[Enter the new name in the old author's name edit field];
+    C --> D[Send request to change the existing author's name];
+    D --> E[Finish editing the book by submitting the form];
+    E --> F[Call UpdateBookCommand];
+    F --> G[Iterate through the new list of authors];
+    G --> H{Is the author in the database?};
+    H --> |Yes| I[Add to the book's authors list];
+    H --> |No| J[Create author, add to database, associate with book];
+    I --> K[Save updated book information];
+    J --> K[Save updated book information];
 ```
 ## Editing Author's Name
 ```mermaid
