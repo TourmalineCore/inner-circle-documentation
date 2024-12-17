@@ -33,7 +33,6 @@ graph TD;
     Q --> R[Save change to the database];
 ```
 # A prototype for creating a book, on which the implemented solution is based
-![](createBookModalWindowPrototype.png)
-
-# A prototype for editing a book/authors, on which the implemented solution is based
-![](updateBookModalWindowPrototype.png)
+![](bookFormAction1.png)
+![](bookFormAction2.png)
+![](bookFormAction3.png)
