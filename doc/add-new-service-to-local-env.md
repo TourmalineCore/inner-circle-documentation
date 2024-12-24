@@ -2,7 +2,7 @@
 
 ### В репозиториии local-env:
 
-- добавить в `helmfile.yaml` в папке `deploy`
+- добавить информацию о новом сервисе в `helmfile.yaml` в папке `deploy`
 
 ```
 - name: # your-service-name from service package.json
@@ -24,19 +24,40 @@
      - <your-service-name>.yaml.gotmpl
 ```
 
+Пример:
+
+```
+- name: inner-layout-ui
+    labels:
+      app: inner-layout-ui
+    wait: true
+    chart: bitnami/nginx
+    # after 15.3.5 our docker file or setup can no longer start, need to investigate what is wrong for the newer versions
+    version: 15.3.5
+    # it won't work anyway until ingress controller is created
+    # thus we wait for it to be ready first
+    needs: 
+      - ingress-nginx
+    values:
+      # https://helmfile.readthedocs.io/en/latest/#loading-remote-environment-values-files
+      - git::https://github.com/TourmalineCore/inner-circle-layout-ui.git@/ci/values-local-env.yaml?ref=feature/replace-layout
+      - values.yaml.gotmpl
+      - values-layout-ui.yaml.gotmpl
+```
+
 - создать файл `<your-service-name>.yaml.gotmpl` в папке `deploy`  
 пример содержимого файла:
 
 ```
 extraConfigMapEnvVars:
-  ENV_KEY: "\"local\""
+  ENV_KEY: "\"local\"" 
   API_ROOT: "\"{{ .Values.baseExternalUrl }}/api\""
   API_ROOT_AUTH: "\"{{ .Values.baseExternalUrl }}/auth-api\""
 ```
 
-### В своем сервисе
+### В сервисе, который подключаем в local-env (в нашем случае [inner-circle-layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui))
 
-- настройте `local-config-builder.js`, если его у вас нет
+- настройте `local-config-builder.js`, если его у вас нет, он нужен для генерации `env-config.js`, который будет хранить предоставленные сервису env переменные
 
 ```
 import fs from "fs"
@@ -68,13 +89,13 @@ fs.writeFileSync(fileCypressPath, `window.__ENV__ = { ${variables} }`)
 **/*/env-config.js
 ```
 
-- не забудьте добавить в `index.html` строку 
+- не забудьте добавить в `index.html` строку, без этого вся работа с `local-config-builder.js` будет бессмысленна и ничего не будет работать
 
 ```
 <script src="/env-config.js"></script>
 ```
 
-- обновите `package.json`:
+- обновите `package.json`, новые скрипты будут собирать нужные конфигурации для заданных окружений(prod/local)
 
 ```
 "start": "run-s create-config:prod vite-start",
@@ -84,7 +105,7 @@ fs.writeFileSync(fileCypressPath, `window.__ENV__ = { ${variables} }`)
 "create-config:local": "node local-config-builder local",
 ```
 
-- создайте или обновите `Dockerfile`
+- создайте или обновите `Dockerfile`, он понадобится для сборки образа и дальнейшего его использования в local-env
 
 ```
 FROM node:20.11.1-alpine3.19 as build
@@ -109,7 +130,7 @@ RUN chmod +x /usr/share/nginx/html/env.sh
 CMD /bin/bash -c "/usr/share/nginx/html/env.sh" && nginx -g "daemon off;" -c "/data/conf/nginx.conf"
 ```
 
-- создайте папку `.github/workflows` и в нем файл `docker-build-and-push.yml`
+- создайте папку `.github/workflows` и в нем файл `docker-build-and-push.yml` для сборки образа и его публикации в GitHub Container Registry
 
 ```
 name: Publish Docker image
@@ -145,7 +166,10 @@ jobs:
          context: .
          file: ./Dockerfile
          push: true
-         tags: ghcr.io/<your-org-name>/<your-app-name>/<your-service-name>:${{ github.sha }}
+         tags: ghcr.io/<your-org-name>/<your-app-name>/
+         <your-service-name>:${{ github.sha }} 
+         # for example: tags: ghcr.io/tourmalinecore/inner-circle/layout-ui:${{ github.sha }}
+
 ```
 
 - сделайте commit и push с изменениями в обоих репозиториях.
@@ -193,6 +217,7 @@ jobs:
          file: ./Dockerfile
          push: true
          tags: ghcr.io/<your-org-name>/<your-app-name>/<your-service-name>:${{ github.sha }}
+         # for example: tags: ghcr.io/tourmalinecore/inner-circle/layout-ui:${{ github.sha }}
  deploy-to-prod-k8s:
    needs: push_to_registry
    name: Deploy service to k8s for prod environment 
