@@ -57,63 +57,14 @@ extraConfigMapEnvVars:
 
 ### В сервисе, который подключаем в local-env (в нашем случае [inner-circle-layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui))
 
-- настройте `local-config-builder.js`, если его у вас нет, он нужен для генерации `env-config.js`, который будет хранить предоставленные сервису env переменные
-
-```
-import fs from "fs"
-const env = process.argv[2]
-
-
-const filepath = "./public/env-config.js"
-const fileCypressPath = "./cypress/env-config.js"
-const data = fs.readFileSync(`./.config-${env}`)
-
-
-const variables = data.toString()
- .split("\n")
- .map((str) => {
-   const regex = /^([^:]+):(.+)/gm
-   const m = regex.exec(str)
-   return `${m[1].trim()}: "${m[2].trim()}",`
- })
- .reduce((res, x) => res.concat(x), "")
-
-
-fs.writeFileSync(filepath, `window.__ENV__ = { ${variables} }`)
-fs.writeFileSync(fileCypressPath, `window.__ENV__ = { ${variables} }`)
-```
-
-- и добавьте `env-config.js` в `.gitignore`:
-
-```
-**/*/env-config.js
-```
-
-- не забудьте добавить в `index.html` строку, без этого вся работа с `local-config-builder.js` будет бессмысленна и ничего не будет работать
-
-```
-<script src="/env-config.js"></script>
-```
-
-- обновите `package.json`, новые скрипты будут собирать нужные конфигурации для заданных окружений(prod/local)
-
-```
-"start": "run-s create-config:prod vite-start",
-"start:local": "run-s create-config:local vite-start",
-"vite-start": "vite --host",
-"create-config:prod": "node local-config-builder prod",
-"create-config:local": "node local-config-builder local",
-```
-
 - создайте или обновите `Dockerfile`, он понадобится для сборки образа и дальнейшего его использования в local-env
 
-```
 FROM node:20.11.1-alpine3.19 as build
 COPY package.json .
 COPY package-lock.json .
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build -- --base=/layout
 
 FROM nginx:1.26.0-alpine3.19-slim
 COPY /ci/nginx.conf /data/conf/nginx.conf
@@ -122,13 +73,9 @@ COPY --from=build /dist /usr/share/nginx/html
 EXPOSE 80
 
 WORKDIR /usr/share/nginx/html
-COPY ./ci/env.sh .
-COPY .env-vars .
 RUN apk add --no-cache bash
-RUN chmod +x /usr/share/nginx/html/env.sh
 
-CMD /bin/bash -c "/usr/share/nginx/html/env.sh" && nginx -g "daemon off;" -c "/data/conf/nginx.conf"
-```
+CMD nginx -g "daemon off;" -c "/data/conf/nginx.conf"
 
 - создайте папку `.github/workflows` и в нем файл `docker-build-and-push.yml` для сборки образа и его публикации в GitHub Container Registry
 
@@ -169,21 +116,162 @@ jobs:
          tags: ghcr.io/<your-org-name>/<your-app-name>/
          <your-service-name>:${{ github.sha }} 
          # for example: tags: ghcr.io/tourmalinecore/inner-circle/layout-ui:${{ github.sha }}
-
 ```
 
+- также нужно создать папку `ci`, если у вас ее еще нет и добавить туда добавляем `helmfile.yaml`
+
+```
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: layout-ui
+    labels:
+      app: layout-ui
+    wait: true
+    chart: bitnami/nginx
+    # after 15.3.5 our docker file or setup can no longer start, need to investigate what is wrong for the newer versions
+    version: 15.3.5
+    values:
+      - values.yaml
+```
+
+- в папке `ci` создаем файл `nginx.conf` для настройки `nginx`
+```
+worker_processes auto;
+
+events {
+    worker_connections  1024;
+    multi_accept on;
+}
+
+http {
+    server {
+        listen 80;
+        server_name  localhost;
+
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        include /etc/nginx/mime.types;
+
+        gzip on;
+        gzip_min_length 1000;
+        gzip_proxied expired no-cache no-store private auth;
+        gzip_types text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+        location / {
+            add_header Cache-Control 'no-cache';
+            try_files $uri $uri/ /index.html;
+        }
+    }
+}
+```
+- в той же папке добавляем файл `values-local-env.yaml` где описываем настройки параметров Helm-чарта добавляемого сервиса
+
+```
+# Here you can find docs bitnami/nginx chart https://github.com/bitnami/charts/blob/main/bitnami/nginx/README.md
+
+image:
+  registry: ghcr.io
+  repository: tourmalinecore/inner-circle/layout-ui
+  tag: "latest"
+  pullPolicy: Always
+  debug: true
+
+containerPorts:
+  http: 80
+  https: ""
+
+replicaCount: 1
+
+# 1000m means 100% of processor time 
+# 1m means 0.1% of processor time.
+# at start pod is being allocated with resources from requests, if it needs more consumption can grow until limits.
+# if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
+resources:
+  limits:
+    cpu: 50m
+    memory: 100Mi
+  requests:
+    cpu: 1m
+    memory: 50Mi
+
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+    https: ""
+
+ingress:
+  enabled: true
+  path: /layout(/|$)(.*)
+  annotations:
+      cert-manager.io/cluster-issuer: letsencrypt 
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+  ingressClassName: "nginx"
+  tls: true
+
+# not needed in this setup
+serviceAccount:
+  create: false
+
+# not needed in this setup
+networkPolicy:
+  enabled: false
+
+# CUSTOM: Here you store non secret env vars that will be passed to the pod's environment
+extraConfigMapEnvVars: {}
+
+# this is needed to tell the container to read extra env vars from the dedicated Config Map that we create in extraDeploy
+extraEnvVarsCM: "{{ include \"common.names.fullname\" . }}"
+
+podAnnotations:
+  # this is needed to trigger re-deploy when only Config Map is changed
+  # that is the file name generated by extraDeploy nginx/templates/extra-list.yaml
+  # that is why it looks so weird in the file path to calculate hash by its content
+  checksum/config: "{{ include (print $.Template.BasePath \"/extra-list.yaml\") . | sha256sum }}"
+
+extraDeploy:
+  # this creates Config Map from extraConfigMapEnvVars to be able to calculate checksum/config hash by env vars
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ include "common.names.fullname" . }}
+      namespace: {{ include "common.names.namespace" . | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 6 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 6 }}
+        {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 6 }}
+      {{- end }}
+    data:
+      {{- if .Values.extraConfigMapEnvVars }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | trim | nindent 6 }}
+      {{- end }}
+ 
+```
 - сделайте commit и push с изменениями в обоих репозиториях.
 
-После этого в github в репозитории вашего сервиса во вкладке меню “Actions” появится новый `workflow run` с вашим коммитом, где должно быть написано “Push Docker image to Docker Hub succeeded”
+После этого в github в репозитории вашего сервиса во вкладке меню “Actions” появится новый `workflow run` с вашим коммитом, где должно быть отображено успешное его прохождение
 
-После этого запускаем local-env по [инструкции с readme](https://github.com/TourmalineCore/inner-circle-local-env/blob/master/README.md). При включении в списке поднятых сервисов в local-env увидим наименование нового добавленного сервиса. Переходим по url local-env и тестим там наш сервис :)
+После этого запускаем local-env по [инструкции с readme](https://github.com/TourmalineCore/inner-circle-local-env/blob/master/README.md). При включении local-env в списке поднятых сервисов будет наименование нового добавленного сервиса. Переходим по url local-env и тестим там наш сервис :)
 
 ## Чтобы задеплоить новый сервис нам нужно:
 
 - cоздайте папку `.github/workflows` и в нем создайте/обновите файл `prod-docker-publish.yml` (если у вас уже в этой папке есть файл `docker-build-and-push.yml`, просто переименуйте его и дополните)
 
 ```
-name: Publish Docker image and deploy <your-service-name>
+name: Publish Docker image and deploy
 
 on:
  push:
@@ -229,28 +317,112 @@ jobs:
      - name: Deploy
        uses: WyriHaximus/github-action-helm3@v3
        with:
+         # for example: RELEASE_NAME=layout
          exec: |
-           RELEASE_NAME=<your-service-name>
+           RELEASE_NAME=<your-service-name> 
            helm repo add bitnami https://charts.bitnami.com/bitnami
            helm upgrade --install --namespace dev-inner-circle --create-namespace --values ./ci/values.yaml \
            --set "image.tag=${{ github.sha }}" \
            --set "ingress.enabled=true" \
            --set "ingress.hostname=${{ secrets.DEV_HOST }}" \
            --set "extraConfigMapEnvVars.API_ROOT_AUTH=${{ secrets.DEV_LINK_TO_API_ROOT_AUTH }}" \
-           --set "extraConfigMapEnvVars.ENV_KEY=${{ secrets.DEV_ENV }}" \
            "${RELEASE_NAME}" \
            bitnami/nginx --version 15.0.2
          kubeconfig: "${{ secrets.DEV_KUBECONFIG }}"
 ```
+- в папке `ci` добавляем файл `values.yaml` где описываем настройки параметров Helm-чарта для деплоя сервиса
+```
+# Here you can find docs bitnami/nginx chart https://github.com/bitnami/charts/blob/main/bitnami/nginx/README.md
+
+image:
+  registry: ghcr.io
+  repository: tourmalinecore/inner-circle/layout-ui
+  tag: "latest"
+  pullPolicy: Always
+  debug: true
+
+containerPorts:
+  http: 80
+  https: ""
+
+replicaCount: 1
+
+# 1000m means 100% of processor time 
+# 1m means 0.1% of processor time.
+# at start pod is being allocated with resources from requests, if it needs more consumption can grow until limits.
+# if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
+resources:
+  limits:
+    cpu: 150m
+    memory: 300Mi
+  requests:
+    cpu: 1m
+    memory: 25Mi
+
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+    https: ""
+
+ingress:
+  enabled: true
+  path: /layout(/|$)(.*)
+  annotations:
+      cert-manager.io/cluster-issuer: letsencrypt 
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+  ingressClassName: "nginx"
+  tls: true
+
+# not needed in this setup
+serviceAccount:
+  create: false
+
+# not needed in this setup
+networkPolicy:
+  enabled: false
+
+# CUSTOM: Here you store non secret env vars that will be passed to the pod's environment
+extraConfigMapEnvVars: {}
+
+# this is needed to tell the container to read extra env vars from the dedicated Config Map that we create in extraDeploy
+extraEnvVarsCM: "{{ include \"common.names.fullname\" . }}"
+
+podAnnotations:
+  # this is needed to trigger re-deploy when only Config Map is changed
+  # that is the file name generated by extraDeploy nginx/templates/extra-list.yaml
+  # that is why it looks so weird in the file path to calculate hash by its content
+  checksum/config: "{{ include (print $.Template.BasePath \"/extra-list.yaml\") . | sha256sum }}"
+
+extraDeploy:
+  # this creates Config Map from extraConfigMapEnvVars to be able to calculate checksum/config hash by env vars
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ include "common.names.fullname" . }}
+      namespace: {{ include "common.names.namespace" . | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 6 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 6 }}
+        {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 6 }}
+      {{- end }}
+    data:
+      {{- if .Values.extraConfigMapEnvVars }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | trim | nindent 6 }}
+      {{- end }}
+```
 
 при деплое в тегах `Build and push Docker image` не воспринимается `latest`, поэтому используем `${{ github.sha }}`
-
-- добавьте `.config-dev` с нужными для сервиса env переменными
-
-```
-ENV_KEY:dev
-API_ROOT_AUTH:https://<your-app-name>/api/auth
-```
 
 - сделайте commit и push изменений, создайте с ними pull request. После этого в github в репозитории вашего сервиса во вкладке меню “Actions” появится новый `workflow run` с вашим коммитом, где должно быть отображено успешное его прохождение
 
