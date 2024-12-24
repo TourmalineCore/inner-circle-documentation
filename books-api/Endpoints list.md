@@ -1,45 +1,135 @@
 # CRUD operations
 
-**Create (or add) a book**</br>
-**Url:** /api/books/create; **Type - POST**
+## Create (or add) a book
+- **Url:** /api/books; 
+- **Type - POST**; 
+- **Headers:** Authorization - Bearer ***
+
+**Request body:**
 ```json
 {
-  "title": "5 пороков команды",
-  "annotation": "Работа команды в силу своего потенциала и неповторимости является основным звеном деятельности компании",
-  "author_id": 1,
-  "artworkUrl": "https://cdn.litres.ru/pub/c/cover_415/620095.webp",
-  "numberOfCopies": 1,
-  "statusId": 1,
-  "categoryId": 1,
-  "tags": [
-    "Менеджмент",
-    "Тимбилдинг"
+  "title": "Пример названия книги", (not optional)
+  "annotation": "Пример аннотации книги", (optional, deafult: null)
+  "authors": [ (not optional, count of values should be more than zero)
+    {
+      "fullName": "Иванов Иван"
+    }
   ],
-  "languageId": 1
+  "language": "ru", (not optional)
+  "artworkUrl": "http://images-for-test.com/book-image.jpg" (optional, default: null)
+}
+```
+**Response body:**
+```json
+{
+  "newBookId": 1
+}
+```
+## Update a book
+- **Url:** /api/books/{id}/edit; 
+- **Type - POST**; 
+- **Headers:** Authorization - Bearer ***
+
+**Request body:**
+```json
+{
+  "title": "Пример обновленного названия книги", (not optional)
+  "annotation": "Пример обновленной аннотации книги", (optional, default: null)
+  "language": "en", (not optional)
+  "authors": [ (not optional, count of values should be more than zero)
+    {
+      "fullName": "Иванов Иван"
+    },
+    {
+      "fullName": "Петров Петр"
+    }
+  ],
+  "artworkUrl": "http://images-for-test.com/book-image-updated.jpg" (optional, default: null)
+}
+``` 
+**Response body:** 200 OK
+
+## Delete a book (soft)
+- **Url:** /api/books/{id}/soft-delete; 
+- **Type - DELETE**; 
+- **Headers:** Authorization - Bearer ***
+
+**Response body:** 
+```json
+{
+  "isDeleted": true
 }
 ```
 
-**Update a book**</br>
-**Url:** /api/books/edit; **Type - PUT**
+## Delete a book (hard)
+- **Url:** /api/books/{id}/hard-delete; 
+- **Type - DELETE**; 
+- **Headers:** Authorization - Bearer ***
+
+**Response body:** 
 ```json
 {
-  "id": 1,
-  "title": "6 пороков команды",
-  "annotation": "Работа команды в силу своего потенциала и неповторимости является основным звеном деятельности компании(изменено)",
-  "artworkUrl": "https://ir-2.ozone.ru/s3/multimedia-1-n/wc1000/7094131403.jpg",
-  "numberOfCopies": 1,
-  "tags": [
-    "Тимбилдинг"
+  "isDeleted": true
+}
+```
+
+## Get all of existing books
+- **Url:** /api/books; 
+- **Type - GET**; 
+- **Headers:** Authorization - Bearer ***
+
+**Response body:** 
+```json
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Пример названия книги",
+      "annotation": "Пример аннотации книги",
+      "language": "ru",
+      "authors": [
+        {
+          "fullName": "Иванов Иван"
+        }
+      ],
+      "artworkUrl": "http://images-for-test.com/book-image.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Пример названия книги 2",
+      "annotation": "Пример аннотации книги 3",
+      "language": "en",
+      "authors": [
+        {
+          "fullName": "Иванов Иван"
+        },
+        {
+          "fullName": "Петров Петр"
+        }
+      ],
+      "artworkUrl": "http://images-for-test.com/book-image-2.jpg"
+    }
   ]
 }
 ```
 
-**Delete a book (soft)**</br>
-**Url:** /api/books/soft-delete/{id}; **Type - POST**</br>
+## Get existing book by id
+- **Url:** /api/books/{id}; 
+- **Type - GET**; 
+- **Headers:** Authorization - Bearer ***
 
-**Delete a book (hard)**</br>
-**Url:** /api/books/hard-delete/{id}; **Type - POST**</br>
-
-# Searching specific or getting all data
-**Get all of existing books:**</br>
-**Url:** /api/books/all; **Type - GET**</br>
+**Response body:** 
+```json
+{
+  "id": 1,
+  "title": "Пример названия книги",
+  "annotation": "Пример аннотации книги",
+  "language": "ru",
+  "authors": [
+    {
+      "fullName": "Иванов Иван"
+    }
+  ],
+  "artworkUrl": "http://images-for-test.com/book-image.jpg"
+}
+```
