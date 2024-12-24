@@ -44,19 +44,19 @@ export default MyComponent;
 2. Также пробовали создать в корне проекта файл `photo.d.ts`
 
 ```
-declare module '\*.svg' {  
- export const ReactComponent: React.FC\<React.SVGProps\<SVGSVGElement\>\>  
- const src: string  
- export default src  
+declare module '*.svg' {
+ export const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>
+ const src: string
+ export default src
 }
 ```
 
 И подключили его в файл `tsconfig.json`
 
 ```
- "include": \[  
-   "\*\*/\*.d.ts", // или пробовали "photo.d.ts",  
- \],
+"include": [
+  "**/*.d.ts", // или пробовали "photo.d.ts",
+]
 ```
 
 Но не уверены, что правильно поняли, как оно работает и подключилось ли оно вообще, потому что ничего не изменилось;(
@@ -66,15 +66,15 @@ declare module '\*.svg' {
 Популярный способ решения это плагин `svgr`, но он почему-то тоже ничем не помог, ничего не изменил. Есть разные варианты его подключения, с доп флагами, либо не из `vite-plugin-svgr`. Самый популярный вариант приведен ниже 
 
 ``` 
-import { defineConfig } from 'vite'  
-import react from '@vitejs/plugin-react'  
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 
-export default defineConfig({  
- plugins: \[  
-   react(),  
-   svgr(), // плагин  
- \],  
+export default defineConfig({
+ plugins: [
+   react(),
+   svgr(), // плагин
+ ],
 })
 ```
 
