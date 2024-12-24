@@ -108,7 +108,7 @@ jobs:
          # for example: tags: ghcr.io/tourmalinecore/inner-circle/layout-ui:${{ github.sha }}
 ```
 
-- также нужно создать папку `ci`, если у вас ее еще нет и добавить туда добавляем `helmfile.yaml`
+- также в корне проекта нужно создать папку `ci`, если у вас ее еще нет и добавить туда `helmfile.yaml`
 
 ```
 repositories:
