@@ -9,14 +9,14 @@ All endpoints are closed by authorization.
 **Request body:**
 ```json
 {
-  "title": "Пример названия книги", (not optional)
-  "annotation": "Пример аннотации книги", (optional, deafult: null)
-  "authors": [ (not optional, count of values should be more than zero)
+  "title": "Пример названия книги", (required)
+  "annotation": "Пример аннотации книги", (required)
+  "authors": [ (required, count of values should be more than zero)
     {
       "fullName": "Иванов Иван"
     }
   ],
-  "language": "ru", (not optional)
+  "language": "ru", (required)
   "artworkUrl": "http://images-for-test.com/book-image.jpg" (optional, default: null)
 }
 ```
@@ -35,10 +35,10 @@ All endpoints are closed by authorization.
 **Request body:**
 ```json
 {
-  "title": "Пример обновленного названия книги", (not optional)
-  "annotation": "Пример обновленной аннотации книги", (optional, default: null)
-  "language": "en", (not optional)
-  "authors": [ (not optional, count of values should be more than zero)
+  "title": "Пример обновленного названия книги", (required)
+  "annotation": "Пример обновленной аннотации книги", (required)
+  "language": "en", (required)
+  "authors": [ (required, count of values should be more than zero)
     {
       "fullName": "Иванов Иван"
     },
