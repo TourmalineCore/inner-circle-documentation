@@ -26,9 +26,9 @@
 Пример:
 
 ```
-- name: inner-layout-ui
+- name: inner-circle-layout-ui
     labels:
-      app: inner-layout-ui
+      app: inner-circle-layout-ui
     wait: true
     chart: bitnami/nginx
     # after 15.3.5 our docker file or setup can no longer start, need to investigate what is wrong for the newer versions
