@@ -1,9 +1,10 @@
 # CRUD operations
-
+All endpoints are closed by authorization.
 ## Create (or add) a book
 - **Url:** /api/books; 
 - **Type - POST**; 
 - **Headers:** Authorization - Bearer ***
+- **Permission:** CanManageBooks
 
 **Request body:**
 ```json
@@ -29,6 +30,7 @@
 - **Url:** /api/books/{id}/edit; 
 - **Type - POST**; 
 - **Headers:** Authorization - Bearer ***
+- **Permission:** CanManageBooks
 
 **Request body:**
 ```json
@@ -53,6 +55,7 @@
 - **Url:** /api/books/{id}/soft-delete; 
 - **Type - DELETE**; 
 - **Headers:** Authorization - Bearer ***
+- **Permission:** CanManageBooks
 
 **Response body:** 
 ```json
@@ -65,6 +68,7 @@
 - **Url:** /api/books/{id}/hard-delete; 
 - **Type - DELETE**; 
 - **Headers:** Authorization - Bearer ***
+- **Permission:** IsBooksHardDeleteAllowed
 
 **Response body:** 
 ```json
