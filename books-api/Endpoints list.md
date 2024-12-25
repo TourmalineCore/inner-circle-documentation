@@ -17,7 +17,7 @@ All endpoints are closed by authorization.
     }
   ],
   "language": "ru", (required)
-  "artworkUrl": "http://images-for-test.com/book-image.jpg" (optional, default: null)
+  "bookCoverUrl": "http://images-for-test.com/book-image.jpg" (optional, default: null)
 }
 ```
 **Response body:**
@@ -46,7 +46,7 @@ All endpoints are closed by authorization.
       "fullName": "Петров Петр"
     }
   ],
-  "artworkUrl": "http://images-for-test.com/book-image-updated.jpg" (optional, default: null)
+  "bookCoverUrl": "http://images-for-test.com/book-image-updated.jpg" (optional, default: null)
 }
 ``` 
 **Response body:** 200 OK
@@ -96,7 +96,7 @@ All endpoints are closed by authorization.
           "fullName": "Иванов Иван"
         }
       ],
-      "artworkUrl": "http://images-for-test.com/book-image.jpg"
+      "bookCoverUrl": "http://images-for-test.com/book-image.jpg"
     },
     {
       "id": 2,
@@ -111,7 +111,7 @@ All endpoints are closed by authorization.
           "fullName": "Петров Петр"
         }
       ],
-      "artworkUrl": "http://images-for-test.com/book-image-2.jpg"
+      "bookCoverUrl": "http://images-for-test.com/book-image-2.jpg"
     }
   ]
 }
@@ -134,6 +134,6 @@ All endpoints are closed by authorization.
       "fullName": "Иванов Иван"
     }
   ],
-  "artworkUrl": "http://images-for-test.com/book-image.jpg"
+  "bookCoverUrl": "http://images-for-test.com/book-image.jpg"
 }
 ```
