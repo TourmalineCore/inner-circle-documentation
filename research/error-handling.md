@@ -26,6 +26,7 @@ public class CustomException : Exception
 
 ## How to set up IExceptionHandler?
 1. Add ExceptionHandler to builder:
+
 Program.cs:
 ```cs
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -33,6 +34,7 @@ builder.Services.AddProblemDetails();
 app.UseExceptionHandler();
 ```
 2. Create your ExceptionHandler:
+
 GlobalExceptionHandler.cs
 ```cs
 internal sealed class GlobalExceptionHandler : IExceptionHandler
@@ -69,6 +71,57 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
     }
 }
 
+```
+## How to set up Error handling middleware?
+1. Add middleware:
+
+Program.cs:
+```cs
+app.UseMiddleware<ErrorHandlerMiddleware>();
+```
+2. Create your Middleware:
+
+GlobalExceptionHandler.cs
+```cs
+public class ErrorHandlerMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public ErrorHandlerMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled Exception: {ex}");
+
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(new ExceptionResponse<object>
+            {
+                Success = false,
+                Message = $"An error occurred while processing your request. See the message: {ex.Message}"
+            });
+        }
+    }
+}
+
+```
+3. Create Error response:
+
+ExceptionResponse.cs:
+```cs
+public class ExceptionResponse<T>
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+}
 ```
 ## Interesting links
 1. [Result types of error in C#](https://dev.to/ephilips/better-error-handling-in-c-with-result-types-4aan) - it's interesting, but it doesn't intercept the exceptions, as I understand it;
