@@ -2,7 +2,7 @@
 
 ## Context
 
-We faced the problem of choosing a calendar while designing the interface for taking a book for a specific selection period. How will it work? How will it look like? In order not to invent a new calendar, we decided to use an existing graphical component library.
+We faced the problem of choosing a calendar while designing the interface for taking a book for a specific period of time. How will it work? How will it look like? In order not to invent a new calendar, we decided to use an existing graphical component library.
 
 ## Decision
 
@@ -48,4 +48,4 @@ It is an open source React component library that implements Google's Material D
 
 ## Consequences
 
-After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT. We were attracted by the variability of the date range component for our UX requirements and the ability to quickly UI development, since all components are open source in Figma.
+After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT. We were attracted by the variability of the date range component for our UX requirements and the ability to quicken UI development, since all components are open source in Figma.
