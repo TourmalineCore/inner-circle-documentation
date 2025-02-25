@@ -48,4 +48,4 @@ It is an open source React component library that implements Google's Material D
 
 ## Consequences
 
-After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT. We were attracted by the variability of the date range component for our UX requirements and the ability to quickly UI development, since all components are open source in Figma.
+After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT. We were attracted by the variability of the date range component for our UX requirements and the ability to quicken UI development, since all components are open source in Figma.
