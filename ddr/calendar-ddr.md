@@ -38,7 +38,7 @@ It is an open source React component library that implements Google's Material D
 
 - Technical support for users and an extensive community. 
 
-- Free UI kit in Figma. This will help the designer to quickly incorporate the component into the current UI design and style it as Inner Circle.
+- Free UI kit in Figma. This will help the designer quickly add the component into the current UI design and style it as Inner Circle.
 
 
 **Disadvantages**
