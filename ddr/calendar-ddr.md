@@ -1,8 +1,8 @@
-# Title
+# Add calendar DDR
 
 ## Context
 
- We faced a calendar selection problem while designing an interface for taking a book for a specific selection period. How will it work? How will it look like? In order not to invent a new calendar, we decided to use an existing graphical component library.
+We faced the problem of choosing a calendar while designing the interface for taking a book for a specific selection period. How will it work? How will it look like? In order not to invent a new calendar, we decided to use an existing graphical component library.
 
 ## Decision
 
@@ -14,19 +14,19 @@ It is a popular open source library for creating user interfaces in React applic
 
 - MIT License to use the component library.
 
-- Extensive documentation. The documentation for Prime React is very detailed and covers a wide range of use cases, making development easier.
+- Extensive documentation. The documentation for Prime React is really detailed and covers a wide range of use cases, making development easier.
 
-- Regular updates to the library.
+- Regular library updates.
 
 - Technical support for users and an extensive community.
 
 **Disadvantages**
 
-- Paid file with components in Figma. This makes the UI/UX designer's job a bit more difficult, as you will have to create the calendar yourself to design the UI design.
+- Paid file with components in Figma. This makes the UI/UX designer's job a bit more difficult because as you will have to create the calendar yourself for UI design.
 
 2. Material UI
 
-It is an open source React component library that implements Google's Material Design. Material UI is eye-catching due to the large number of components for date and time selection. We were most interested in the following variants of a single component: with an input field and a pop-up calendar for several months to select a date range, mobile variant, adaptive, static, with shortcuts for quick range selection.  
+It is an open source React component library that implements Google's Material Design. Material UI attracts attention with a large number of components for choosing date and time. We were most interested in the following options of a single component: with an input field and a pop-up calendar for several months to select a date range, mobile variant, adaptive, static, with shortcuts for quick range selection.  
 
 **Advantages**
 
@@ -34,11 +34,11 @@ It is an open source React component library that implements Google's Material D
 
 - Extensive documentation.
 
-- Regular updates to the library.
+- Regular library updates.
 
 - Technical support for users and an extensive community. 
 
-- Free UI kit in Figma. This will help the designer to quickly incorporate the component into the current UI design and style it as Inner Circle.
+- Free UI kit in Figma. This will help the designer quickly add the component into the current UI design and style it as Inner Circle.
 
 
 **Disadvantages**
@@ -48,4 +48,4 @@ It is an open source React component library that implements Google's Material D
 
 ## Consequences
 
-After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT.  We were attracted by the variability of the date range component for our UX requirements and the possibility of fast UI development, as all components are publicly available in Figma. 
+After weighing all the advantages and disadvantages, we came to the conclusion that the Material UI component library is more suitable for us than PRIMEREACT. We were attracted by the variability of the date range component for our UX requirements and the ability to quickly UI development, since all components are open source in Figma.
