@@ -4,13 +4,13 @@
 
 We faced the problem of choosing a calendar while designing the interface for taking a book for a specific period of time. How will it work? How will it look like? In order not to invent a new calendar, we decided to use an existing graphical component library.
 
+We currently use the React Datepicker library, but it has a limited set of static calendar components, which doesn't meet our UI design needs.
+
 ## Decision
 
 1. PRIMEREACT
 
-It is a popular open source library for creating user interfaces in React applications from PrimeTek. This library is attractive because it has different types of calendar: pop-up with a field to enter the date, static, with multiple month selection, with date range selection and touch interface.
-
-**Advantages**
+It is a popular open source library for creating user interfaces in React applications from PrimeTek.
 
 - MIT License to use the component library.
 
@@ -22,11 +22,13 @@ It is a popular open source library for creating user interfaces in React applic
 
 **Disadvantages**
 
-- Paid file with components in Figma. This makes the UI/UX designer's job a bit more difficult because as you will have to create the calendar yourself for UI design.
+- Paid file with components in Figma. This makes the UI/UX designer's job more difficult because as you will have to create the calendar yourself for UI design.
+
+- PRIMEREACT has one static calendar component that marks only one date, not a range of dates.
 
 2. Material UI
 
-It is an open source React component library that implements Google's Material Design. Material UI attracts attention with a large number of components for choosing date and time. We were most interested in the following options of a single component: with an input field and a pop-up calendar for several months to select a date range, mobile variant, adaptive, static, with shortcuts for quick range selection.  
+It is an open source React component library that implements Google's Material Design.
 
 **Advantages**
 
@@ -39,6 +41,8 @@ It is an open source React component library that implements Google's Material D
 - Technical support for users and an extensive community. 
 
 - Free UI kit in Figma. This will help the designer quickly add the component into the current UI design and style it as Inner Circle.
+
+- A large number of static calendars with different date range selections. For example, the calendar can be a controlled calendar. If the user changes one of the two dates, the range will be changed rather than reset.
 
 
 **Disadvantages**
