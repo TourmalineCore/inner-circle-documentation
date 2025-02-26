@@ -42,7 +42,7 @@ It is an open source React component library that implements Google's Material D
 
 - Free UI kit in Figma. This will help the designer quickly add the component into the current UI design and style it as Inner Circle.
 
-- A large number of static calendars with different date range selections. For example, the calendar can be a controlled calendar. If the user changes one of the two dates, the range will be changed rather than reset.
+- A large number of static calendars with different date range selections. For example, a calendar might have range shortcuts that help the user identify a period of dates.
 
 
 **Disadvantages**
