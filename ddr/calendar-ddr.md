@@ -11,7 +11,7 @@ We currently use the React Datepicker library, but it has a limited set of stati
 1. PRIMEREACT
 
 It is a popular open source library for creating user interfaces in React applications from PrimeTek.
-
+**Advantages**
 - MIT License to use the component library.
 
 - Extensive documentation. The documentation for Prime React is really detailed and covers a wide range of use cases, making development easier.
