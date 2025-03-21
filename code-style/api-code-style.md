@@ -20,6 +20,7 @@ Previously, we had 5 layers, but now we've decided to keep only 3.
 We moved the **DataAccess** layer into **Application**, as it no longer makes sense to have a separate layer.
 
 Additionally, we removed the **Tests** layer and distributed the tests throughout the code. Now, our unit-tests are located next to the classes they test. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
+
 ![Tests Location Example](./images/tests-location-example.png)
 
 ### Conclusion
@@ -45,14 +46,14 @@ Now we are using 3 layers:
 
 All methods that return tasks must end with `async`. For example:
 
-> **public async Task\<SomeResponse\> DoSomething<u>Async</u>()**
+#### **public async Task\<SomeResponse\> DoSomething<u>Async</u>()**
 
 
 ## 4. Controller Responses Naming
 
 Everything that comes back from the controller must end with `response`. For example:
 
-> **public async Task\<Some<u>Response</u>\> DoSomethingAsync()**
+#### **public async Task\<Some<u>Response</u>\> DoSomethingAsync()**
 
 
 ## 5. Explicit Response Mapping
