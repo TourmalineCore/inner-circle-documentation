@@ -44,21 +44,27 @@ Now we are using 3 layers:
 
 ## 3. Naming Convention of Methods That Return Tasks
 
-All methods that return tasks must end with `async`. For example:
+All methods that return tasks must end with `async`.
 
-#### **public async Task\<SomeResponse\> DoSomething<u>Async</u>()**
+```csharp
+// example
+public async Task DoSomethingAsync()
+```
 
 
 ## 4. Controller Responses Naming
 
-Everything that comes back from the controller must end with `response`. For example:
+Everything that comes back from the controller must end with `response`.
 
-#### **public async Task\<Some<u>Response</u>\> DoSomethingAsync()**
+```csharp
+// example
+public async Task<SomeResponse> DoSomething()
+```
 
 
 ## 5. Explicit Response Mapping
 
-In the controller, explicit mapping of data should always occur before returning the response
+In the controller, explicit mapping of data should always occur before returning the response.
 
 ```csharp
 // example
