@@ -3,7 +3,7 @@
 This document outlines the code style guidelines for API services.
 
 
-## 1. Layers Srtucture
+## 1. Layers Structure
 
 Now we agreed to use 3 layers:
 
