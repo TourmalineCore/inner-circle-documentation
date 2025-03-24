@@ -9,7 +9,7 @@ Now we agreed to use 3 layers:
 
 1. **Api**
 
-- This layer contains controllers, requests, and responses. This helps to group all request-related code within the Api context.
+- This layer contains controllers, requests and responses. This helps to group all request-related code within the Api context.
 
 2. **Application**
 
