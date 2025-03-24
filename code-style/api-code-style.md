@@ -2,34 +2,14 @@
 
 This document outlines the code style guidelines for API services.
 
-## 1. Moving Requests Folder
 
-"Requests" folder have been moved from the **Application** layer to the **Api** layer.
+## 1. Layers Srtucture
 
-This change improves the separation of concerns by grouping all request-related code within the Api context.
-
-
-## 2. Layers Srtucture
-
-What and where we agreed to put?
-
-### Background
-
-Previously, we had 5 layers, but now we've decided to keep only 3.
-
-We moved the **DataAccess** layer into **Application**, as it no longer makes sense to have a separate layer.
-
-Additionally, we removed the **Tests** layer and distributed the tests throughout the code. Now, our unit-tests are located next to the classes they test. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
-
-![Tests Location Example](./images/tests-location-example.png)
-
-### Conclusion
-
-Now we are using 3 layers:
+Now we agreed to use 3 layers:
 
 1. **Api**
 
-- This layer contains controllers, requests, and responses.
+- This layer contains controllers, requests, and responses. This helps to group all request-related code within the Api context.
 
 2. **Application**
 
@@ -37,28 +17,33 @@ Now we are using 3 layers:
 
 3. **Core**
 
-- This layer contains classes that describe entities. These classes are used in DbContext to create tables. We do not return Core classes or perform any operations with them. 
+- This layer contains classes that describe entities. These classes are used in DbContext to create tables. We do not return Core classes to user or perform any operations with them. 
    
-   Our **Application** layer accepts DTOs or models, transforms these DTOs or models into Core classes in commands, and saves them in the database. Similarly, queries extract Core classes from the database but immediately convert them into models for passing up (for example, to responses).
+   Our **Application** layer accepts models, transforms them into Core classes in commands, and saves them in the database. Similarly, queries extract Core classes from the database but immediately convert them into models for passing up (for example, to responses).
+
+
+## 2. Test location
+
+We place unit-tests next to the classes they test on all layers of the application. You can read [our article](https://www.tourmalinecore.com/articles/dotnet-unit-testing) about it. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
+
+![Tests Location Example](./images/tests-location-example.png)
 
 
 ## 3. Naming Convention of Methods That Return Tasks
 
-All methods that return tasks must end with `async`.
+All methods that return tasks must end with `Async`.
 
 ```csharp
-// example
 public async Task DoSomethingAsync()
 ```
 
 
 ## 4. Controller Responses Naming
 
-Everything that comes back from the controller must end with `response`.
+Everything that comes back from the controller must end with `Response`.
 
 ```csharp
-// example
-public async Task<SomeResponse> DoSomething()
+public async Task<SomeElseResponse> DoSomethingElseAsync()
 ```
 
 
@@ -67,7 +52,6 @@ public async Task<SomeResponse> DoSomething()
 In the controller, explicit mapping of data should always occur before returning the response.
 
 ```csharp
-// example
 public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
 {
     var createCommandParams = new CreateCommandParams
@@ -84,6 +68,12 @@ public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
     };
 }
 ```
+
+
+## 6. RORO pattern
+
+We use RORO pattern (Request Object Response Object). You can read 
+[our article](https://www.tourmalinecore.com/articles/React) about it.
 
 ---
 to be continued..
