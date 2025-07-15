@@ -1,40 +1,40 @@
-# Flow of adding a new permission
+# Flow of Adding a New Permission
 
-## 1 step - accounts-api
+## Step 1 - accounts-api
 
-В репозитории [accounts-api](https://github.com/TourmalineCore/accounts-api):
+In the [accounts-api](https://github.com/TourmalineCore/accounts-api) repository:
 
-1. В файл `Core/Models/Permissions.cs`
+1. In the file `Core/Models/Permissions.cs` add line
 
 ```c#
 public const string CanManageExample = "CanManageExample";
 ```
 
-2. В файл `DataAccess/Mapping/MappingData.cs`
+2. In the file `DataAccess/Mapping/MappingData.cs` add line
 
 ```c#
 new Permission(Permissions.CanManageExample),
 ```
 
-3. Накатить миграцию на добавленную пермисиию, как это сделать, можно посмотреть в `README.md`
+3. Roll out the migration for the added permission, instructions on how to do this can be found in `README.md`
 
-## 2 step - accounts-ui
+## Step 2 - accounts-ui
 
-В репозитории [accounts-ui](https://github.com/TourmalineCore/accounts-ui):
+In the [accounts-ui](https://github.com/TourmalineCore/accounts-ui) repository:
 
-1. В файл `src/features/account-management/roles-enums.ts`
+1. In the file `src/features/account-management/roles-enums.ts` add line
 
 ```ts
 CanManageExample: 'Can Manage Example',
 ```
 
-2. В файл `src/routes/state/AccessBasedOnPemissionsState.ts`
+2. In the file `src/routes/state/AccessBasedOnPemissionsState.ts` add line
 
 ```ts
 CanManageExample = 'CanManageExample',
 ```
 
-3. В файл `src/features/account-management/RolesPageContent.tsx` можно добавить либо новую группу пермисиий, либо же уже в существующую группу добавить нужную пермиссию
+3. In the file `src/features/account-management/RolesPageContent.tsx` you can either add a new group of permissions or add the required permission to an existing group
 
 ```ts
 {
@@ -45,33 +45,33 @@ CanManageExample = 'CanManageExample',
 },
 ```
 
->[пример](https://github.com/TourmalineCore/accounts-ui/commit/482ebc3288c3ab22786d10e4f79cb1932bc390e1) коммита с добавлением новой пермиссии в существующую группу аккаунтов 
+>[Example](https://github.com/TourmalineCore/accounts-ui/commit/482ebc3288c3ab22786d10e4f79cb1932bc390e1) of a commit with adding a new permission to **an existing group** of accounts
 
->[пример](https://github.com/TourmalineCore/accounts-ui/commit/9d94cafc453fc24f30f57b26d3b4d12b22ae33ec) коммита с добавлением новой группы книг со всеми новыми пермиссиями
+>[Example](https://github.com/TourmalineCore/accounts-ui/commit/9d94cafc453fc24f30f57b26d3b4d12b22ae33ec) of a commit with adding a **new group** of books with all new permissions
 
-## 3 step - ваш API
+## Step 3 - Your API
 
-1. В файл `Api/UserClaimsProvider.cs`
+1. In the file `Api/UserClaimsProvider.cs` add line
 
 ```c#
 public const string CanManageExample = "CanManageExample";
 ```
 
-## 4 step - ваш UI - два варианта развития событий
+## Step 4 - Your UI - Two Possible Scenarios
 
-### Если добавляете пермисии в сервисы с подключенным layout-ui (compensations-ui или books-ui)
+### First Scenario: If you are adding permissions to services with connected layout-ui (compensations-ui or books-ui)
 
-#### В [layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui)
+#### In [layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui)
 
-1. В файл `src/routes/state/AccessBasedOnPemissionsState.ts` в enum Permission добавить
+1. In the file `src/routes/state/AccessBasedOnPemissionsState.ts` add line to the Permission enum
 
 ```ts
 CanManageExample = `CanManageExample`,
 ```
 
-#### В вашем UI
+#### In Your UI
 
-1. Для отображения страницы в зависимости от пермиссий, в файле `src/routes/pageRoutes.tsx` обернуть нужный роут в проверку нужной пермиссии
+1. To display a page based on permissions, in the file `src/routes/pageRoutes.tsx` wrap the required route in a check for the necessary permission
 
 ```tsx
 if (accessPermissions.get(`CanManageExample`)) {
@@ -79,11 +79,11 @@ if (accessPermissions.get(`CanManageExample`)) {
 }
 ```
 
-2. (Не обязательно) Если нужно, чтобы в вашем UI сервсие отдельный компонент внутри страницы отображался в зависимости от пермиссий, то нужно 
+2. (Optional) If you need a separate component within the page of your UI service to be displayed based on permissions, you need to:
 
-- Установить в сервис "jwt-decode": "^4.0.0"
+- Install "jwt-decode": "^4.0.0"
 
-- Добавить файл `src/common/hasAccessPermission.ts`
+- Add the file `src/common/hasAccessPermission.ts`
 
 ```ts
 import { useContext } from "react"
@@ -121,7 +121,7 @@ export const hasAccessPermission = ({
 }
 ```
 
-- И обернуть его, как компонент `<Actions />`
+- And wrap it as a component `<Actions />`
 
 ```tsx
 return (
@@ -135,15 +135,15 @@ return (
   )
 ```
 
-### Если добавляете пермисии в сервисы где еще нет layout-ui (inner-circle-ui или inner-circle-documents)
+### If you are adding permissions to services where layout-ui is not yet available (inner-circle-ui or inner-circle-documents)
 
-1. В вашем UI сервсие в файл `src/routes/state/AccessBasedOnPemissionsState.ts` в enum Permission добавить
+1. In your UI service, in the file `src/routes/state/AccessBasedOnPemissionsState.ts` add line to the Permission enum
 
 ```ts
 CanManageExample = `CanManageExample`,
 ```
 
-2. В файлe `src/routes/adminRoutes.tsx` в функции `getAdminRoutes` обернуть нужный роут в проверку нужной пермиссии
+2. In the file `src/routes/adminRoutes.tsx` in the function `getAdminRoutes` wrap the required route in a check for the necessary permission
 
 ```tsx
 if (accessPermissions.get('CanManageExample')) {
