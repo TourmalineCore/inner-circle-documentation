@@ -135,7 +135,7 @@ return (
   )
 ```
 
-### If you are adding permissions to services where layout-ui is not yet available (inner-circle-ui or inner-circle-documents)
+### Second Scenario: If you are adding permissions to services where layout-ui is not yet available (inner-circle-ui or inner-circle-documents)
 
 1. In your UI service, in the file `src/routes/state/AccessBasedOnPemissionsState.ts` add line to the Permission enum
 
@@ -150,3 +150,109 @@ if (accessPermissions.get('CanManageExample')) {
   routes.push(...exampleRoutes);
 }
 ```
+
+## Step About How Add Sidebar Buttons - Two Possible Scenarios
+
+### First Scenario: If you are adding permissions to services with connected layout-ui (compensations-ui or books-ui)
+
+> Note: If you add buttons to the sidebar in layout-ui, these buttons will be visible only within those services that are connected to layout-ui, to add buttons to other services, see second scenario
+
+1. #### In [layout-ui](https://github.com/TourmalineCore/inner-circle-layout-ui) in the file `src/pages/your-service/routes.tsx` add sidebar routes
+
+- if you need to add only 1 button
+
+```tsx
+export const exampleSidebarRoutes = [
+  {
+    path: '/example',
+    label: 'Example',
+  },
+];
+```
+
+- if you need to add a group of buttons
+
+```tsx
+export const exampleSidebarRoutes = [
+  {
+    isWindowRedirectNecessary: true,
+    path: `/example`,
+    label: `Example`,
+    routes: [
+      {
+        isWindowRedirectNecessary: true,
+        path: `/example/first`,
+        label: `First Example`,
+      },
+      {
+        isWindowRedirectNecessary: true,
+        path: `/example/second`,
+        label: `Second Example`,
+      },
+    ],
+  },
+]
+```
+
+2. In the file `src/routes/sidebarRoutes.tsx` in the function `getSidebarRoutes` wrap the required route in a check for the necessary permission
+
+> Note: you need add this route **before accounts routes** because of strange realization of this function that we will refactor later
+
+```tsx
+if (accessPermissions.get('CanManageExample')) {
+  routes.push(...exampleSidebarRoutes);
+}
+```
+
+### Second Scenario: If you are adding permissions to services where layout-ui is not yet available (inner-circle-ui or inner-circle-documents)
+
+> Note: If you add buttons to the sidebar in your service, these buttons will be visible only within your service, to see the buttons in other services, you need to add them to other services too
+
+1. In the file `src/features/your-service/routes.tsx` add sidebar routes
+
+- if you need to add only 1 button
+
+```tsx
+export const exampleSidebarRoutes = [
+  {
+    path: '/example',
+    label: 'Example',
+  },
+];
+```
+
+- if you need to add a group of buttons (in the SidebarRoutesProps interface make the iconMini prop optional if needed)
+
+```tsx
+export const exampleSidebarRoutes = [
+  {
+    isWindowRedirectNecessary: true,
+    path: `/example`,
+    label: `Example`,
+    routes: [
+      {
+        isWindowRedirectNecessary: true,
+        path: `/example/first`,
+        label: `First Example`,
+      },
+      {
+        isWindowRedirectNecessary: true,
+        path: `/example/second`,
+        label: `Second Example`,
+      },
+    ],
+  },
+]
+```
+
+2. In the file `src/routes/adminRoutes.tsx` in the function `getSidebarRoutes` wrap the required route in a check for the necessary permission
+
+> Note: you need add this route **before accounts routes** because of strange realization of this function that we will refactor later
+
+```tsx
+if (accessPermissions.get('CanManageExample')) {
+  routes.push(...exampleSidebarRoutes);
+}
+```
+
+>[Example](https://github.com/TourmalineCore/inner-circle-layout-ui/commit/b0ff1cb246a4e4d21baf40bee4b28f53583ba58f) of a commit with adding a new permissions and group of sidebar routes in layout-ui
