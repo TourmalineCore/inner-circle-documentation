@@ -25,7 +25,7 @@
 ## Another useful links
 - [Project board](https://github.com/orgs/TourmalineCore/projects/5)
 - [USM board](https://board.mail.ru/?utm_source=portal&utm_medium=portal_navigation&utm_campaign=board.vk.com_cross_navimt_link_id%3Dykpiid2&uid=94acfbe7-8699-47d4-92df-fb705322e541)
-- [Retro board](https://app.holst.so/share/b/11a05827-18f0-4491-aab6-00effb37bf47)
+- [Retro board]([https://app.holst.so/share/b/11a05827-18f0-4491-aab6-00effb37bf47](https://app.holst.so/board/047a6d87-4a7c-4179-840f-8c54f6fd21d2))
 - [Figma designs](https://www.figma.com/design/O4Kbm638zRYHhVqN9FBm5D/Inner-Circle?t=kPjBwo15UyXLnic5-0)
 
 ## C4 model
