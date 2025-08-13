@@ -14,9 +14,20 @@ This document outlines the code style guidelines for API services.
 | :---------------- | :------: | :------: | :------: | :------: | :------: | :------: |
 | DbOnly                 |   Yes   |   No   |   No   |   No   |   No   |   No   |
 | MockForDevelopment     |   Yes   |   No   |   No   |   Yes  |   No   |   No   |
+| MockForTests           |   Yes   |   Yes  |   No   |   Yes  |   No   |   No   |
+| MockForPullRequest     |   Yes   |   Yes  |   No   |   Yes  |   No   |   Yes  |
 | LocalEnvForDevelopment |   No    |   No   |   Yes  |   No   |   Yes  |   No   |
-| MockForPullRequest     |   Yes   |   Yes  |   No   |   Yes  |   No   |   No   |
-| LocalEnvForPullRequest |   No    |   No   |   Yes  |   No   |   Yes  |   No   |
+| LocalEnvForPullRequest |   No    |   No   |   Yes  |   No   |   Yes  |   Yes  |
+
+## Ports
+
+5501, 5502, .etc - book ports before adding services in this docs table (ToDo move from here)
+
+### Local
+| Service Name           | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
+| :--------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
+| inner-circle-items-api |    5501    |          6501         |          7501         |             8501            |
+
 
 ## 1. Layers Structure
 
