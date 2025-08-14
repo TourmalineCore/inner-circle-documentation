@@ -7,8 +7,8 @@ This document outlines the code style guidelines for API services.
 - DbOnly - spins up only database in docker compose, especially useful to add migrations
 - MockForDevelopment - used locally when you run the service in Visual Studio e.g. in Debug and don't want to spin up any external deps
 - MockForTests - used locally to run the service in isolation (no external deps) and later separately run its Karate tests
-- LocalEnvForDevelopment - used locally when you run the service in Visual Studio and you want to connect to its external deps from Local Env, including Local Env's running api's database. Thus locally running api and Local Env api target the same db and the same dependent services from Local Env.
 - MockForPullRequest - used in PR pipeline to run the service in isolation (no external deps) and its Karate tests
+- LocalEnvForDevelopment - used locally when you run the service in Visual Studio and you want to connect to its external deps from Local Env, including Local Env's running api's database. Thus locally running api and Local Env api target the same db and the same dependent services from Local Env
 - LocalEnvForPullRequest - used in PR pipeline to run the service as part of Local Env and later separately run Karate tests against it
 
 | Configuration              | Db in Docker Compose | Api in Docker Compose | Api in Local Env | MockServer for External Deps |  Local Env for External Deps | Run Karate Tests |
