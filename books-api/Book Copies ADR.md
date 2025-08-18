@@ -137,10 +137,10 @@ erDiagram
     BooksCopiesReadingHistory {
         long id PK
         long bookCopyId FK
-        long holderEmployeeId
+        long readerEmployeeId
         timestamptz takenAtUtc
-        timestamptz returnedAtUtc "Nullable"
-        string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
+        timestamptz sheduledReturnAtUtc
+        timestamptz actualReturnedAtUtc "Nullable"
     }
     BooksFeedback {
         long id PK
@@ -150,5 +150,19 @@ erDiagram
         timestamptz leftAtUtc
         string description
         float rating
+    }
+```
+
+for future BooksCopiesReadingHistory maybe will be like (added progressOfReading prop)
+```mermaid
+erDiagram
+    BooksCopiesReadingHistory {
+        long id PK
+        long bookCopyId FK
+        long readerEmployeeId
+        timestamptz takenAtUtc
+        timestamptz sheduledReturnAtUtc
+        timestamptz actualReturnedAtUtc "Nullable"
+        string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
     }
 ```
