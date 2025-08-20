@@ -136,7 +136,7 @@ erDiagram
     }
     BooksCopiesReadingHistory {
         long id PK
-        long bookCopyId FK
+        long copyId FK
         long readerEmployeeId
         timestamptz takenAtUtc
         timestamptz sheduledReturnAtUtc

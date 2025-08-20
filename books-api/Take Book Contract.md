@@ -5,9 +5,9 @@
 Request body:
 ```ts
 {
-  bookCopyId: 1,
+  сopyId: 1,
   takenAtUtc: `15.08.2025`
-  sheduledToReturnAtUtc: `22.11.2025`
+  sheduledReturnAtUtc: `22.11.2025`
   // readersIds: [
   //   {
   //     corporateEmail: "iivanov1@mail.com",
