@@ -1,11 +1,11 @@
 # Take Book Contract
 
-### POST /api/books/{id}/take
+### POST /api/books/take
 
 Request body:
 ```ts
 {
-  сopyId: 1,
+  bookCopyId: 1,
   takenAtUtc: `15.08.2025`
   sheduledReturnAtUtc: `22.11.2025`
   // readersIds: [
@@ -22,7 +22,7 @@ Request body:
 Response
 ```ts
 {
-  id: 1,
+  takenBookId: 1,
 }
 ```
 
@@ -63,13 +63,13 @@ But after adding take book flow, the page also needs to display who has the book
     },
   ],
   сoverUrl: ``,
-  сopies: [ 
+  bookCopiesIds: [ 
     11, 
     12, 
   ],
   readers: [
     {
-      // id: // ??
+      employeeId: 1,
       fullName: "Ivanov Ivan", // for now to display who has the book in their hands
       corporateEmail: "iivanov3@mail.com", // for understand that the user who has the book in their hands has visited the book page
       // photo: // later to display who has the book in their hands instead of fullName
