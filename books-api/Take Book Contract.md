@@ -3,11 +3,11 @@
 ### POST /api/books/take
 
 Request body:
+
 ```ts
 {
   bookCopyId: 1,
-  takenAtUtc: `15.08.2025`
-  sheduledReturnAtUtc: `22.11.2025`
+  sheduledReturnDate: `2025-11-22`
   // readersIds: [
   //   {
   //     corporateEmail: "iivanov1@mail.com",
@@ -20,9 +20,10 @@ Request body:
 ```
 
 Response
+
 ```ts
 {
-  takenBookId: 1,
+  newBookCopyReadingHistoryId: 1,
 }
 ```
 
@@ -41,8 +42,8 @@ Now getting a book looks like this
       fullName: `authors`, 
     },
   ],
-  bookCoverUrl: ``,
-  bookCopies: [ 
+  coverUrl: ``,
+  bookCopiesIds: [ 
     11, 
     12,
   ],
@@ -62,7 +63,7 @@ But after adding take book flow, the page also needs to display who has the book
       fullName: `authors`, 
     },
   ],
-  сoverUrl: ``,
+  coverUrl: ``,
   bookCopiesIds: [ 
     11, 
     12, 
@@ -94,8 +95,8 @@ sequenceDiagram
     EmployeesAPI->>BookAPI: 5. return employees data by readerEmployeeIds
     BookAPI->>BookUI: 6. return all book data
     BookUI->>User: 7. render book page with book data
-    User->>BookUI: 8. take book within?? button
-    BookUI->>BookAPI: 9. POST /api/books/{id}/take
+    User->>BookUI: 8. take book using button
+    BookUI->>BookAPI: 9. POST /api/books/take
 
     BookAPI->>EmployeesAPI: 10. GET /...
     EmployeesAPI->>BookAPI: 11. return taking book employee data by email from token

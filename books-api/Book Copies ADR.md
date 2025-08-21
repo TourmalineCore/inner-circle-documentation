@@ -139,7 +139,7 @@ erDiagram
         long bookCopyId FK
         long readerEmployeeId
         timestamptz takenAtUtc
-        timestamptz sheduledReturnAtUtc
+        timestamptz sheduledReturnDate
         timestamptz actualReturnedAtUtc "Nullable"
     }
     BooksFeedback {
@@ -161,7 +161,7 @@ erDiagram
         long bookCopyId FK
         long readerEmployeeId
         timestamptz takenAtUtc
-        timestamptz sheduledReturnAtUtc
+        timestamptz sheduledReturnDate
         timestamptz actualReturnedAtUtc "Nullable"
         string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
     }
