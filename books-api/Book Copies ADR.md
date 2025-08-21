@@ -124,10 +124,13 @@ erDiagram
     BooksCopiesReadingHistory ||--o{ BooksFeedback : "1-to-1"
     Books {
         long id PK
+        long tenantId
         string title
         string annotation
         string authors
         string language
+        datetime createdAtUtc
+        datetime deletedAtUtc
         string coverImageUrl
     }
     BooksCopies {
@@ -138,9 +141,9 @@ erDiagram
         long id PK
         long bookCopyId FK
         long readerEmployeeId
-        timestamptz takenAtUtc
-        timestamptz sheduledReturnDate
-        timestamptz actualReturnedAtUtc "Nullable"
+        datetime takenAtUtc
+        date sheduledReturnDate
+        datetime actualReturnedAtUtc "Nullable"
     }
     BooksFeedback {
         long id PK
