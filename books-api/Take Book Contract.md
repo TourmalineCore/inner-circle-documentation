@@ -7,7 +7,7 @@ Request body:
 ```ts
 {
   bookCopyId: 1,
-  sheduledReturnDate: `2025-11-22`
+  sсheduledReturnDate: `2025-11-22`
   // readersIds: [
   //   {
   //     corporateEmail: "iivanov1@mail.com",
