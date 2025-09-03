@@ -2,6 +2,40 @@
 
 This document outlines the code style guidelines for API services.
 
+## Configurations
+
+- DbOnly - spins up only database in docker compose, especially useful to add migrations
+- MockForDevelopment - used locally when you run the service in Visual Studio e.g. in Debug and don't want to spin up any external deps
+- MockForTests - used locally to run the service in isolation (no external deps) and later separately run its Karate tests
+- MockForPullRequest - used in PR pipeline to run the service in isolation (no external deps) and its Karate tests
+- LocalEnvForDevelopment - used locally when you run the service in Visual Studio and you want to connect to its external deps from Local Env, including Local Env's running api's database. Thus locally running api and Local Env api target the same db and the same dependent services from Local Env
+- LocalEnvForPullRequest - used in PR pipeline to run the service as part of Local Env and later separately run Karate tests against it
+
+| Configuration              | Db in Docker Compose | Api in Docker Compose | Api in Local Env | MockServer for External Deps |  Local Env for External Deps | Run Karate Tests |
+| :---------------- | :------: | :------: | :------: | :------: | :------: | :------: |
+| DbOnly                 |   Yes   |   No   |   No   |   No   |   No   |   No   |
+| MockForDevelopment     |   Yes   |   No   |   No   |   Yes  |   No   |   No   |
+| MockForTests           |   Yes   |   Yes  |   No   |   Yes  |   No   |   No   |
+| MockForPullRequest     |   Yes   |   Yes  |   No   |   Yes  |   No   |   Yes  |
+| LocalEnvForDevelopment |   No    |   No   |   Yes  |   No   |   Yes  |   No   |
+| LocalEnvForPullRequest |   No    |   No   |   Yes  |   No   |   Yes  |   Yes  |
+
+## Ports
+
+You need to book ports before adding services in this docs table (ToDo move from here).
+
+The key take away is to provide a convention to make a conscious decision about ports for a new service and enable all product services parallel run on a developer's computer.
+
+When you add a new service you need to add a new row at the end of this table as a copy of the previous one and increment each port by 1. For instance, the last service ports were: 5501, 6501, 7501, 8501 => the new ones will be 5502, 6502, 7502, 8502.
+
+This approach should be scalable to make other products using this infra and approaches. In case of a new product we might use not 500 but 600. So the first service ports will be: 5601, 6601, 7601, 8601.
+
+### Local
+| Service Name               | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
+| :------------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
+| inner-circle-items-api     |    5501    |          6501         |          7501         |             8501            |
+| inner-circle-mentoring-api |    5502    |          6502         |          7502         |             8502            |
+
 
 ## 1. Layers Structure
 
