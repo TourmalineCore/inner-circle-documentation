@@ -31,9 +31,10 @@ When you add a new service you need to add a new row at the end of this table as
 This approach should be scalable to make other products using this infra and approaches. In case of a new product we might use not 500 but 600. So the first service ports will be: 5601, 6601, 7601, 8601.
 
 ### Local
-| Service Name           | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
-| :--------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
-| inner-circle-items-api |    5501    |          6501         |          7501         |             8501            |
+| Service Name               | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
+| :------------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
+| inner-circle-items-api     |    5501    |          6501         |          7501         |             8501            |
+| inner-circle-mentoring-api |    5502    |          6502         |          7502         |             8502            |
 
 
 ## 1. Layers Structure
