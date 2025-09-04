@@ -144,19 +144,21 @@ erDiagram
         datetime takenAtUtc
         date sсheduledReturnDate
         datetime actualReturnedAtUtc "Nullable"
+        string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
     }
     BooksFeedback {
         long id PK
         long bookId FK
         long takenBookCopyId "Nullable"
         long authorEmployeeId
-        timestamptz leftAtUtc
-        string description
+        date leftAtUtc
+        string advantages
+        string disadvantages
         float rating
     }
 ```
 
-for future BooksCopiesReadingHistory maybe will be like (added progressOfReading prop)
+previous version
 ```mermaid
 erDiagram
     BooksCopiesReadingHistory {
@@ -167,5 +169,14 @@ erDiagram
         timestamptz sсheduledReturnDate
         timestamptz actualReturnedAtUtc "Nullable"
         string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
+    }
+    BooksFeedback {
+        long id PK
+        long bookId FK
+        long takenBookCopyId "Nullable"
+        long authorEmployeeId
+        timestamptz leftAtUtc
+        string description
+        float rating
     }
 ```
