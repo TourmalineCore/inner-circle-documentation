@@ -36,6 +36,10 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
         }
 
         Container(EmailSender, "Email Sender", ".net 8", "Sends emails to employees on corporate email.")
+        
+        Container(ItemsAPI, "Items API", ".net 9", "API for inventory management")
+        
+        Container(MentoringAPI, "Mentoring API", ".net 9", "API to track the progress of mentoring, one-on-ones, and staff-reviews, etc.")
     }
 
     Container_Ext(MailBox, "Mail.ru mailbox", "External Service", "")
@@ -65,4 +69,8 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
     Rel(CompensationsAPI, EmployeesAPI, "Requests employee data")
 
     Rel(EmailSender, MailBox, "Sends emails", "SMTP")
+
+    Rel(ItemsAPI, EmployeesAPI, "Requests employees data")
+
+    Rel(MentoringAPI, EmployeesAPI, "Requests employees data")
 @enduml
