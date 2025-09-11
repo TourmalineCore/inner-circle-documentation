@@ -144,7 +144,7 @@ erDiagram
         datetime takenAtUtc
         date sсheduledReturnDate
         datetime actualReturnedAtUtc "Nullable"
-        string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
+        string progressOfReading "null|NotReadAtAll|ReadPartially|ReadEntirely"
     }
     BooksFeedback {
         long id PK
