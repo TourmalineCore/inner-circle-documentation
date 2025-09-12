@@ -124,10 +124,13 @@ erDiagram
     BooksCopiesReadingHistory ||--o{ BooksFeedback : "1-to-1"
     Books {
         long id PK
+        long tenantId
         string title
         string annotation
         string authors
         string language
+        datetime createdAtUtc
+        datetime deletedAtUtc
         string coverImageUrl
     }
     BooksCopies {
@@ -137,9 +140,34 @@ erDiagram
     BooksCopiesReadingHistory {
         long id PK
         long bookCopyId FK
-        long holderEmployeeId
+        long readerEmployeeId
+        datetime takenAtUtc
+        date sсheduledReturnDate
+        datetime actualReturnedAtUtc "Nullable"
+        string progressOfReading "null|NotReadAtAll|ReadPartially|ReadEntirely"
+    }
+    BooksFeedback {
+        long id PK
+        long bookId FK
+        long takenBookCopyId "Nullable"
+        long authorEmployeeId
+        date leftAtUtc
+        string advantages
+        string disadvantages
+        float rating
+    }
+```
+
+previous version
+```mermaid
+erDiagram
+    BooksCopiesReadingHistory {
+        long id PK
+        long bookCopyId FK
+        long readerEmployeeId
         timestamptz takenAtUtc
-        timestamptz returnedAtUtc "Nullable"
+        timestamptz sсheduledReturnDate
+        timestamptz actualReturnedAtUtc "Nullable"
         string progressOfReading "NotReadAtAll|ReadPartially|ReadEntirely"
     }
     BooksFeedback {
