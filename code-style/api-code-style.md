@@ -35,6 +35,7 @@ This approach should be scalable to make other products using this infra and app
 | :------------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
 | inner-circle-items-api     |    5501    |          6501         |          7501         |             8501            |
 | inner-circle-mentoring-api |    5502    |          6502         |          7502         |             8502            |
+| auth-api                   |    5503    |          6503         |          7503         |             8503            |
 
 
 ## 1. Layers Structure
