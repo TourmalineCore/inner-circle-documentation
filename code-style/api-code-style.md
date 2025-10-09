@@ -31,13 +31,13 @@ When you add a new service you need to add a new row at the end of this table as
 This approach should be scalable to make other products using this infra and approaches. In case of a new product we might use not 500 but 600. So the first service ports will be: 5601, 6601, 7601, 8601.
 
 ### Local
-| Service Name               | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
-| :------------------------- | :--------: | :-------------------: | :-------------------: | :-------------------------: |
-| inner-circle-items-api     |    5501    |          6501         |          7501         |             8501            |
-| inner-circle-mentoring-api |    5502    |          6502         |          7502         |             8502            |
-| auth-api                   |    5503    |          6503         |          7503         |             8503            |
-| inner-circle-documents-api |    5504    |          6504         |          7504         |             8504            |
-| inner-circle-books-api     |    5505    |          6505         |          7505         |             8505            |
+| Service Name               | Api in Dev Container/Codespaces | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
+| :------------------------- | :-----------------------------: | :--------: | :-------------------: | :-------------------: | :-------------------------: |
+| inner-circle-items-api     |               4501              |    5501    |          6501         |          7501         |             8501            |
+| inner-circle-mentoring-api |               4502              |    5502    |          6502         |          7502         |             8502            |
+| auth-api                   |               4503              |    5503    |          6503         |          7503         |             8503            |
+| inner-circle-documents-api |               4504              |    5504    |          6504         |          7504         |             8504            |
+| inner-circle-books-api     |               4505              |    5505    |          6505         |          7505         |             8505            |
 
 
 ## 1. Layers Structure
