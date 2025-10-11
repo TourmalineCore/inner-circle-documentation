@@ -2,9 +2,13 @@
 
 This document outlines the code style guidelines for API services.
 
-## Run, Debug, and Test in Dev Container VSCode/Codespaces
+Super useful giudelines o
+
+## Develop in Dev Container VSCode/Codespaces
 
 This section contains insructions on how to run, debug, and test the API in Dev Container in VSCode and GitHub Codespaces.
+
+Super useful guidelinse about C#/.NET development in VSCode available [here](https://code.visualstudio.com/docs/csharp/introvideos-csharp) and all its other chapters of C# section.
 
 By default `db` and `mock-server` start at Dev Container startup. Thus, the only thing you need to do is to run the API itself.
 
@@ -36,6 +40,26 @@ dotnet test --verbosity detailed
 To run Karate E2E tests execute the following script in Terminal:
 ```cli
 java -jar /karate.jar .
+```
+
+### Migrations
+
+Go through [these](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) Migrations chapters to pick up some basic understanding of Migrations.
+
+Connection string is taken from `MockForDevelopment` configuration due to `ASPNETCORE_ENVIRONMENT` env variable in `removeEnv` of Dev Container. 
+
+#### Add Migration
+
+To add a new migration with the domain changes execute the following script in Terminal:
+```cli
+dotnet ef migrations add <YOUR_NEW_MIGRATION_NAME> --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
+```
+
+#### Update Database
+
+To apply pending migrations execute the following script in Terminal:
+```cli
+dotnet ef database update --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
 ```
 
 ## Configurations
