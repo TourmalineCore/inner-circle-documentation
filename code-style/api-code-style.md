@@ -2,6 +2,42 @@
 
 This document outlines the code style guidelines for API services.
 
+## Run, Debug, and Test in Dev Container VSCode/Codespaces
+
+This section contains insructions on how to run, debug, and test the API in Dev Container in VSCode and GitHub Codespaces.
+
+By default `db` and `mock-server` start at Dev Container startup. Thus, the only thing you need to do is to run the API itself.
+
+### Simple Run
+You can run the API executing the following script in Terminal:
+```cli
+dotnet run --project ./Api
+```
+>Docs: [dotnet run](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run).
+
+We don't specify configuration because Dev Container contains `ASPNETCORE_ENVIRONMENT` env var with `MockForDevelopment` to make the start command short and use this configuration everywhere else by default.
+
+### Simple Testing
+
+#### Rest Client
+The simplest way you can test the API is using `*.http` requests collections for Rest Client. For instance, use `App.http` to generate a debug auth token using running `mock-sever` and calling the API endpoints with it.
+
+>Docs: [Rest Client with Examples of Requests](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+
+#### xUnit Tests
+
+To run xUnit unit and integrational tests execute the following script in Terminal:
+```cli
+dotnet test --verbosity detailed
+```
+
+#### Karate Tests
+
+To run Karate E2E tests execute the following script in Terminal:
+```cli
+API_ROOT_URL=http://localhost:4501 java -jar /karate.jar .
+```
+
 ## Configurations
 
 - DbOnly - spins up only database in docker compose, especially useful to add migrations
