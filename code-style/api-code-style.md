@@ -35,7 +35,7 @@ dotnet test --verbosity detailed
 
 To run Karate E2E tests execute the following script in Terminal:
 ```cli
-API_ROOT_URL=http://localhost:4501 java -jar /karate.jar .
+java -jar /karate.jar .
 ```
 
 ## Configurations
@@ -62,9 +62,9 @@ You need to book ports before adding services in this docs table (ToDo move from
 
 The key take away is to provide a convention to make a conscious decision about ports for a new service and enable all product services parallel run on a developer's computer.
 
-When you add a new service you need to add a new row at the end of this table as a copy of the previous one and increment each port by 1. For instance, the last service ports were: 5501, 6501, 7501, 8501 => the new ones will be 5502, 6502, 7502, 8502.
+When you add a new service you need to add a new row at the end of this table as a copy of the previous one and increment each port by 1. For instance, the last service ports were: 4501, 5501, 6501, 7501, 8501 => the new ones will be 4502, 5502, 6502, 7502, 8502.
 
-This approach should be scalable to make other products using this infra and approaches. In case of a new product we might use not 500 but 600. So the first service ports will be: 5601, 6601, 7601, 8601.
+This approach should be scalable to make other products using this infra and approaches. In case of a new product we might use not 500 but 600. So the first service ports will be: 4601, 5601, 6601, 7601, 8601.
 
 ### Local
 | Service Name               | Api in Dev Container/Codespaces | Api in IDE | Api in Docker Compose |  Db in Docker Compose |MockServer in Docker Compose |
