@@ -55,6 +55,14 @@ To add a new migration with the domain changes execute the following script in T
 dotnet ef migrations add <YOUR_NEW_MIGRATION_NAME> --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
 ```
 
+#### Remove Migration
+
+To remove the last migration execute the following script in Terminal:
+```cli
+dotnet ef migrations remove --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
+```
+>Note: You cannot do that if this migration applied to production!
+
 #### Update Database
 
 To apply pending migrations execute the following script in Terminal:
