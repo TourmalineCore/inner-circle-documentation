@@ -36,6 +36,7 @@ Response - void
       employeeId: 1,
       fullName: "Ivanov Ivan", // for now to display who has the book in their hands
       // photo: // later to display who has the book in their hands instead of fullName
+      bookCopyId: 11
     },
   ],
 }
