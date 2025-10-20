@@ -1,5 +1,10 @@
 # QR Printing In Windows OS
 
+Drivers - https://kaywa.me/ipx1s
+
+
+>The printer only works via a wire.
+
 ## Setting up Printing options
 1. In the browser, press Ctrl + Shift + P.
 
