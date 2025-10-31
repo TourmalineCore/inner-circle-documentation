@@ -2,7 +2,6 @@
 
 This document outlines the code style guidelines for API services.
 
-
 ## Develop in Dev Container VSCode/Codespaces
 
 This section contains insructions on how to run, debug, and test the API in Dev Container in VSCode and GitHub Codespaces.
