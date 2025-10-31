@@ -2,7 +2,6 @@
 
 This document outlines the code style guidelines for API services.
 
-Super useful giudelines o
 
 ## Develop in Dev Container VSCode/Codespaces
 
