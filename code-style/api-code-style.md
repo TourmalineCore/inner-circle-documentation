@@ -104,7 +104,7 @@ This approach should be scalable to make other products using this infra and app
 | auth-api                   |               4503              |    5503    |          6503         |          7503         |             8503            |             9503            |
 | inner-circle-documents-api |               4504              |    5504    |          6504         |          7504         |             8504            |             9504            |
 | inner-circle-books-api     |               4505              |    5505    |          6505         |          7505         |             8505            |             9505            |
-
+| inner-circle-employees-api     |               4506              |    5506    |          6506         |          7506         |             8506     | 9506
 
 ## 1. Layers Structure
 
