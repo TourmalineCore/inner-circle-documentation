@@ -30,5 +30,5 @@ We need to create test data:
 | :------------ | :-----------------------: | :------------------------------------: | :-----------------------: | :--------: | :--------------------------------------------------------------------------: |
 | Harry Potter  | Gryffindor                | CEO (temporary)                        | potter@tourmalinecore.com | Patronum1! | the spell to conjure a Patronus, symbolizing Harry |
 | Draco Malfoy  | AUTO_TESTS_ONLY Slytherin | CEO (temporary)                        | malfoy@tourmalinecore.com | Serpens1!  | the snake-conjuring spell, symbolizing Slytherin and Draco |
-| Cho Chang     | AUTO_TESTS_ONLY Ravenclaw | CEO (temporary)                        | chang@tourmalinecore.com  | Aviato1!   | the bird-conjuring spell, symbolizing lightness and freedom |
+| Cho Chang     | AUTO_TESTS_ONLY Ravenclaw | CEO (temporary)                        | chang@tourmalinecore.com  | Reparo1!   | the mending charm, representing Cho’s responsible and caring nature |
 | Gregory Goyle | AUTO_TESTS_ONLY Slytherin | AUTO_TESTS_ONLY Single Permission Role | goyle@tourmalinecore.com  | Crucio1!   | one of the Unforgivable Curses, symbolizing the dark and limited nature of Goyle |
