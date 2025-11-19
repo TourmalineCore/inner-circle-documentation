@@ -26,9 +26,9 @@ We need to create test data:
 
 ### 3. Accounts
 
-| Account Name  | Tenant                    | Role                                   | Email                     | Password | Password Description                                                         |
-| :------------ | :-----------------------: | :------------------------------------: | :-----------------------: | :------: | :--------------------------------------------------------------------------: |
-| Harry Potter  | Gryffindor                | CEO (temporary)                        | potter@tourmalinecore.com | lumos    | the light spell, symbolizing Harry                                           |
-| Draco Malfoy  | AUTO_TESTS_ONLY Slytherin | CEO (temporary)                        | malfoy@tourmalinecore.com | serpens  | the snake-conjuring spell, symbolizing Slytherin and Draco Malfoy            |
-| Cho Chang     | AUTO_TESTS_ONLY Ravenclaw | CEO (temporary)                        | chang@tourmalinecore.com  | avis     | the bird-conjuring spell, symbolizing lightness and freedom                  |
-| Gregory Goyle | AUTO_TESTS_ONLY Slytherin | AUTO_TESTS_ONLY Single Permission Role | goyle@tourmalinecore.com  | nox      | the spell to extinguish light, opposite of lumos, symbolizing no permissions |
+| Account Name  | Tenant                    | Role                                   | Email                     | Password   | Password Description                                                         |
+| :------------ | :-----------------------: | :------------------------------------: | :-----------------------: | :--------: | :--------------------------------------------------------------------------: |
+| Harry Potter  | Gryffindor                | CEO (temporary)                        | potter@tourmalinecore.com | Patronum1! | the spell to conjure a Patronus, symbolizing Harry |
+| Draco Malfoy  | AUTO_TESTS_ONLY Slytherin | CEO (temporary)                        | malfoy@tourmalinecore.com | Serpens1!  | the snake-conjuring spell, symbolizing Slytherin and Draco |
+| Cho Chang     | AUTO_TESTS_ONLY Ravenclaw | CEO (temporary)                        | chang@tourmalinecore.com  | Aviato1!   | the bird-conjuring spell, symbolizing lightness and freedom |
+| Gregory Goyle | AUTO_TESTS_ONLY Slytherin | AUTO_TESTS_ONLY Single Permission Role | goyle@tourmalinecore.com  | Crucio1!   | one of the Unforgivable Curses, symbolizing the dark and limited nature of Goyle |
