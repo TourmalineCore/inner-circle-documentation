@@ -16,7 +16,7 @@ AND endTime < @endTime
 AND tenantId = @tenantId
 AND employeeId = @employeeId
 
-CERATE INDEX a ON work_entries
+CREATE INDEX a ON work_entries
 ```
 
 ### 2. adjustments
