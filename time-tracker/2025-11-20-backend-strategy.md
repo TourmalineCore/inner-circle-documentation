@@ -88,7 +88,7 @@ erDiagram
       id int PK "int or long?"
       tenant_id long FK
       employee_id long FK
-      parent_id FK_id int "Nullable. ссылка сама на себя на ориг карточку из этой же таблицы, int or long?"
+      parent_id FK int "Nullable. ссылка сама на себя на ориг карточку из этой же таблицы, int or long?"
       start_time timestamp
       end_time timestamp
       timezone text
