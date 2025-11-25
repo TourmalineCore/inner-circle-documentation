@@ -43,17 +43,17 @@ CREATE INDEX a ON work_entries
 
 #### work-entries
 
-- **POST** /api/work-entries - add
-- **POST** /api/work-entries/{id} - update
-- **GET** /api/work-entries?startTime={startTime}&endTime={endTime} - get list by period
-- **DELETE** /api/work-entries/{id} - soft delete
+- **POST** /api/time/tracking/work-entries - add
+- **POST** /api/time/tracking/work-entries/{id} - update
+- **GET** /api/time/tracking/work-entries?startTime={startTime}&endTime={endTime} - get list by period
+- **DELETE** /api/time/tracking/work-entries/{id} - soft delete
 
 #### adjustments
 
-- **POST** /api/adjustments - add
-- **POST** /api/adjustments/{id} - update
-- **GET** /api/adjustments?startTime={startTime}&endTime={endTime} - get list by period
-- **DELETE** /api/adjustments/{id} - soft delete
+- **POST** /api/time/tracking/adjustments - add
+- **POST** /api/time/tracking/adjustments/{id} - update
+- **GET** /api/time/tracking/adjustments?startTime={startTime}&endTime={endTime} - get list by period
+- **DELETE** /api/time/tracking/adjustments/{id} - soft delete
 
 
 ## db diagram
