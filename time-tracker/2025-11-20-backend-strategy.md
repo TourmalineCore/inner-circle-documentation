@@ -1,4 +1,4 @@
-# Time Tracker Backend Strategy 2025-11-20
+# Time Tracker Backend Strategy 2025-11-20, 2025-11-25
 
 ## Entities
 
@@ -46,7 +46,6 @@ CREATE INDEX a ON work_entries
 - **POST** /api/work-entries - add
 - **POST** /api/work-entries/{id} - update
 - **GET** /api/work-entries?startTime={startTime}&endTime={endTime} - get list by period
-- **GET** /api/work-entries/{id} - get one by id
 - **DELETE** /api/work-entries/{id} - soft delete
 
 #### adjustments
@@ -54,7 +53,6 @@ CREATE INDEX a ON work_entries
 - **POST** /api/adjustments - add
 - **POST** /api/adjustments/{id} - update
 - **GET** /api/adjustments?startTime={startTime}&endTime={endTime} - get list by period
-- **GET** /api/adjustments/{id} - get one by id
 - **DELETE** /api/adjustments/{id} - soft delete
 
 
@@ -65,10 +63,10 @@ erDiagram
     work_entries ||--|| projects : "1-to-1"
     adjustments ||--o{ adjustments : "1-to-many"
     work_entries {
-      id int PK "int or long?"
+      id long PK
       tenant_id long FK
       employee_id long FK
-      project_id int FK "internal request projects list, int or long?"
+      project_id long FK "internal request projects list"
       start_time timestamp
       end_time timestamp
       timezone text
@@ -80,25 +78,26 @@ erDiagram
       is_deleted boolean
     }
     projects {
-      id int PK "int or long?"
+      id long PK
       tenant_id long FK
       name text
     }
     adjustments {
-      id int PK "int or long?"
+      id long PK
       tenant_id long FK
       employee_id long FK
-      parent_id int FK "Nullable. ссылка сама на себя на ориг карточку из этой же таблицы, int or long?"
+      parent_id long FK "Nullable. ссылка сама на себя на ориг карточку из этой же таблицы"
       start_time timestamp
       end_time timestamp
       timezone text
       duration interval "положительное для переработок, отрицательное для отгулов"
+      amount interval "на подумать - вычитается из рабочих часов время или нет"
       type int
       description text "Nullable"
       is_deleted boolean
       sick_leave_reason boolean "Nullable. причина плохого самочувствия"
       is_approved boolean
-      is_billable boolean
+      is_paid boolean
       is_full_day boolean "?"
     }
 ```
