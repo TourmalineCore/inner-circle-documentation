@@ -95,7 +95,7 @@ erDiagram
       type int
       description text "Nullable"
       is_deleted boolean
-      sick_leave_reason boolean "Nullable. причина плохого самочувствия"
+      sick_leave_reason int "Nullable. причина плохого самочувствия"
       is_approved boolean
       is_paid boolean
       is_full_day boolean "?"
