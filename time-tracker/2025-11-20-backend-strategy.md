@@ -69,7 +69,7 @@ erDiagram
       project_id long FK "internal request projects list"
       start_time timestamp
       end_time timestamp
-      timezone text
+      time_zone_id text
       duration interval "(calculated)"
       type int
       title text
@@ -89,7 +89,7 @@ erDiagram
       parent_id long FK "Nullable. ссылка сама на себя на ориг карточку из этой же таблицы"
       start_time timestamp
       end_time timestamp
-      timezone text
+      time_zone_id text
       duration interval "положительное для переработок, отрицательное для отгулов"
       amount interval "на подумать - вычитается из рабочих часов время или нет"
       type int
