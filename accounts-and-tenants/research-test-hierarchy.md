@@ -231,7 +231,7 @@ NOTE: I didn't finish writing out the tests, but the results are written
 - remove books where title starts with `[E2E-SMOKE]`
 - create book
 - get book copy by id from get book data request
-- check tkacking histiry of this book
+- check tracking history of this book
 - return book
 - remove books where title starts with `[E2E-SMOKE]`
 
