@@ -162,7 +162,7 @@
 - create book with randomName = 'Test-book-' + Math.random()
 - check by id from first step that the book is created and there are 2 book copies
 - edit by id from first step the book's details with editedName = 'Test-edited-book' + Math.random()
-- get the edited book by by id from first step and verify the details have changed
+- get the edited book by id from first step and verify the details have changed
 - delete the book by id from first step (soft delete)
 - verify the book with id from first step no longer in the list
 - delete the book by id from first step (hard delete)
