@@ -1,7 +1,7 @@
-# 001 Choose Time tracker
+# 001: Choose Time Tracker Package
 
 ## Status
-Accepted
+Accepted (2025-11-27)
 
 ## Context
 We need to find a ready-made calendar with timeline solution that will allow us to implement our own time tracker faster.
@@ -19,6 +19,11 @@ Some Advantages of this package:
 
 ## Consequences
 This solution will allow us to implement the UI part of the time tracker much faster than if we wrote everything from scratch.
+But we become dependant on this package. In the future it will be difficult to use something different.
+
+## Alternatives
+### Self-coded solution
+The chosen package covers all our use cases, so there is no need to write everything from scratch. This way we can save time and resources.
 
 ## Other solutions considered
 [react-calendar-timeline](https://www.npmjs.com/package/react-calendar-timeline) - The package also tracks time, but not in the format we need.
