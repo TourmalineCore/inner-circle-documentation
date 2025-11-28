@@ -1,8 +1,9 @@
 # Layering
 
-In our project we follow the pattern of Container/Content controlled by MobX state.
+In our project we follow the pattern of **Container/Content** controlled by MobX state.
+To follow this approach we single out independent sections on the page which have their own state and network calls.
 
-This is a typical folder structure for this approach:
+Below is a typical folder structure for this approach. In this case _auth_ is the only section on the page, so we don't need to create a _sections_ folder:
 
 ```bash
 ├── pages
@@ -56,7 +57,7 @@ export function AuthPage() {
 1. Boilerplate code
 2. Complexity
 - More files to navigate
-- Higher learning curve
+- Higher learning curve, because you need more time for onboarding
 - Simple components become over-engineered
 
 ## When to Use
