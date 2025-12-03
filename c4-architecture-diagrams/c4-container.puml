@@ -35,6 +35,18 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
             ContainerDb(CompensationsDB, "Compensations DB", "PostgreSQL", "Stores compensations information.")
         }
 
+        Boundary(BooksBoundary, "Books") {
+            Container(BooksUI, "Books UI", "React/JS", "Pages for borrowing and managing corporate library books.")
+            Container(BooksAPI, "Books API", ".net 8", "API for borrowing and managing corporate library books.")
+            ContainerDb(BooksDB, "Books DB", "PostgreSQL", "Stores corporate library books information.")
+        }
+
+        Boundary(TimeBoundary, "Time") {
+            Container(TimeUI, "Time UI", "React/JS", "Pages for tracking and monitoring working time.")
+            Container(TimeAPI, "Time API", ".net 8", "API for for tracking and monitoring working time.")
+            ContainerDb(TimeDB, "Time DB", "PostgreSQL", "Stores working time entries.")
+        }
+
         Container(EmailSender, "Email Sender", ".net 8", "Sends emails to employees on corporate email.")
         
         Container(ItemsAPI, "Items API", ".net 9", "API for inventory management")
@@ -67,6 +79,13 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
     Rel(CompensationsUI, CompensationsAPI, "Makes API calls to", "REST")
     Rel(CompensationsAPI, CompensationsDB, "Read from and write to")
     Rel(CompensationsAPI, EmployeesAPI, "Requests employee data")
+
+    Rel(BooksUI, BooksAPI, "Makes API calls to", "REST")
+    Rel(BooksAPI, BooksDB, "Read from and write to")
+    Rel(BooksAPI, EmployeesAPI, "Requests employee data")
+
+    Rel(TimeUI, TimeAPI, "Makes API calls to", "REST")
+    Rel(TimeAPI, TimeDB, "Read from and write to")
 
     Rel(EmailSender, MailBox, "Sends emails", "SMTP")
 
