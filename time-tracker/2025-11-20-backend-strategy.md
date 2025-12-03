@@ -53,8 +53,8 @@ CREATE INDEX a ON work_entries
       id: long,
       title: string,
       taskId?: string,
-      startTime: Date,
-      endTime: Date,
+      startTime: DateTime,
+      endTime: DateTime,
     },
   ]
 }
@@ -67,8 +67,8 @@ CREATE INDEX a ON work_entries
 {
   title: string,
   taskId?: string,
-  startTime: Date,
-  endTime: Date,
+  startTime: DateTime,
+  endTime: DateTime,
   timeZoneId: string
 }
 ```
@@ -87,8 +87,8 @@ CREATE INDEX a ON work_entries
 {
   title: string,
   taskId?: string,
-  startTime: Date,
-  endTime: Date,
+  startTime: DateTime,
+  endTime: DateTime,
   timeZoneId: string
 }
 ```
