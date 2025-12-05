@@ -28,22 +28,21 @@ It has to support parallel execution of all E2E tests against an environment. Th
 
 #### Manager Roles Per Service (Can Edit Data)
 
-- Employees Manager Role
-- Books Manager Role
-- Items Manager Role
-- Compensations Manager Role
+- Employees Manager
+- Books Manager
+- Items Manager
+- Compensations Manager
 
-Do we create a "CEO" or "Manager" role with all editing permissions or do we combine several specific Manager roles in an account?
+Normally each of these roles contain all permissions of their service except for `AUTO_TESTS_ONLY` ones. For instance, `AUTO_TESTS_ONLY Items` contains all permissions of Items service except for `AUTO_TESTS_ONLY_IsItemTypesHardDeleteAllowed` and `AUTO_TESTS_ONLY_IsItemsHardDeleteAllowed`. There might be also some permissions missing for a Manager Role depending on the service needs.
 
 #### Destructive Roles for E2E Tests Cleanup (ALL PERMISSIONS OF SERVICE)
 
-- AUTO_TESTS_ONLY Employees Role
-- AUTO_TESTS_ONLY Books Role
-- AUTO_TESTS_ONLY Items Role
-- AUTO_TESTS_ONLY Compensations Role
+- AUTO_TESTS_ONLY Employees
+- AUTO_TESTS_ONLY Books
+- AUTO_TESTS_ONLY Items
+- AUTO_TESTS_ONLY Compensations
 
-Will these AUTO_TESTS_ONLY Roles contain all permissions of a specific service?
-
+Each of these roles contain all permissions of their service. For instance, `AUTO_TESTS_ONLY Items` contains all permissions of Items service.
 
 ToDo
 How to call First and Second Tenant/Account to remember them?
