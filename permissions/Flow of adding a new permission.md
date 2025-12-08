@@ -22,7 +22,7 @@ new Permission(Permissions.CanManageExample),
 
 In the [accounts-ui](https://github.com/TourmalineCore/accounts-ui) repository:
 
-1. In the file `src/features/account-management/roles-enums.ts` add line
+1. In the file `src/pages/roles/roles-enums.ts` add line
 
 ```ts
 CanManageExample: 'Can Manage Example',
@@ -34,7 +34,7 @@ CanManageExample: 'Can Manage Example',
 CanManageExample = 'CanManageExample',
 ```
 
-3. In the file `src/features/account-management/RolesPageContent.tsx` you can either add a new group of permissions or add the required permission to an existing group
+3. In the file `src/pages/roles/RolesContent.tsx` you can either add a new group of permissions or add the required permission to an existing group
 
 ```ts
 {
@@ -208,7 +208,7 @@ if (accessPermissions.get('CanManageExample')) {
 
 > Note: If you add buttons to the sidebar in your service, these buttons will be visible only within your service, to see the buttons in other services, you need to add them to other services too
 
-1. In the file `src/features/your-service/routes.tsx` add sidebar routes
+1. In the file `src/pages/your-service/routes.tsx` add sidebar routes
 
 - if you need to add only 1 button
 
