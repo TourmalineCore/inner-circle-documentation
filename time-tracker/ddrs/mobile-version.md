@@ -1,7 +1,7 @@
 # Mobile version
 
 ## Status
-Proposed (2025-12-04)
+Accepted (2025-12-10)
 
 ## Context
 A mobile version is crucial, so that the time tracker can be used from any device.

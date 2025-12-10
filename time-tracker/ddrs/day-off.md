@@ -1,7 +1,7 @@
 # Day-off
 
 ## Status
-Proposed (2025-12-05)
+Accepted (2025-12-10)
 
 ## Context
 

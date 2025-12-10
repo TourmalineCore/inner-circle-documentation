@@ -1,7 +1,7 @@
 # Sick leave
 
 ## Status
-Proposed (2025-12-04)
+Accepted (2025-12-10)
 
 ## Context
 

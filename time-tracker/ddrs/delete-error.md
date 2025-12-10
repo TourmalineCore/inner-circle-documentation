@@ -1,7 +1,7 @@
 # Delete error
 
 ## Status
-Proposed (2025-12-05)
+Accepted (2025-12-10)
 
 ## Context
 A solution in case something goes wrong during delete.

@@ -1,7 +1,7 @@
 # Event types
 
 ## Status
-Proposed (2025-12-05)
+Accepted (2025-12-10)
 
 ## Context
 Different types of events are needed to cover all user stories and cases when working with the time tracker.

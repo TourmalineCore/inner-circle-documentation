@@ -1,7 +1,7 @@
 # Modal window
 
 ## Status
-Proposed (2025-12-05)
+Accepted (2025-12-10)
 
 ## Context
 A modal window or popup is needed to add events.

@@ -1,7 +1,7 @@
 # Delete
 
 ## Status
-Proposed (2025-12-04)
+Accepted (2025-12-10)
 
 ## Context
 We need to specify a reason why an entry was deleted, in order to make it clear why the event was created and then not just edited in case of inaccuracy, but deleted. It is implied that an employee had a plan and it didn't come true, and if we don't specify the reason, it won't be clear why. In this case the manager will have trouble understanding why an employee worked when they were not supposed to, or didn't work when they were supposed to.    
