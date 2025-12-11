@@ -165,7 +165,7 @@ erDiagram
       is_deleted boolean
       sick_leave_reason int "Nullable. причина плохого самочувствия"
       is_approved boolean
-      is_need_comment "? check the box to indicate whether or not you should write the reason for feeling unwell"
+      is_need_comment "check the box to indicate whether or not you should write the reason for feeling unwell"
       is_paid boolean
       is_full_day boolean "?"
     }
