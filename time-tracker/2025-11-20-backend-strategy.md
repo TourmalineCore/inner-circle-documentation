@@ -52,7 +52,8 @@ CREATE INDEX a ON work_entries
     {
       id: long,
       title: string,
-      taskId?: string,
+      taskId: string,
+      description: string,
       startTime: DateTime,
       endTime: DateTime,
     },
@@ -66,7 +67,8 @@ CREATE INDEX a ON work_entries
 ```ts
 {
   title: string,
-  taskId?: string,
+  taskId: string,
+  description: string,
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
@@ -86,7 +88,8 @@ CREATE INDEX a ON work_entries
 ```ts
 {
   title: string,
-  taskId?: string,
+  taskId: string,
+  description: string,
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
@@ -118,8 +121,8 @@ CREATE INDEX a ON work_entries
   duration interval "(calculated)"
   type int // get default value from emun for now
   title text
-  task_id text "Nullable"
-  description text "Nullable"
+  task_id text
+  description text
   is_deleted boolean
 }
 ```
@@ -141,8 +144,8 @@ erDiagram
       duration interval "(calculated)"
       type int
       title text
-      task_id text "Nullable"
-      description text "Nullable"
+      task_id text
+      description text
       is_deleted boolean
     }
     projects {
@@ -161,7 +164,7 @@ erDiagram
       duration interval "positive for overtime, negative for time off"
       amount interval "to think about whether time is deducted from working hours or not"
       type int
-      description text "Nullable"
+      description text
       is_deleted boolean
       sick_leave_reason int "Nullable. причина плохого самочувствия"
       is_approved boolean
