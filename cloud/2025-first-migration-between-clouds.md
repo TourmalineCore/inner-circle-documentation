@@ -21,7 +21,7 @@
 
 ## Roadmap
 
-1. Create inner-circle-cloud with 1 VM (2 CPU 10% (the lowest possible) and static IP-address, 8GB RAM) in it using home-cloud as an example. Setup resources in the target cloud using it (local run, no CI/CD)
+1. Create inner-circle-cloud with 1 VM (2 CPU 5% (the lowest possible) and static IP-address, 4GB RAM) in it using home-cloud as an example. Setup resources in the target cloud using it (local run, no CI/CD)
 1. Create inner-circle-env with prod environment in it that contains:
 ingress,
 cert-manager,
