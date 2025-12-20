@@ -29,9 +29,9 @@ metric-server,
 1. Deploy inner-circle-env with its prod environment to the new cluster (local run, no CI/CD)
 1. Add needed DNS records for the new Inner Circle Prod domain (new one)
 **!!! At this point it should show requests to ingress in its logs and LetsEncrypt https certificates are issued**
-1. Spin up Intranet GitHub Actions self-hosted runners for IC deployment and prod e2e tests only. They will have cluster's KUBECONFIG in their environment.
+1. Spin up Intranet GitHub Actions self-hosted runners for IC deployment and prod e2e tests only. They will have cluster's KUBECONFIG stored in the filesystem.
 1. Add a prod deployment workflow to inner-circle-env that will use the new self-hosted runners to deploy it to the new prod on a master branch push.
-**!!! At this point we have tested the deployment from the self-hosted runners that contain KUBECONFIG secret in their environment.**
+**!!! At this point we have tested the deployment from the self-hosted runners that contain KUBECONFIG in their filesystem.**
 1. Migrate inner-circle-employees-api workflows and all its Secrets to inner-circle-items-api.
 1. Migrate inner-circle-employees-ui workflows and all its Secrets to inner-circle-time-ui.
 1. Freeze any changes to inner-circle-employees-api and inner-circle-employees-ui.
