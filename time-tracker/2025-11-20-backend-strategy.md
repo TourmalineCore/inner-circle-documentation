@@ -43,7 +43,7 @@ CREATE INDEX a ON work_entries
 
 #### work-entries
 
-1. **GET** /api/time/tracking/work-entries?startTime={startTime}&endTime={endTime} - get list by period
+1. **GET** /api/time/tracking/work-entries?startDate={startDate}&endDate={endDate} - get list by period
 
 **Response body:**
 ```ts
@@ -53,6 +53,7 @@ CREATE INDEX a ON work_entries
       id: long,
       title: string,
       taskId: string,
+      projectName: string,
       description: string,
       startTime: DateTime,
       endTime: DateTime,
@@ -68,6 +69,7 @@ CREATE INDEX a ON work_entries
 {
   title: string,
   taskId: string,
+  projectId: long,
   description: string,
   startTime: DateTime,
   endTime: DateTime,
@@ -89,6 +91,7 @@ CREATE INDEX a ON work_entries
 {
   title: string,
   taskId: string,
+  projectId: long,
   description: string,
   startTime: DateTime,
   endTime: DateTime,
@@ -98,7 +101,22 @@ CREATE INDEX a ON work_entries
 
 **Response body:** 200 OK
 
-4. **DELETE** /api/time/tracking/work-entries/{id}/soft-delete - soft delete   
+4. **GET** /api/time/tracking/work-entries/projects?date={date} - get employee's projects
+
+**Response body:**
+
+```ts
+{
+  projects: [
+    {
+      id: long,
+      name: string;
+    },
+  ]
+}
+```
+
+5. **DELETE** /api/time/tracking/work-entries/{id}/soft-delete - soft delete  
 
 #### adjustments
 
@@ -114,7 +132,7 @@ CREATE INDEX a ON work_entries
   id long PK
   tenant_id long FK
   employee_id long FK
-  // project_id long FK "internal request projects list"
+  project_id long FK "internal request projects list"
   start_time timestamp
   end_time timestamp
   time_zone_id text
