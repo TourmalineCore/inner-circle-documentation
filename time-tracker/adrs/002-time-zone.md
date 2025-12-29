@@ -54,15 +54,13 @@ or
 | UTC Time             |           |           |          |           |
 | UTC Time + Timezone  |           |           |          |           |
 
-Наброски сценариев
-- сотрудник вносит отработанное время - менеджер составляет отчет за месяц,
-- сотрудник добавляет отгул и отработку - менеджер смотрит, когда у сотрудника будет рабочее время
-- сегодня я трекаю таску А в Челябинске, завтра лечу в Питер, меняю в профиле часовую зону и меняю время вчерашней таски А
-- обед всегда в 12, независимо от того в Челябинске сотрудник или в командировке (wall time + timezone)
-- если отработка запланирована на 10 утра в субботу, то она не должна начаться в 9 из за перехода на летнее время (wall time + timezone)
-- если сотрудник затрекал что он работал в час ночи первого января, то и учесться это время должно за 1 января, даже если у менеджера в Петербурге еще 31 декабря в этот момент было (wall time + timezone)
-- Мы только индивидуальные отработки планируем именно (какие-то ещё штуки тоже инидвидуальные планируем).
-Думаю, что кейс парной или моб сессии будем трекать все-таки постфактум с чьего-то одного аккаунта указав людей и из Питера и из Челябинска. Интересно, как будет тут. Работали то они груба говоря в одном периоде времени от Instant до Instant, а у одного будет в одном поясе сохранено у другого в другом?
-- 2 сотрудника сидели ночью что-то дебажили. В Челябинске сотрудник А с 12 до 2х ночи, в Питере сотрудник В с 10 до 12. В учет так и пойдет - у сотрудника А в Челябинске затрекается за следующий день работа, а у сотрудника В в Питере - за предыдущий. То есть как залогировал, так и учли/оплатили. А если хранить в UTC, то будет проблема - залогировал за один день, а оплатили за другой день/месяц/год
-- (при хранении в UTC вообще возможен сценарий когда работа учтена и оплачена не будет) Таймшит за ноябрь перед выходными уже закрыт и отправлен заказчику, сотрудник во Владивостоке трекает работу 1 декабря, но из за разницы часовых поясов для менеджера этот временной интервал оказывается в ноябре. В результате эта работа и в ноябре не будет учтена (таймшит уже закрыт), и в декабре. (такое поведение может быть если в UTC хранить)
-
+Scenarios Drafts
+- An employee tracks time - the manager makes a monthly report.
+- An employee adds time-off and make-up time - the manager checks the employee's working time.
+- Today I'm tracking Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg, changing the time zone in my profile and changing the time of yesterday's Task A.
+- Lunch is always at 12, regardless of whether the employee is in Chelyabinsk or on a business trip (wall time + timezone).
+- If make-up time is scheduled for 10 a.m. on Saturday, it should not start at 9 a.m. due to daylight saving time. (wall time + timezone).
+- If an employee tracked that they were working at 1 a.m. on January 1st, then this time should be counted as January 1st, even if the manager in St. Petersburg was still working on December 31st at that time (wall time + timezone).
+- We plan only individual make-up time (or other individual adjustments). The case of a pair or mob session will be tracked after the event through a single account, specifying people from both St. Petersburg and Chelyabinsk. They were working during the same time period, from Instant to Instant, but each person's data will be saved in their time zone.
+- Two employees were debugging something overnight. In Chelyabinsk, Employee A worked from 12 a.m. to 2 a.m., and in St. Petersburg, Employee B worked from 10 a.m. to 12 a.m. The accounting will be as follows: Employee A in Chelyabinsk will be logged for the next day's work, and Employee B in St. Petersburg will be logged for the previous day's work. In other words, the work will be recorded and paid for as it was logged. But if you store it in UTC, there will be a problem: you logged it for one day, but got paid for another day/month/year.
+- When storing in UTC, it's possible for work to be recorded but not paid. The November timesheet is already closed and sent to the client before the weekend. An employee in Vladivostok tracks the work on December 1st, but due to the time zone difference, this time interval appears to be November for the manager. As a result, this work won't be recorded in November (the timesheet is already closed) or in December.
