@@ -38,29 +38,14 @@ In this [article's](https://habr.com/ru/articles/772954) comment section there's
 
 ## Comparison Table
 
-| Scenario             | Wall Time | Wall Time + Timezone | UTC Time | UTC Time + Timezone |
-| :------------------- | :-------: | :------------------: | :------: | :-----------------: |
-|                      |           |                      |          |                     |
-|                      |           |                      |          |                     |
-|                      |           |                      |          |                     |
-|                      |           |                      |          |                     |
-
-or
-
-|                      |           |           |          |           |
-| :------------------- | :-------: | :-------: | :------: | :-------: |
-| Wall Time            |           |           |          |           |
-| Wall Time + Timezone |           |           |          |           |
-| UTC Time             |           |           |          |           |
-| UTC Time + Timezone  |           |           |          |           |
-
-Scenarios Drafts
-- An employee tracks time - the manager makes a monthly report.
-- An employee adds time-off and make-up time - the manager checks the employee's working time.
-- Today I'm tracking Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg, changing the time zone in my profile and changing the time of yesterday's Task A.
-- Lunch is always at 12, regardless of whether the employee is in Chelyabinsk or on a business trip (wall time + timezone).
-- If make-up time is scheduled for 10 a.m. on Saturday, it should not start at 9 a.m. due to daylight saving time. (wall time + timezone).
-- If an employee tracked that they were working at 1 a.m. on January 1st, then this time should be counted as January 1st, even if the manager in St. Petersburg was still working on December 31st at that time (wall time + timezone).
-- We plan only individual make-up time (or other individual adjustments). The case of a pair or mob session will be tracked after the event through a single account, specifying people from both St. Petersburg and Chelyabinsk. They were working during the same time period, from Instant to Instant, but each person's data will be saved in their time zone.
-- Two employees were debugging something overnight. In Chelyabinsk, Employee A worked from 12 a.m. to 2 a.m., and in St. Petersburg, Employee B worked from 10 a.m. to 12 a.m. The accounting will be as follows: Employee A in Chelyabinsk will be logged for the next day's work, and Employee B in St. Petersburg will be logged for the previous day's work. In other words, the work will be recorded and paid for as it was logged. But if you store it in UTC, there will be a problem: you logged it for one day, but got paid for another day/month/year.
-- When storing in UTC, it's possible for work to be recorded but not paid. The November timesheet is already closed and sent to the client before the weekend. An employee in Vladivostok tracks the work on December 1st, but due to the time zone difference, this time interval appears to be November for the manager. As a result, this work won't be recorded in November (the timesheet is already closed) or in December.
+| Scenario | Wall Time  | Wall Time \+ Timezone | UTC Time | UTC Time \+ Timezone |
+| :---- | :----: | :----: | :----: | :----: |
+| An employee tracks time \- the manager makes a monthly report. |  | ✅  |  |  |
+| An employee adds time-off and make-up time \- the manager checks the employee's working time. |  | ✅ |  |  |
+| Today I'm tracking Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg, changing the time zone in my profile and changing the time of yesterday's Task A. |  | ✅ |  |  |
+| Lunch is always at 12, regardless of whether the employee is in Chelyabinsk or on a business trip. |  | ✅ |  |  |
+| If make-up time is scheduled for 10 a.m. on Saturday, it should not start at 9 a.m. due to daylight saving time. |  | ✅ |  |  |
+| If an employee tracked that they were working at 1 a.m. on January 1st, then this time should be counted as January 1st, even if the manager in St. Petersburg was still working on December 31st at that time. |  | ✅ |  |  |
+| We plan only individual make-up time (or other individual adjustments). The case of a pair or mob session will be tracked after the event through a single account, specifying people from both St. Petersburg and Chelyabinsk. They were working during the same time period, from Instant to Instant, but each person's data will be saved in their time zone. |  | ✅ |  |  |
+| Two employees were debugging something overnight together. In Chelyabinsk, Employee A worked from 12 a.m. to 2 a.m., and in St. Petersburg, Employee B worked from 10 a.m. to 12 a.m. The accounting will be as follows: Employee A in Chelyabinsk will be logged for the next day's work, and Employee B in St. Petersburg will be logged for the previous day's work. In other words, the work will be recorded and paid for as it was logged. But if you store it in UTC, there will be a problem: you logged it for one day, but got paid for another day/month/year. |  | ✅ |  |  |
+| When storing in UTC, it's possible for work to be recorded but not paid. The November timesheet is already closed and sent to the client before the weekend. An employee in Vladivostok tracks the work on December 1st, but due to the time zone difference, this time interval appears to be November for the manager. As a result, this work won't be recorded in November (the timesheet is already closed) or in December. |  | ✅ |  |  |
