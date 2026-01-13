@@ -4,7 +4,12 @@
 Accepted (2025-12-18)
 
 ## Context
-As we are developing a time-tracker for distributed teams, we need to chose a way to store the tracked time and the time of planned activities taking into account employees' time zones.
+As we are developing a time-tracker for distributed teams across multiple time zone. We need to store both tracked time (past events) and planned activities (future events) while accommodating:
+
+- employees working in different time zones
+- future scheduling (time-off, make-up time)
+- time zone changes (travel, relocation)
+- possible Daylight Saving Time transitions
 
 ## Decision
 According to the [DDR on timezones](../../time-tracker/ddrs/time-zone.md), the time zone is set and can be changed in an employee's profile.
@@ -14,8 +19,36 @@ The user's time zone will be stored in a separate database column, based on what
 
 _A **timestamp** is a specific point in time, equal to the number of milliseconds since 1970. It's not tied to a time zone, so if User A from Chelyabinsk logged time into the database at the same time as User B from Moscow (in real time, at the same moment, though it might be 2:00 PM for one and 4:00 AM for the other), the timestamp would be the same._
 
+### Implementation Details
+
+1. **Database Schema:**
+- `timestamp_without_timezone` column for the wall time
+- separate timezone column (e.g., "America/New_York", "Europe/Moscow")
+
+2. **Time Zone Management:**
+- time zone is configured in each employee's profile
+- can be updated when employees travel or relocate
+- uses IANA time zone identifiers (e.g., "Europe/Moscow", not "MSK+3")
+
+3. **Application Logic:**
+- employees see and enter time in their local time zone
+- managers see time entries converted to their own time zone
+- reports aggregate time entriess correctly across time zones
+
 ## Consequences
-Storing **timestamp without time zone** will give us an opportunity to convert to UTC or any other time zone of the user and aviod doscrepancies inherent in the alternative solution with **timestamptz** (see below). </br>
+
+**Positive**
+- Future Events: Planned activities remain at their intended local times
+- Time Zone Changes: Employees can update time zones without corrupting historical data
+- DST Safety: Daylight Saving transitions don't shift scheduled events
+- Payroll Integrity: Work is recorded and paid according to when it was actually performed
+- Manager Reports: Time entries display correctly in each manager's local time zone
+
+**Negative**
+- Storage Overhead: Extra column for time zone storage
+- Application Logic: Must handle time zone conversions explicitly
+
+Overall, storing **timestamp without time zone** will give us an opportunity to convert to UTC or any other time zone of the user and aviod discrepancies inherent in the alternative solution with **timestamptz** (see below). </br>
 PostgreSQL has an **AT TIME ZONE** operator that can convert wall time to UTC and back, knowing the time zone ID, which is exactly what we need, see [here](https://www.enterprisedb.com/postgres-tutorials/postgres-time-zone-explained).
 
 ## Alternatives
@@ -27,7 +60,7 @@ In this [article's](https://habr.com/ru/articles/772954) comment section there's
 
 ## Consequences
 - can cause disrepancies between timesheets and actually tracked time, e.g. a person tracked time in the Moscow time zone, while a manager in the Chelyabinsk time zone sees this as a next day entry.
-- a change in time zone rules, e.g. your country stopped using Daylight Saving Time, can cause future entries to shift (e.g. a 1-hour lunch shift for everyone).
+- a change in time zone rules, e.g. when your country stopped using Daylight Saving Time, can cause future entries to shift (e.g. a 1-hour lunch shift for everyone).
 - since PostgreSQL takes into account the time zone of the connection, using UTC (timestamptz) with PostgreSQL can cause weird effects - one time will be displayed from DBeaver, another from psql, and a third from the application.
 
 ## Other Useful Links
@@ -40,9 +73,9 @@ In this [article's](https://habr.com/ru/articles/772954) comment section there's
 
 | Scenario | Wall Time  | Wall Time \+ Timezone | UTC Time | UTC Time \+ Timezone |
 | :---- | :----: | :----: | :----: | :----: |
-| An employee tracks time \- the manager makes a monthly report. |  | ✅  |  |  |
-| An employee adds time-off and make-up time \- the manager checks the employee's working time. |  | ✅ |  |  |
-| Today I'm tracking Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg, changing the time zone in my profile and changing the time of yesterday's Task A. |  | ✅ |  |  |
+| An employee tracks time \- the manager makes a monthly report. |  | ✅ |  |  |
+| An employee adds future time-off and make-up time \- the manager checks when the employee is going to work. |  | ✅ |  |  |
+| Today I tracked Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg changing the time zone in my profile, and need to change the time of yesterday's Task A. |  | ✅ |  |  |
 | Lunch is always at 12, regardless of whether the employee is in Chelyabinsk or on a business trip. |  | ✅ |  |  |
 | If make-up time is scheduled for 10 a.m. on Saturday, it should not start at 9 a.m. due to daylight saving time. |  | ✅ |  |  |
 | If an employee tracked that they were working at 1 a.m. on January 1st, then this time should be counted as January 1st, even if the manager in St. Petersburg was still working on December 31st at that time. |  | ✅ |  |  |
