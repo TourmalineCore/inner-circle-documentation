@@ -33,7 +33,7 @@ _A **timestamp** is a specific point in time, equal to the number of millisecond
 3. **Application Logic:**
 - employees see and enter time in their local time zone
 - managers see time entries converted to their own time zone
-- reports aggregate time entriess correctly across time zones
+- reports aggregate time entries correctly across time zones
 
 ## Consequences
 
@@ -50,6 +50,7 @@ _A **timestamp** is a specific point in time, equal to the number of millisecond
 
 Overall, storing **timestamp without time zone** will give us an opportunity to convert to UTC or any other time zone of the user and aviod discrepancies inherent in the alternative solution with **timestamptz** (see below). </br>
 PostgreSQL has an **AT TIME ZONE** operator that can convert wall time to UTC and back, knowing the time zone ID, which is exactly what we need, see [here](https://www.enterprisedb.com/postgres-tutorials/postgres-time-zone-explained).
+
 
 ## Alternatives
 ###  Saving in UTC along with the time zone (timestamptz)
@@ -71,14 +72,22 @@ In this [article's](https://habr.com/ru/articles/772954) comment section there's
 
 ## Comparison Table
 
-| Scenario | Wall Time  | Wall Time \+ Timezone | UTC Time | UTC Time \+ Timezone |
-| :---- | :----: | :----: | :----: | :----: |
-| An employee tracks time \- the manager makes a monthly report. |  | ✅ |  |  |
-| An employee adds future time-off and make-up time \- the manager checks when the employee is going to work. |  | ✅ |  |  |
-| Today I tracked Task A in Chelyabinsk, tomorrow I'm flying to St. Petersburg changing the time zone in my profile, and need to change the time of yesterday's Task A. |  | ✅ |  |  |
-| Lunch is always at 12, regardless of whether the employee is in Chelyabinsk or on a business trip. |  | ✅ |  |  |
-| If make-up time is scheduled for 10 a.m. on Saturday, it should not start at 9 a.m. due to daylight saving time. |  | ✅ |  |  |
-| If an employee tracked that they were working at 1 a.m. on January 1st, then this time should be counted as January 1st, even if the manager in St. Petersburg was still working on December 31st at that time. |  | ✅ |  |  |
-| We plan only individual make-up time (or other individual adjustments). The case of a pair or mob session will be tracked after the event through a single account, specifying people from both St. Petersburg and Chelyabinsk. They were working during the same time period, from Instant to Instant, but each person's data will be saved in their time zone. |  | ✅ |  |  |
-| Two employees were debugging something overnight together. In Chelyabinsk, Employee A worked from 12 a.m. to 2 a.m., and in St. Petersburg, Employee B worked from 10 a.m. to 12 a.m. The accounting will be as follows: Employee A in Chelyabinsk will be logged for the next day's work, and Employee B in St. Petersburg will be logged for the previous day's work. In other words, the work will be recorded and paid for as it was logged. But if you store it in UTC, there will be a problem: you logged it for one day, but got paid for another day/month/year. |  | ✅ |  |  |
-| When storing in UTC, it's possible for work to be recorded but not paid. The November timesheet is already closed and sent to the client before the weekend. An employee in Vladivostok tracks the work on December 1st, but due to the time zone difference, this time interval appears to be November for the manager. As a result, this work won't be recorded in November (the timesheet is already closed) or in December. |  | ✅ |  |  |
+
+| Scenario | Wall Time Only (no TZ) | Wall Time \+ Timezone ✅ | UTC Time Only (timestamptz) | UTC Time \+ Timezone |
+| :---- | :---- | :---- | :---- | :---- |
+| 1\. **Past Time Tracking & Monthly Reporting**.</br> Employee tracks worked hours; manager makes a monthly report across time zones | ❌ No timezone context → can't correctly aggregate across timezones | ✅ Local times preserved; easy conversion to manager's TZ for reporting | ⚠️ Careful manual conversion to local time is required  | ✅ Can convert to local time for reporting |
+| 2\. **Future Time-Off & Make-up Time Scheduling**.</br> Employee schedules future absence; manager needs to know local work hours | ❌ Without TZ future times are ambiguous  | ✅ Future local times preserved regardless of DST changes | ❌ Future events can shift when DST rules change | ❌ Future events can shift when DST rules change |
+| 3\. **Employee Time Zone Change**.</br> Employee travels, updates TZ in profile, needs to adjust yesterday's entry | ❌ Can't distinguish between  original and current TZ | ✅ Historical entries keep original TZ; new entries use new TZ | ❌ All time entries appear wrong after TZ change | ⚠️ Can preserve original TZ but complex to manage |
+| 4\. **Fixed Local Time Events**.</br> "Lunch at 12 PM" means local noon, regardless of location | ❌ No TZ → "12 PM" is meaningless | ✅ 12 PM local time preserved in each TZ | ❌ UTC noon shifts with location/DST | ⚠️ Can store but requires conversion |
+| 5\. **DST-Proof Scheduling**.</br> Make-up time at 10 AM Saturday shouldn't become 9 AM after DST transition | ❌ No TZ → can't handle DST | ✅ Local time preserved; DST handled by TZ database | ❌ UTC fixed → local time shifts with DST | ❌ UTC fixed → local time still can shift if TZ rules change |
+| 6\. **Local Date Boundary Integrity**.</br> Work at 1 AM Jan 1st local time counts as Jan 1st, even if manager sees Dec 31st | ❌ Date depends on viewer's TZ | ✅ Date determined by employee's local time | ❌ Date depends on conversion TZ | ✅ Can determine local date with TZ |
+| 7\. **Cross Time Zone Team Collaboration**.</br> A pair programming session with two people in different time zones working simultaneously. After the event, a single account logs the session, specifying participants from both St. Petersburg and Chelyabinsk. | ❌ Can't represent different TZs | ✅ Each entry has its own local time \+ TZ. Each participant gets their OWN local time entry | ❌ Can't represent different TZs | ⚠️ One UTC period with multiple TZ can be tricky:</br> 1\. Individual time adjustments affect all</br> 2\. Local dates must be calculated</br> 3\. Confusion between "instant" vs "local experience"</br> 4\. Payroll assignment requires conversion |
+| 8\. **Overnight Work & Payroll Alignment**.</br> Employees in different TZs work same instant; payroll aligns with local dates | ❌ Date ambiguity causes payroll errors | ✅ Local dates preserved → correct payroll  | ❌ UTC may place work in wrong pay period | ✅ Can calculate local dates for payroll |
+| 9\. **Time Sheet Closure Edge Case**.</br> Work logged after the monthly timesheet is closed, but appears before due to TZ difference. Such work can be recorded but not paid. | ❌ Unresolvable without TZ | ✅ Local date determines timesheet assignment | ❌ May assign to closed timesheet incorrectly | ✅ Can assign to correct timesheet with TZ |
+| 10\. **Historical Data After TZ Rule Changes**.</br> Country changes DST rules; historical entries should remain correct | ❌ Times become ambiguous | ✅ Original local times are preserved  | ❌ Historical local times recalculated incorrectly | ⚠️ Can preserve but requires TZ versioning |
+
+### Critical Scenarios Where Only Wall Time \+ TZ Works:
+
+1. **Future Scheduling**: Only this approach guarantees DST-proof future events  
+2. **Payroll Compliance**: Legal requirement to pay based on when work was performed locally  
+3. **Cross Time Zone Team Collaboration**: Each team member sees times in their local context
