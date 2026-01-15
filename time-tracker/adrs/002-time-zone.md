@@ -22,7 +22,7 @@ _A **timestamp** is a specific point in time, equal to the number of millisecond
 ### Implementation Details
 
 1. **Database Schema:**
-- `timestamp_without_timezone` column for the wall time
+- `start_time` and `end_time` columns will store the wall time
 - separate timezone column (e.g., "America/New_York", "Europe/Moscow")
 
 2. **Time Zone Management:**
