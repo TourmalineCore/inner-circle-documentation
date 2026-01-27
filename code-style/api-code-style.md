@@ -179,5 +179,114 @@ public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
 We use RORO pattern (Request Object Response Object). You can read 
 [our article](https://www.tourmalinecore.com/articles/React) about it.
 
+## 7. DTO Naming for Response Models
+
+All classes used in API responses must have the Dto postfix in their class names.
+
+```csharp
+public class ProjectsResponse
+{
+    public required List<ProjectDto> Projects { get; set; }
+}
+
+public class ProjectDto
+{
+    public required long Id { get; set; }
+
+    public required string Name { get; set; }
+}
+```
+
+## 8. No Inheritance for DTOs
+
+DTOs must be flat and self-contained. Do not use inheritance for DTOs, even if they share the same fields.
+
+### Avoid Inheritance to Remove Duplication
+
+```csharp
+public abstract class BaseDto
+{
+    public required long Id { get; set; }
+    public required string Name { get; set; }
+}
+
+public class ItemDto : BaseDto
+{
+}
+```
+
+### Use Explicit DTOs
+
+```csharp
+public class ItemDto
+{
+    public required long Id { get; set; }
+    public required string Name { get; set; }
+}
+```
+
+## 9. Lambda Parameter Naming
+
+- Use `x` as the default lambda parameter name.
+- Use a full, meaningful name only when it improves readability.
+- Do not use abbreviated names.
+
+### Avoid Abbreviated Naming
+
+```csharp
+items.Where(e => e.IsActive);
+```
+
+### Use `x` as default
+
+```csharp
+items.Where(x => x.IsActive);
+```
+
+### Use full name when it improves readability
+
+```csharp
+items.Where(item => item.IsActive && item.IsVisible);
+```
+## 10. Async Methods and Returning Tasks
+
+- Methods that perform `await` inside must be marked as `async`.
+
+- All methods that return a `Task` must have the `Async` postfix, even if they do not use `await` inside.
+
+- If a method does not `await` anything inside, you can return the `Task` directly without marking the method `async`. This allows the caller to await it.
+
+### Returning Task Directly (No Await)
+
+```csharp
+public Task<int> GetValueAsync()
+{
+    return _service.CalculateAsync();
+}
+```
+
+### Async Method with Await
+
+```csharp
+public async Task<int> GetProcessedValueAsync()
+{
+    var result = await _service.CalculateAsync();
+    return result + 1;
+}
+```
+
+## 11. Null-Forgiving Operator (!)
+
+When the linter reports possible null, use the null-forgiving operator `!.`
+
+We assume the value always exists.
+If it is null, the code should fail immediately.
+
+Do not use `?.` in these cases.
+
+```csharp
+var value = context.User!.Id;
+```
+
 ---
 to be continued..
