@@ -125,13 +125,11 @@ Now we agreed to use 3 layers:
    
    Our **Application** layer accepts models, transforms them into Core classes in commands, and saves them in the database. Similarly, queries extract Core classes from the database but immediately convert them into models for passing up (for example, to responses).
 
-
 ## 2. Test location
 
 We place unit-tests next to the classes they test on all layers of the application. You can read [our article](https://www.tourmalinecore.com/articles/dotnet-unit-testing) about it. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
 
 ![Tests Location Example](./images/tests-location-example.png)
-
 
 ## 3. Naming Convention of Methods That Return Tasks
 
@@ -141,7 +139,6 @@ All methods that return tasks must end with `Async`.
 public async Task DoSomethingAsync()
 ```
 
-
 ## 4. Controller Responses Naming
 
 Everything that comes back from the controller must end with `Response`.
@@ -149,7 +146,6 @@ Everything that comes back from the controller must end with `Response`.
 ```csharp
 public async Task<SomeElseResponse> DoSomethingElseAsync()
 ```
-
 
 ## 5. Explicit Response Mapping
 
@@ -172,7 +168,6 @@ public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
     };
 }
 ```
-
 
 ## 6. RORO pattern
 
@@ -203,6 +198,7 @@ Don't use shared DTO for different requests and responses. Even if they share th
 In the future DTOs are likely to become different.
 
 ### Avoid using shared DTO between different Responses and Requests
+
 ```csharp
 public class GetItemsResponse : ItemDto
 {
@@ -218,6 +214,7 @@ public class GetItemTypesResponse : ItemDto
 ```
 
 ### Create separate DTOs 
+
 ```csharp
 public class GetItemsResponse
 {
@@ -280,6 +277,7 @@ var result = orders
         OrdersCount = group.Count()
     });
 ```
+
 ## 10. Async Methods and Returning Tasks
 
 - Methods that perform `await` inside must be marked as `async`.
