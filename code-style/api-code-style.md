@@ -271,7 +271,14 @@ items.Where(x => x.IsActive);
 ### Use full name when it improves readability
 
 ```csharp
-items.Where(item => item.IsActive && item.IsVisible);
+var result = orders
+    .Where(order => order.IsPaid && order.CreatedAt >= startDate)
+    .GroupBy(order => order.CustomerId)
+    .Select(group => new
+    {
+        CustomerId = group.Key,
+        OrdersCount = group.Count()
+    });
 ```
 ## 10. Async Methods and Returning Tasks
 
