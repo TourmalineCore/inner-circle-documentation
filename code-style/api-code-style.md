@@ -259,7 +259,7 @@ public class ItemTypesDto
 ### Avoid Abbreviated Naming
 
 ```csharp
-items.Where(e => e.IsActive);
+items.Where(i => i.IsActive);
 ```
 
 ### Use `x` as default
