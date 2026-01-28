@@ -322,7 +322,7 @@ When the linter reports possible null, use the null-forgiving operator `!.`
 We assume the value always exists.
 If it is null, the code should fail immediately.
 
-Do not use `?.` in these cases.
+Do not use `?.` in these cases. However, there are cases when `?.` is what you need, when null is possible and expected to happen. Thus, we use a stronger operator `!.` by default and a weaker one `?.` only when necessary.
 
 ```csharp
 var value = context.User!.Id;
