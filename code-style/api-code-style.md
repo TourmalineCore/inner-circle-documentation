@@ -182,7 +182,7 @@ We use RORO pattern (Request Object Response Object). You can read
 
 ## 7. DTO Naming for Response Models
 
-All classes used in API responses must have the Dto postfix in their class names.
+All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
 
 ```csharp
 public class ProjectsResponse
