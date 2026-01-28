@@ -179,5 +179,154 @@ public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
 We use RORO pattern (Request Object Response Object). You can read 
 [our article](https://www.tourmalinecore.com/articles/React) about it.
 
+
+## 7. DTO Naming for Response Models
+
+All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
+
+```csharp
+public class ProjectsResponse
+{
+    public required List<ProjectDto> Projects { get; set; }
+}
+
+public class ProjectDto
+{
+    public required long Id { get; set; }
+
+    public required string Name { get; set; }
+}
+```
+
+
+## 8. Separate DTOs for Requests and Responses
+
+Don't use shared DTO for different requests and responses. Even if they share the same fields.
+In the future DTOs are likely to become different.
+
+### Avoid using shared DTO between different Responses and Requests
+
+```csharp
+public class GetItemsResponse : ItemDto
+{
+    public required List<ItemDto> Items { get; set; }
+}
+```
+
+```csharp
+public class GetItemTypesResponse : ItemDto
+{
+    public required List<ItemDto> ItemTypes { get; set; }
+}
+```
+
+### Create separate DTOs 
+
+```csharp
+public class GetItemsResponse
+{
+    public required List<ItemDto> Items { get; set; }
+}
+
+public class ItemDto
+{
+    public required long Id { get; set; }
+
+    public required string Title { get; set; }
+
+    public required string Description { get; set; }
+}
+```
+
+```csharp
+public class GetItemTypesResponse
+{
+    public required List<ItemTypesDto> ItemTypes { get; set; }
+}
+
+public class ItemTypesDto
+{
+    public required long Id { get; set; }
+
+    public required string Title { get; set; }
+
+    public required string Description { get; set; }
+}
+```
+
+
+## 9. Lambda Parameter Naming
+
+- Use `x` as the default lambda parameter name.
+- Use a full, meaningful name only when it improves readability.
+- Do not use abbreviated names.
+
+### Avoid Abbreviated Naming
+
+```csharp
+items.Where(i => i.IsActive);
+```
+
+### Use `x` as default
+
+```csharp
+items.Where(x => x.IsActive);
+```
+
+### Use full name when it improves readability
+
+```csharp
+var result = orders
+    .Where(order => order.IsPaid && order.CreatedAt >= startDate)
+    .GroupBy(order => order.CustomerId)
+    .Select(group => new
+    {
+        CustomerId = group.Key,
+        OrdersCount = group.Count()
+    });
+```
+
+
+## 10. Async Methods and Returning Tasks
+
+- Methods that perform `await` inside must be marked as `async`.
+
+- All methods that return a `Task` must have the `Async` postfix, even if they do not use `await` inside.
+
+- If a method does not `await` anything inside, you can return the `Task` directly without marking the method `async`. This allows the caller to await it.
+
+### Returning Task Directly (No Await)
+
+```csharp
+public Task<int> GetValueAsync()
+{
+    return _service.CalculateAsync();
+}
+```
+
+### Async Method with Await
+
+```csharp
+public async Task<int> GetProcessedValueAsync()
+{
+    var result = await _service.CalculateAsync();
+    return result + 1;
+}
+```
+
+
+## 11. Null-Forgiving Operator (!)
+
+When the linter reports possible null, use the null-forgiving operator `!.`
+
+We assume the value always exists.
+If it is null, the code should fail immediately.
+
+Do not use `?.` in these cases. However, there are cases when `?.` is what you need, when null is possible and expected to happen. Thus, we use a stronger operator `!.` by default and a weaker one `?.` only when necessary.
+
+```csharp
+var value = context.User!.Id;
+```
+
 ---
 to be continued..
