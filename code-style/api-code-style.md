@@ -197,31 +197,56 @@ public class ProjectDto
 }
 ```
 
-## 8. No Inheritance for DTOs
+## 8. Separate DTOs for Requests and Responses
 
-DTOs must be flat and self-contained. Do not use inheritance for DTOs, even if they share the same fields.
+Don't use shared DTO for different requests and responses. Even if they share the same fields.
+In the future DTOs are likely to become different.
 
-### Avoid Inheritance to Remove Duplication
-
+### Avoid using shared DTO between different Responses and Requests
 ```csharp
-public abstract class BaseDto
+public class GetItemsResponse : ItemDto
 {
-    public required long Id { get; set; }
-    public required string Name { get; set; }
-}
-
-public class ItemDto : BaseDto
-{
+    public required List<ItemDto> Items { get; set; }
 }
 ```
 
-### Use Explicit DTOs
-
 ```csharp
+public class GetItemTypesResponse : ItemDto
+{
+    public required List<ItemDto> ItemTypes { get; set; }
+}
+```
+
+### Create separate DTOs 
+```csharp
+public class GetItemsResponse
+{
+    public required List<ItemDto> Items { get; set; }
+}
+
 public class ItemDto
 {
     public required long Id { get; set; }
-    public required string Name { get; set; }
+
+    public required string Title { get; set; }
+
+    public required string Description { get; set; }
+}
+```
+
+```csharp
+public class GetItemTypesResponse
+{
+    public required List<ItemTypesDto> ItemTypes { get; set; }
+}
+
+public class ItemTypesDto
+{
+    public required long Id { get; set; }
+
+    public required string Title { get; set; }
+
+    public required string Description { get; set; }
 }
 ```
 
