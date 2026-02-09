@@ -402,9 +402,8 @@ Appears as a regex pattern.
 `[Range(1, 100)]`  
 Restricts allowed numeric values and is exposed as `minimum` / `maximum`.
 
-`required` (C# keyword)  
-Enforces compile-time initialization of the property.  
-This is a language-level feature and complements runtime validation attributes like `[Required]`.
+`[Required]`  
+Ensures a property has a value at runtime and is marked required in Swagger. Unlike C# required, [Required] does not enforce compile-time initialization - it only works during runtime validation.
 
 ### How this metadata appears in Swagger UI:
 
