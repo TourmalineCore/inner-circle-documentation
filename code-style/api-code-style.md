@@ -328,9 +328,6 @@ Do not use `?.` in these cases. However, there are cases when `?.` is what you n
 var value = context.User!.Id;
 ```
 
----
-to be continued..
-
 
 ## 12. API Documentation for Swagger / OpenAPI
 
