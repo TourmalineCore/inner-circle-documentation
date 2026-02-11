@@ -122,7 +122,7 @@ CREATE INDEX a ON work_entries
 
 - **POST** /api/time/tracking/adjustments - add
 - **POST** /api/time/tracking/adjustments/{id} - update
-- **GET** /api/time/tracking/adjustments?startTime={startTime}&endTime={endTime} - get list by period
+- **GET** /api/time/tracking/adjustments?startDate={startDate}&endDate={endDate} - get list by period
 - **DELETE** /api/time/tracking/adjustments/{id}/soft-delete - soft delete
 
 ## db for add task & get all tasks & update task (1 iteration)
