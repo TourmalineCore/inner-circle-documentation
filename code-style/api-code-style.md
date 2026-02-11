@@ -327,6 +327,5 @@ Do not use `?.` in these cases. However, there are cases when `?.` is what you n
 ```csharp
 var value = context.User!.Id;
 ```
-
 ---
 to be continued..
