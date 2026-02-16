@@ -1,22 +1,27 @@
-# Time Tracker Backend Strategy 2025-11-20, 2025-11-25
+# Time Tracker Backend Contract
 
 ## Entities
 
 ### 1. work_entries
 
-- задача
-- отсутствие (отраб)
-- отсутствие (не отраб)
-- опоздание
-- плохое самочувствие
-- отработка
-- переработка
-- обед
-- дей-офф (отраб)
-- дей-офф (оплачиваемый)
-- дей-офф (не оплачиваемый)
-- больничный
-- отпуск
+Events:
+- Task
+- Away (unpaid)
+- Away (paid)
+- Late
+- Unwell
+- Make-up time
+- Make-up time for day-off
+- Overtime
+- Time-off
+
+All-day events:
+- Lunch
+- Sick leave
+- Vacation
+- Day-off to make up for
+- Personal day-off
+- Unpaid day-off
 
 #### sql notes
 
@@ -31,7 +36,7 @@ AND employeeId = @employeeId
 CREATE INDEX a ON work_entries
 ```
 
-## endpoints
+## Endpoints
 
 #### work-entries
 
@@ -90,7 +95,6 @@ CREATE INDEX a ON work_entries
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
-  type: int,
 }
 ```
 
