@@ -2,7 +2,7 @@
 
 ## Entities
 
-### 1. work_entries
+### 1. tracked_entries
 
 Events:
 - Task
@@ -27,7 +27,7 @@ All-day events:
 
 ```sql
 SELECT *
-FROM work_entries
+FROM tracked_entries
 WHERE startTime > @startTime
 AND endTime < @endTime
 AND tenantId = @tenantId
@@ -50,8 +50,16 @@ CREATE INDEX a ON work_entries
       id: long,
       title: string,
       taskId: string,
-      projectName: string,
+      projectId: long,
       description: string,
+      startTime: DateTime,
+      endTime: DateTime,
+      type: int,
+    },
+  ]
+  unwellEntries: [
+    {
+      id: long,
       startTime: DateTime,
       endTime: DateTime,
       type: int,
@@ -137,12 +145,44 @@ CREATE INDEX a ON work_entries
 }
 ```
 
+#### unwell-entries
+
+1. **POST** /api/time/tracking/unwell-entries - add unwell entries
+
+**Request body:**
+```ts
+{
+  startTime: DateTime,
+  endTime: DateTime,
+  timeZoneId: string
+  type: int,
+}
+```
+
+**Response body:**
+```ts
+{
+  newUnwellEntryId: long
+}
+```
+
+2. **POST** /api/time/tracking/unwell-entries/{id} - update unwell entry
+
+**Request body:**
+```ts
+{
+  startTime: DateTime,
+  endTime: DateTime,
+  timeZoneId: string
+}
+```
+
 ## db diagram
 
 ```mermaid
 erDiagram
-    work_entries ||--|| projects : "1-to-1"
-    work_entries {
+    tracked_entries ||--|| projects : "1-to-1"
+    tracked_entries {
       id long PK
       tenant_id long FK
       employee_id long FK
