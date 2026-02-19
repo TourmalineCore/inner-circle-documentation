@@ -1,16 +1,33 @@
-# Time Tracker Backend Strategy 2025-11-20, 2025-11-25
+# Time Tracker Backend Contract
 
 ## Entities
 
-### 1. work_entries
+### 1. tracked_entries
 
-- задача
+Events:
+- Task
+- Away (unpaid)
+- Away (paid)
+- Late
+- Unwell
+- Make-up time
+- Make-up time for day-off
+- Overtime
+- Time-off
+
+All-day events:
+- Lunch
+- Sick leave
+- Vacation
+- Day-off to make up for
+- Personal day-off
+- Unpaid day-off
 
 #### sql notes
 
 ```sql
 SELECT *
-FROM work_entries
+FROM tracked_entries
 WHERE startTime > @startTime
 AND endTime < @endTime
 AND tenantId = @tenantId
@@ -19,26 +36,7 @@ AND employeeId = @employeeId
 CREATE INDEX a ON work_entries
 ```
 
-### 2. adjustments
-
-**другие события**
-
-- отсутствие (отраб)
-- отсутствие (не отраб)
-- опоздание
-- плохое самочувствие
-- отработка
-- переработка
-- обед
-
-**события на день**
-
-- дей-офф (отраб)
-- дей-офф (не отраб)
-- больничный
-- отпуск
-
-## endpoints
+## Endpoints
 
 #### work-entries
 
@@ -52,10 +50,19 @@ CREATE INDEX a ON work_entries
       id: long,
       title: string,
       taskId: string,
-      projectName: string,
+      projectId: long,
       description: string,
       startTime: DateTime,
       endTime: DateTime,
+      type: int,
+    },
+  ]
+  unwellEntries: [
+    {
+      id: long,
+      startTime: DateTime,
+      endTime: DateTime,
+      type: int,
     },
   ]
 }
@@ -73,6 +80,7 @@ CREATE INDEX a ON work_entries
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
+  type: int,
 }
 ```
 
@@ -117,13 +125,6 @@ CREATE INDEX a ON work_entries
 
 5. **DELETE** /api/time/tracking/work-entries/{id}/soft-delete - soft delete  
 
-#### adjustments
-
-- **POST** /api/time/tracking/adjustments - add
-- **POST** /api/time/tracking/adjustments/{id} - update
-- **GET** /api/time/tracking/adjustments?startDate={startDate}&endDate={endDate} - get list by period
-- **DELETE** /api/time/tracking/adjustments/{id}/soft-delete - soft delete
-
 ## db for add task & get all tasks & update task (1 iteration)
 
 ```ts
@@ -144,49 +145,66 @@ CREATE INDEX a ON work_entries
 }
 ```
 
+#### unwell-entries
+
+1. **POST** /api/time/tracking/unwell-entries - add unwell entries
+
+**Request body:**
+```ts
+{
+  startTime: DateTime,
+  endTime: DateTime,
+  timeZoneId: string
+  type: int,
+}
+```
+
+**Response body:**
+```ts
+{
+  newUnwellEntryId: long
+}
+```
+
+2. **POST** /api/time/tracking/unwell-entries/{id} - update unwell entry
+
+**Request body:**
+```ts
+{
+  startTime: DateTime,
+  endTime: DateTime,
+  timeZoneId: string
+}
+```
+
 ## db diagram
 
 ```mermaid
 erDiagram
-    work_entries ||--|| projects : "1-to-1"
-    adjustments ||--o{ adjustments : "1-to-many"
-    work_entries {
+    tracked_entries ||--|| projects : "1-to-1"
+    tracked_entries {
       id long PK
       tenant_id long FK
       employee_id long FK
-      project_id long FK "internal request projects list"
+      project_id long FK "Nullable. Internal request projects list"
+      parent_id long FK "Nullable. A self-reference to the original card from the same table"
       start_time timestamp
       end_time timestamp
       time_zone_id text
-      duration interval "(calculated)"
+      duration interval "(calculated), positive for overtime, negative for time off"
+      amount interval "Nullable. To think about whether time is deducted from working hours or not"
       type int
-      title text
-      task_id text
-      description text
+      title text "Nullable."
+      task_id text "Nullable."
+      description text "Nullable."
       is_deleted boolean
+      sick_leave_reason int "Nullable."
+      is_paid boolean "Nullable."
+      is_full_day boolean "Nullable."
     }
     projects {
       id long PK
       tenant_id long FK
       name text
-    }
-    adjustments {
-      id long PK
-      tenant_id long FK
-      employee_id long FK
-      parent_id long FK "Nullable. a self-reference to the original card from the same table"
-      start_time timestamp
-      end_time timestamp
-      time_zone_id text
-      duration interval "positive for overtime, negative for time off"
-      amount interval "to think about whether time is deducted from working hours or not"
-      type int
-      description text
-      is_deleted boolean
-      sick_leave_reason int "Nullable. причина плохого самочувствия"
-      is_approved boolean
-      is_need_comment boolean "? check the box to indicate whether or not you should write the reason for feeling unwell"
-      is_paid boolean
-      is_full_day boolean "?"
     }
 ```
