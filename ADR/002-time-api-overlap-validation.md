@@ -30,7 +30,7 @@ We need to validate the overlaps of time intervals between different types of en
 
 ## Decision
 
-Validate time overlaps only at the database level using constraints. This solves race conditions and data integrity issues. This solution has a technical limitation: range intersection constraints only work within a single table. To achieve this behavior, we used the  [TPH (table-per-hierarchy)](https://learn.microsoft.com/en-us/ef/core/modeling/inheritance#table-per-hierarchy-and-discriminator-configuration) inheritance type, which has one base table from which all others inherit.
+Validate time overlaps only at the database level using constraints. This solves race conditions and data integrity issues. This solution has a technical limitation: range intersection constraints only work within a single table - we cannot add a constraint that will validate overlaps acreoss multiple tables. Initially, we had separate tables for work entries , i.e. tasks, and for adjustments (e.g., overtime, make-up time), so it wouldn't be possible to use range intersection constraints. So we had to unite all entries to a single table using the [TPH (table-per-hierarchy)](https://learn.microsoft.com/en-us/ef/core/modeling/inheritance#table-per-hierarchy-and-discriminator-configuration) inheritance type, which has one base table from which all others inherit.
 
 *Example: Task cannot intersect with Unwell.*
 
@@ -40,6 +40,7 @@ Validate time overlaps only at the database level using constraints. This solves
 | **Unwell** | \- | \- |
 
 ```
+// Constraint 1: Block overlaps within {type 1, type 2}
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type12\_overlap
@@ -62,6 +63,7 @@ WHERE (type IN (1, 2));
 | **Overtime** | \+ | \- | \- |
 
 ```
+// Constraint 1: Block overlaps within {type 1, type 2}
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type12\_overlap
@@ -74,6 +76,7 @@ EXCLUDE USING GIST (
 
 WHERE (type IN (1, 2));
 
+// Constraint 2: Block overlaps within {type 2, type 3}
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type23\_overlap
@@ -105,6 +108,7 @@ To generate user-friendly errors, an additional query is made to the database at
 * All validated records must be stored in a single table.  
 * The logic for grouping types in constraints requires careful maintenance.  
 * An additional query is added to handle constraint errors.
+* It is tricky to test all variations of range overlaps, and the complexity will grow when new types will be added.  
 
 ## Alternatives
 
@@ -132,3 +136,11 @@ Storing different record types in different tables.
 
 * Unable to validate overlaps between tables using constraints.  
 * Data model and queries become more complex.
+
+### Optimistic Locking with Daily Aggregation
+
+Instead of complex database constraints and TPH inheritance, we can fundamentally rethink the storage schema so that a single row stores data for an employee's entire day. Then we can remove the complex jumble of constraints in the database.
+
+#### Cons:
+
+* Cross-day overlap validation will require complex validation logic.
