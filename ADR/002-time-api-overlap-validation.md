@@ -17,16 +17,16 @@ We need to validate the overlaps of time intervals between different types of en
 
 | | Task | Overtime | Make-up time | Lunch | Unwell | Day-off | Late | Sick leave | Vacation | Away |
 | :---- | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| **Task** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\+** | **\+** | **\-** | **\-** | **\+** | **\-** | **\+** | **\+** | **\-** |
-| **Overtime** | **\+** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** | **\+** | **\-** | **\+** | **\+** | **\-** |
-| **Make-up time** | **\+** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** |
-| **Lunch** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** |
-| **Unwell** | **\-** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** | **\-** | **\-** |
-| **Day-off** | **\+** | **\+** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** | **\-** |
-| **Late** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** | **\-** |
-| **Sick leave** | **\+** | **\+** | **\-** | **\-** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** | **\-** |
-| **Vacation** | **\+** | **\+** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> | **\-** |
-| **Away** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | <span style="background-color: #e6ffe6; padding: 5px 10px; display: inline-block;">**\-**</span> |
+| **Task** | ${\color{blue}-}$ | **\+** | **\+** | **\-** | **\-** | **\+** | **\-** | **\+** | **\+** | **\-** |
+| **Overtime** | **\+** | ${\color{blue}-}$ | **\-** | **\-** | **\-** | **\+** | **\-** | **\+** | **\+** | **\-** |
+| **Make-up time** | **\+** | **\-** | ${\color{blue}-}$| **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** |
+| **Lunch** | **\-** | **\-** | **\-** | ${\color{blue}-}$ | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** |
+| **Unwell** | **\-** | **\-** | **\-** | **\-** | ${\color{blue}-}$| **\-** | **\-** | **\-** | **\-** | **\-** |
+| **Day-off** | **\+** | **\+** | **\-** | **\-** | **\-** | ${\color{blue}-}$| **\-** | **\-** | **\-** | **\-** |
+| **Late** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | ${\color{blue}-}$ | **\-** | **\-** | **\-** |
+| **Sick leave** | **\+** | **\+** | **\-** | **\-** | **\-** | **\-** | **\-** | ${\color{blue}-}$ | **\-** | **\-** |
+| **Vacation** | **\+** | **\+** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | ${\color{blue}-}$ | **\-** |
+| **Away** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | **\-** | ${\color{blue}-}$ |
 
 ## Decision
 
