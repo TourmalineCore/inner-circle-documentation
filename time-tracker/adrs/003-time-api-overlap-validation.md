@@ -32,6 +32,8 @@ We need to validate the overlaps of time intervals between different types of en
 
 Validate time overlaps only at the database level using constraints. This solves race conditions and data integrity issues. This solution has a technical limitation: range intersection constraints only work within a single table - we cannot add a constraint that will validate overlaps acreoss multiple tables. Initially, we had separate tables for work entries , i.e. tasks, and for adjustments (e.g., overtime, make-up time), so it wouldn't be possible to use range intersection constraints. So we had to unite all entries to a single table using the [TPH (table-per-hierarchy)](https://learn.microsoft.com/en-us/ef/core/modeling/inheritance#table-per-hierarchy-and-discriminator-configuration) inheritance type, which has one base table from which all others inherit.
 
+These constraints create overlap rules that only apply to specific subsets of rows, not all rows in the table.
+
 *Example: Task cannot intersect with Unwell.*
 
 |  | Task | Unwell |
@@ -40,7 +42,7 @@ Validate time overlaps only at the database level using constraints. This solves
 | **Unwell** | \- | \- |
 
 ```
-// Constraint 1: Block overlaps within {type 1, type 2}
+// Constraint 1: Only applies to rows where type is 1 OR 2
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type12\_overlap
@@ -51,6 +53,7 @@ EXCLUDE USING GIST (
 
 )
 
+// Filters which rows the constraint applies to
 WHERE (type IN (1, 2));
 ```
 
@@ -63,7 +66,7 @@ WHERE (type IN (1, 2));
 | **Overtime** | \+ | \- | \- |
 
 ```
-// Constraint 1: Block overlaps within {type 1, type 2}
+// Constraint 1: Only applies to rows where type is 1 OR 2
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type12\_overlap
@@ -74,9 +77,10 @@ EXCLUDE USING GIST (
 
 )
 
+// Filters which rows the constraint applies to
 WHERE (type IN (1, 2));
 
-// Constraint 2: Block overlaps within {type 2, type 3}
+// Constraint 2: Only applies to rows where type is 2 OR 3
 ALTER TABLE tracked\_entries
 
 ADD CONSTRAINT exclude\_type23\_overlap
@@ -87,6 +91,7 @@ EXCLUDE USING GIST (
 
 )
 
+// Filters which rows the constraint applies to
 WHERE (type IN (2, 3));
 ```
 
