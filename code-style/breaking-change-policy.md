@@ -6,7 +6,7 @@ To keep things stable we need to agree on what counts as a breaking change. We l
 ## What is a breaking change
 
 1. **Removal or modification of the contract.**
-If something is removed from the public API (deleted endpoint, field in a response, required request parameter) or its type is changed.
+If something is removed from the public API (deleted endpoint, field in a response, required request parameter) or the type of request method is changed (e.g. PUT -> POST). 
 
 2. **Changes to mandatory scenarios.** 
 If you introduce a new requirement that must now be performed in the middle of an existing flow for the system to function correctly.
