@@ -16,3 +16,24 @@ If you introduce a new requirement that must now be performed in the middle of a
 1. **Adding new contracts.** If you add a new endpoint or a new optional field to a response/request. Old clients will continue to function using the existing logic without issues.
 
 2. **Cosmetic and internal changes.** Fixing typos in documentation, internal refactoring, performance optimizations (if they don't change public behavior), updating dependencies (if they don't transitively break the public API).
+
+## Conventional Commits Allowed Prefixes
+We need to allow only certain prefixes that lead to expected version bump and its commit.
+
+**feat** - non-breaking functional change/new feature, minor update</br>
+**feat!** - breaking change/new feature (UI can no longer call the API without adjustment), major update
+
+**fix** - non-breaking bug fix, patch update</br>
+**fix!** - breaking bug fix, major update
+
+**refactor** - non-breaking refactoring, patch update
+
+**format** - non-breaking code re-formatting, patch update (in case there was an accidental functionality change)
+
+**docs** - docs change, no version bump</br>
+**infra** - DevExp infrastructure update that needs no deployment, no version bump
+
+**ci** - workflows or ci folder update that needs no deployment, no version bump</br>
+**cd** - deployment update, patch update
+
+**git** - git related changes that needs no deployment, no version bump
