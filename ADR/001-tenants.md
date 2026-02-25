@@ -1,4 +1,4 @@
-# Tenants ADR  
+# 001: Tenants  
 ## What is Tenant?
 Organization/Client to split data between them.
 
