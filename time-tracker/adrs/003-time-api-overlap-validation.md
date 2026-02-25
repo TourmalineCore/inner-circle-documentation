@@ -44,15 +44,10 @@ These constraints create overlap rules that only apply to specific subsets of ro
 ```
 // Constraint 1: Only applies to rows where type is 1 OR 2
 ALTER TABLE tracked\_entries
-
 ADD CONSTRAINT exclude\_type12\_overlap
-
 EXCLUDE USING GIST (
-
     tsrange(start\_time, end\_time, '\[)') WITH &&
-
 )
-
 // Filters which rows the constraint applies to
 WHERE (type IN (1, 2));
 ```
