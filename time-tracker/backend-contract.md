@@ -33,14 +33,14 @@ AND endTime < @endTime
 AND tenantId = @tenantId
 AND employeeId = @employeeId
 
-CREATE INDEX a ON work_entries
+CREATE INDEX a ON tracked_entries
 ```
 
 ## Endpoints
 
-#### work-entries
+#### entries
 
-1. **GET** /api/time/tracking/work-entries?startDate={startDate}&endDate={endDate} - get list by period
+1. **GET** /api/time/tracking/entries?startDate={startDate}&endDate={endDate} - get list by period
 
 **Response body:**
 ```ts
@@ -68,7 +68,17 @@ CREATE INDEX a ON work_entries
 }
 ```
 
-2. **POST** /api/time/tracking/work-entries - add
+2.  **DELETE** /api/time/tracking/entries/{entryId}/soft-delete - soft delete 
+**Request body:**
+```ts
+{
+  deletionReason: string,
+}
+``` 
+
+## task-entries
+
+1. **POST** /api/time/tracking/task-entries - add task entry
 
 **Request body:**
 ```ts
@@ -87,11 +97,11 @@ CREATE INDEX a ON work_entries
 **Response body:**
 ```ts
 {
-  newWorkEntryId: long
+  newTaskEntryId: long
 }
 ```
 
-3. **POST** /api/time/tracking/work-entries/{id} - update
+3. **POST** /api/time/tracking/task-entries/{id} - update task entry
 
 **Request body:**
 ```ts
@@ -108,7 +118,7 @@ CREATE INDEX a ON work_entries
 
 **Response body:** 200 OK
 
-4. **GET** /api/time/tracking/work-entries/projects?date={date} - get employee's projects
+4. **GET** /api/time/tracking/task-entries/projects?date={date} - get employee's projects
 
 **Response body:**
 
@@ -120,28 +130,6 @@ CREATE INDEX a ON work_entries
       name: string;
     },
   ]
-}
-```
-
-5. **DELETE** /api/time/tracking/work-entries/{id}/soft-delete - soft delete  
-
-## db for add task & get all tasks & update task (1 iteration)
-
-```ts
-{
-  id long PK
-  tenant_id long FK
-  employee_id long FK
-  project_id long FK "internal request projects list"
-  start_time timestamp
-  end_time timestamp
-  time_zone_id text
-  duration interval "(calculated)"
-  type int // get default value from emun for now
-  title text
-  task_id text
-  description text
-  is_deleted boolean
 }
 ```
 
@@ -197,7 +185,8 @@ erDiagram
       title text "Nullable."
       task_id text "Nullable."
       description text "Nullable."
-      is_deleted boolean
+      deleted_at_utc timestamp with timezone "Nullable."
+      deletion_reason string "Nullable."
       sick_leave_reason int "Nullable."
       is_paid boolean "Nullable."
       is_full_day boolean "Nullable."
