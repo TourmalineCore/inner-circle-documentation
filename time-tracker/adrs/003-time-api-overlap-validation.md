@@ -62,19 +62,19 @@ WHERE (type IN (1, 2));
 
 ```
 // Constraint 1: Only applies to rows where type is 1 OR 2
-ALTER TABLE tracked\_entries
-ADD CONSTRAINT exclude\_type12\_overlap
+ALTER TABLE tracked_entries
+ADD CONSTRAINT exclude_type12_overlap
 EXCLUDE USING GIST (
-    tsrange(start\_time, end\_time, '\[)') WITH &&
+    tsrange(start_time, end_time, '[)') WITH &&
 )
 // Filters which rows the constraint applies to
 WHERE (type IN (1, 2));
 
 // Constraint 2: Only applies to rows where type is 2 OR 3
-ALTER TABLE tracked\_entries
-ADD CONSTRAINT exclude\_type23\_overlap
+ALTER TABLE tracked_entries
+ADD CONSTRAINT exclude_type23_overlap
 EXCLUDE USING GIST (
-    tsrange(start\_time, end\_time, '\[)') WITH &&
+    tsrange(start_time, end_time, '[)') WITH &&
 )
 // Filters which rows the constraint applies to
 WHERE (type IN (2, 3));
