@@ -69,3 +69,45 @@ Handles the modal window for creating and editing entries:
   - Update an existing unwell entry
 - `DELETE /api/time/tracking/entries/{entryId}/soft-delete`
   - Delete an existing entry
+
+## Event-bus Pattern
+The time-tracker UI uses event-driven architecture for managing cross-component communication. This approach was chosen to avoid props drilling and coordinate opening modals, refreshing data, etc.
+
+All events are listed in EventMap interface, and these predefined events can be triggered or subscribed to:
+
+```typescript
+type EventMap = {
+  'ENTRY_MODAL:OPEN': unknown,
+  'ENTRY_MODAL:CLOSE': unknown,
+  ...
+}
+```
+
+The EventBus class manages event subscriptions and triggers using this Map of event names.
+
+For component-specific state or parent-child communication, we still use React's local state and props. The event bus complements React's component model, but doesn't replace it.
+
+### Usage Examples
+#### Triggering Events
+Components can trigger events without knowing which components are listening:
+```typescript
+  <button onClick={openEntryModalEvent}>
+```
+
+#### Subscribing to Events
+Components can subscribe to events and clean up when unmounting:
+```typescript
+  useEffect(() => {
+    const unsubscribeEntryModalOpen = eventBus.subscribe(`ENTRY_MODAL:OPEN`, () => {
+      setIsOpenModal(true)
+    })
+     
+    return () => {
+      unsubscribeEntryModalOpen()
+    }
+  }, [
+    isOpenModal,
+  ])
+```
+
+  
