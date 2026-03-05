@@ -30,16 +30,16 @@ Handles rendering the time tracker table, where users can:
 | **TimeTrackerTableContent** | Displays the table |
 
 **API Endpoints (TimeTrackerTableContainer):**
-- `GET /api/time/tracking/work-entries?startDate={startDate}&endDate={endDate}`
+- `GET /api/time/tracking/entries?startDate={startDate}&endDate={endDate}`
   - Returns a list of work entries for the given period
   - Parameters: `startDate` is the week start, `endDate` is the week end
-- `GET /api/time/tracking/work-entries/projects?startDate={startDate}&endDate={endDate}`
+- `GET /api/time/tracking/task-entries/projects?startDate={startDate}&endDate={endDate}`
   - Returns a list of projects for the period
   - Parameters: `startDate` is the week start, `endDate` is the week end
 
 ---
 
-#### 2. **work-entry-modal**
+#### 2. **entry-modal**
 Handles the modal window for creating and editing entries:
 - Entering activity details for a time period
 - Editing existing entries
@@ -48,15 +48,24 @@ Handles the modal window for creating and editing entries:
 
 | Layer | Purpose |
 |------|------------|
-| **WorkEntryModalState** | Manages the modal window's state |
-| **WorkEntryModalContainer** | Sends requests to create/update entries and get data |
-| **WorkEntryModalContent** | Displays the modal window |
+| **EntryModalState** | Manages the modal window's state |
+| **EntryModalContainer** | Sends requests to create/update entries and get data |
+| **EntryModalContent** | Displays the modal window |
 
-**API Endpoints (WorkEntryModalContainer):**
-- `GET /api/time/tracking/work-entries/projects?startDate={startDate}&endDate={endDate}`
+**API Endpoints:**
+
+- `GET /api/time/tracking/entries/startDate={startDate}&endDate={endDate}`
+  - Get a list of all entries for a period starting with startDate and ending on endDate
+- `GET /api/time/tracking/task-entries/projects?startDate={startDate}&endDate={endDate}`
   - Get a list of projects for a single day
   - Parameters: `startDate` and `endDate` take the same date, because we only need projects for one day
-- `POST /api/time/tracking/work-entries`
-  - Create a new work entry
-- `POST /api/time/tracking/work-entries/{id}`
+- `POST /api/time/tracking/task-entries`
+  - Create a new task entry
+- `POST /api/time/tracking/task-entries/{taskEntryId}`
   - Update an existing work entry
+- `POST /api/time/tracking/unwell-entries`
+  - Create a new unwell entry
+- `POST /api/time/tracking/unwell-entries/{unwellEntryId}`
+  - Update an existing unwell entry
+- `DELETE /api/time/tracking/entries/{entryId}/soft-delete`
+  - Delete an existing entry
