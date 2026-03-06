@@ -70,6 +70,120 @@ Handles the modal window for creating and editing entries:
 - `DELETE /api/time/tracking/entries/{entryId}/soft-delete`
   - Delete an existing entry
 
+## Strategy Pattern
+We have a number of entry types which have alike fields and methods. To avoid a lot of duplication, we use the strategy pattern which allows to define repeated parts, encapsulate each one in a separate object, and make them interchangeable.
+
+This is the type we have for EntryStrategy:
+
+```typescript
+export type EntryStrategy = { 
+  EntryContent: ReactNode,
+  validateOnClient: ({
+    entryState,
+  }: {
+    entryState: any,
+  }) => boolean,
+  createEntryAsync: ({
+    requestData,
+  }: {
+    requestData: any,
+  }) => Promise<unknown>,
+  updateEntryAsync: ({
+    id,
+    requestData,
+  }: {
+    id: number,
+    requestData: any,
+  }) => Promise<unknown>,
+}
+```
+This the implementation of the strategy for the **task** entry type:
+```typescript
+export const TASK_ENTRY_STRATEGY: EntryStrategy = {
+  EntryContent: <TaskEntryContent />,
+  validateOnClient: ({
+    entryState,
+  }: {
+    entryState: TaskEntryState,
+  }) => validateTaskEntry({
+    entryState, 
+  }),
+  createEntryAsync: ({
+    requestData,
+  }: {
+    requestData: CreateTaskEntryRequest,
+  }) => api.trackingCreateTaskEntry(requestData),
+  updateEntryAsync: ({
+    id,
+    requestData,
+  }: {
+    id: number,
+    requestData: UpdateTaskEntryRequest,
+  }) => api.trackingUpdateTaskEntry(id, requestData),
+}
+```
+This the implementation of the strategy for the **unwell** entry type:
+
+```typescript
+export const UNWELL_ENTRY_STRATEGY: EntryStrategy = {
+  EntryContent: <UnwellEntryContent />,
+  validateOnClient: () => true,
+  createEntryAsync: ({
+    requestData,
+  }: {
+    requestData: CreateUnwellEntryRequest,
+  }) => api.trackingCreateUnwellEntry(requestData),
+  updateEntryAsync: ({
+    id,
+    requestData,
+  }: {
+    id: number,
+    requestData: UpdateUnwellEntryRequest,
+  }) => api.trackingUpdateUnwellEntry(id, requestData),
+}
+```
+
+This is how all strategies are united in one object:
+
+```typescript
+export const ENTRY_TYPES_STRATEGY: Record<EntryType, EntryStrategy> = {
+  [EntryType.TASK]: TASK_ENTRY_STRATEGY,
+  [EntryType.UNWELL]: UNWELL_ENTRY_STRATEGY,
+}
+```
+
+This is how the strategy is used in the component in the submit method:
+```typescript
+  async function onSubmitEntry() {
+    const entryStrategy = ENTRY_TYPES_STRATEGY[type]
+
+    const isValid = entryStrategy.validateOnClient({
+      entryState,
+    })
+
+    if (!isValid) {
+      return
+    }
+    
+    try {
+      const requestData = ...,
+
+      if (id) {
+        await entryStrategy.updateEntryAsync({
+          id,
+          requestData,
+        })
+      }
+      else {
+        await entryStrategy.createEntryAsync({
+          requestData,
+        })
+      }
+    }
+    catch () {}
+  }
+```
+
 ## Event-bus Pattern
 The time-tracker UI uses event-driven architecture for managing cross-component communication. This approach was chosen to avoid props drilling and coordinate opening modals, refreshing data, etc.
 
