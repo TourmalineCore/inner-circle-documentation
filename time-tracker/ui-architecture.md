@@ -77,7 +77,7 @@ There are various entry types (e.g., task entry, unwell entry), each with its ow
 ## Strategy Pattern
 We have a number of entry types which have alike fields and methods. To avoid a lot of duplication, we use the strategy pattern which allows to define repeated parts, encapsulate each one in a separate object, and make them interchangeable.
 
-This is the type we have for EntryStrategy:
+This is the **type** we have for **EntryStrategy**:
 
 ```typescript
 export type EntryStrategy = { 
@@ -191,7 +191,7 @@ This is how the strategy is used in the component in the submit method:
 ## Event-bus Pattern
 The time-tracker UI uses event-driven architecture for managing cross-component communication. This approach was chosen to avoid props drilling, leave the sections loosely coupled and coordinate opening modals, refreshing data, etc.
 
-All events are listed in EventBusMap type, and these predefined events can be triggered or subscribed to:
+All events are listed in **EventBusMap type**, and these predefined events can be triggered or subscribed to:
 
 ```typescript
 type EventBusMap = {
@@ -201,7 +201,7 @@ type EventBusMap = {
 }
 ```
 
-The EventBus class manages event subscriptions and triggers using this Map of event names.
+The **EventBus class** manages event subscriptions and triggers using this Map of event names.
 
 For component-specific state or parent-child communication, we still use React's local state and props. The event bus complements React's component model, but doesn't replace it.
 
