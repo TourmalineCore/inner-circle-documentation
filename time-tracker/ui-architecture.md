@@ -12,12 +12,12 @@ Page for tracking time, containing the main time tracker components.
 The page consists of two sections:
 
 #### 1. **time-tracker-table**
-Handles rendering the time tracker table, where users can:
-- View existing entries
-- Log different events:
-  - Work tasks
+This layer pass data on current entry that is being created to EntryModal section.<br/>
+It handles rendering of the time tracker table with various entry types:
+  - Tasks
   - Absences
-  - Overtime / compensation time
+  - Overtime 
+  - Make-up time
   - Vacation
   - Sick leave, etc.
 
@@ -31,7 +31,7 @@ Handles rendering the time tracker table, where users can:
 
 **API Endpoints (TimeTrackerTableContainer):**
 - `GET /api/time/tracking/entries?startDate={startDate}&endDate={endDate}`
-  - Returns a list of work entries for the given period
+  - Returns a list of entries for the given period
   - Parameters: `startDate` is the week start, `endDate` is the week end
 - `GET /api/time/tracking/task-entries/projects?startDate={startDate}&endDate={endDate}`
   - Returns a list of projects for the period
@@ -42,7 +42,9 @@ Handles rendering the time tracker table, where users can:
 #### 2. **entry-modal**
 Handles the modal window for creating and editing entries:
 - Entering activity details for a time period
-- Editing existing entries
+- Updating existing entries
+- Copying existing entries
+- Deleting existing entries
 
 **Architecture Layers:**
 
@@ -51,6 +53,8 @@ Handles the modal window for creating and editing entries:
 | **EntryModalState** | Manages the modal window's state |
 | **EntryModalContainer** | Sends requests to create/update entries and get data |
 | **EntryModalContent** | Displays the modal window |
+
+There are various entry types (e.g., task entry, unwell entry), each with its own state and content.
 
 **API Endpoints:**
 
@@ -185,12 +189,12 @@ This is how the strategy is used in the component in the submit method:
 ```
 
 ## Event-bus Pattern
-The time-tracker UI uses event-driven architecture for managing cross-component communication. This approach was chosen to avoid props drilling and coordinate opening modals, refreshing data, etc.
+The time-tracker UI uses event-driven architecture for managing cross-component communication. This approach was chosen to avoid props drilling, leave the sections loosely coupled and coordinate opening modals, refreshing data, etc.
 
-All events are listed in EventMap interface, and these predefined events can be triggered or subscribed to:
+All events are listed in EventBusMap type, and these predefined events can be triggered or subscribed to:
 
 ```typescript
-type EventMap = {
+type EventBusMap = {
   'ENTRY_MODAL:OPEN': unknown,
   'ENTRY_MODAL:CLOSE': unknown,
   ...
@@ -205,12 +209,19 @@ For component-specific state or parent-child communication, we still use React's
 #### Triggering Events
 Components can trigger events without knowing which components are listening:
 ```typescript
+  const openEntryModalEvent = () => eventBus.trigger('ENTRY_MODAL:OPEN') 
+
   <button onClick={openEntryModalEvent}>
 ```
 
 #### Subscribing to Events
-Components can subscribe to events and clean up when unmounting:
+Components can subscribe to events and clean up when unmounting and resubsribe when isOpenModal state changes:
 ```typescript
+  const [
+    isOpenModal,
+    setIsOpenModal,
+  ] = useState(false) 
+
   useEffect(() => {
     const unsubscribeEntryModalOpen = eventBus.subscribe(`ENTRY_MODAL:OPEN`, () => {
       setIsOpenModal(true)
