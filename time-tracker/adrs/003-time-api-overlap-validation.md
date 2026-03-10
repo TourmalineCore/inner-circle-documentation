@@ -78,6 +78,7 @@ EXCLUDE USING GIST (
 )
 // Filters which rows the constraint applies to
 WHERE (type IN (2, 3));
+```
 
 ### Generating User-Friendly Errors
 
