@@ -11,6 +11,10 @@ Follow the installation steps in the wizard.
 
 >The printer only works via a wire.
 
+>If you face a security warning of the OS, go to *Settings -> Privacy & Security* and grant the necessary permission.
+
+<img src="./images/grant-permission-macos.png" alt="" width="50%"/>
+
 ## Add Printer
 
 1. In the System Preferences click the *Printers & Scanners*. Click *Add Printer, Scanner,...* to set up a printer.
