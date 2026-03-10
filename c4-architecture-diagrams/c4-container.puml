@@ -43,13 +43,13 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
 
         Boundary(TimeBoundary, "Time") {
             Container(TimeUI, "Time UI", "React/JS", "Pages for tracking and monitoring working time.")
-            Container(TimeAPI, "Time API", ".net 8", "API for for tracking and monitoring working time.")
+            Container(TimeAPI, "Time API", ".net 9", "API for for tracking and monitoring working time.")
             ContainerDb(TimeDB, "Time DB", "PostgreSQL", "Stores working time entries.")
         }
 
         Boundary(InvoicesBoundary, "Invoices") {
             Container(InvoicesUI, "Invoices UI", "React/JS", "Page for calculating invoices based on tracked time.")
-            Container(InvoicesAPI, "Invoices API", ".net 8", "API for calculating invoices based on tracked time.")
+            Container(InvoicesAPI, "Invoices API", ".net 9", "API for calculating invoices based on tracked time.")
         }
 
         Container(EmailSender, "Email Sender", ".net 8", "Sends emails to employees on corporate email.")
