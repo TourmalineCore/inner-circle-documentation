@@ -106,6 +106,7 @@ This approach should be scalable to make other products using this infra and app
 | inner-circle-books-api     |               4505              |    5505    |          6505         |          7505         |             8505            |             9505            |
 | inner-circle-employees-api     |               4506              |    5506    |          6506         |          7506         |             8506     | 9506
 | inner-circle-time-api      |               4507              |    5507    |          6507         |          7507         |             8507     | 9507
+| inner-circle-invoices-api      |               4508              |    5508    |          6508         |          7508         |             8508     | 9508
 
 ## 1. Layers Structure
 
