@@ -11,3 +11,4 @@
 | inner-circle-books-ui         |     done     |    ^18.2.0    |    ^7.1.9    |   ^5.9.3   |               +                |             -            |         +        |
 | inner-circle-layout-ui        |     done     |    ^18.2.0    |    ^7.1.9    |   ^5.9.3   |               not nedded       |             -            |                  |
 | inner-circle-time-ui          |     done     |    ^18.2.0    |    ^7.1.9    |   ^5.9.3   |               +                |             -            |         +        |
+| inner-circle-invoices-ui 
