@@ -40,6 +40,18 @@ To run Karate E2E tests execute the following script in Terminal:
 java -jar /karate.jar .
 ```
 
+
+### Generate HTML coverage report
+First you need to get an xml file, the commands for generating an xml file can be found in `calculate-tests-coverage-on-pull-request`:
+
+To generate HTML coverage report execute the following script in Terminal:
+
+```cli
+reportgenerator -reports:e2e-coverage.xml -targetdir:coverage-report   
+-reporttypes:Html
+```
+
+
 ### Migrations
 
 Go through [these](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) Migrations chapters to pick up some basic understanding of Migrations.
