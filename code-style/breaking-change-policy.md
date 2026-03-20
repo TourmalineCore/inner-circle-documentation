@@ -17,6 +17,39 @@ If you introduce a new requirement that must now be performed in the middle of a
 
 2. **Cosmetic and internal changes.** Fixing typos in documentation, internal refactoring, performance optimizations (if they don't change public behavior), updating dependencies (if they don't transitively break the public API).
 
+## Changes Breaking TypeScript Contract Detected by Lint
+We have a workflow that lints UI when a new js-client is published in PR so that we know that the new api changes are non-breaking from TypeScript contract point of view
+
+1. Removing a property from a response.
+Example: Removing name from ProjectDto causes TypeScript errors wherever UI code accesses this property.
+
+```text
+Error: src/pages/time-tracker/sections/entry-modal/sections/TaskEntry/TaskEntryContent.tsx(65,13): error TS2339: Property 'name' does not exist on type 'ProjectDto'.
+Error: src/pages/time-tracker/sections/time-tracker-table/components/EntryContent/EntryContent.tsx(15,28): error TS2339: Property 'name' does not exist on type 'ProjectDto'.
+Error: src/pages/time-tracker/sections/time-tracker-table/state/TimeTrackerTableState.cy.ts(19,9): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'ProjectDto'.
+```
+
+2. Renaming a response that is explicitly referred by the UI.
+Example: Renaming CreateUnwellEntryRequest to CreateUnwellEntryTestRequest causes import failures.
+
+```text
+Error: src/pages/time-tracker/sections/entry-modal/sections/UnwellEntry/strategy.tsx(1,10): error TS2724: '"@tourmalinecore/inner-circle-time-api-js-client"' has no exported member named 'CreateUnwellEntryRequest'. Did you mean 'CreateUnwellEntryTestRequest'?
+```
+
+Important: this is not a breaking change in HTTP contract. We simply renamed an internal class but its http contract was intact. In such case we can safely bypass this failure, merge it, and then migrate the UI to the new TypeScript types schema. That won't affect the runtime contract between API and UI.
+
+3. Renaming query parameters or removing endpoints.
+Example: Renaming startDate to startDateTest in a query parameter, and removing an endpoint like entries/{entryId}/soft-delete, causes TypeScript errors where the UI calls these functions.
+
+```text
+Error: src/pages/time-tracker/sections/entry-modal/sections/DeleteModal/DeleteModalContainer.tsx(36,15): error TS2551: Property 'trackingSoftDeleteEntry' does not exist on type '{ trackingGetEntriesByPeriod: (query: { startDateTest: string; endDate: string; }, params?: RequestParams | undefined) => Promise<AxiosResponse<GetEntriesByPeriodResponse, any, {}>>; ... 5 more ...; trackingHardDeleteEntry: (entryId: number, params?: RequestParams | undefined) => Promise<...>; }'. Did you mean 'trackingHardDeleteEntry'?
+Error: src/pages/time-tracker/sections/time-tracker-table/TimeTrackerTableContainer.tsx(58,9): error TS2353: Object literal may only specify known properties, and 'startDate' does not exist in type '{ startDateTest: string; endDate: string; }'.
+```
+
+## Changes NOT Detected by TypeScript Lint
+Endpoint path changes.
+If we change an endpoint path, it produces no errors in lint. Even though this is a breaking change in the contract, it cannot be caught with this lint, it is expected to be caught by the ui and/or api E2E tests.
+
 ## Conventional Commits Allowed Prefixes
 We need to allow only certain prefixes that lead to expected version bump and its commit.
 
