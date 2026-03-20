@@ -94,6 +94,7 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
 
     Rel(InvoicesUI, InvoicesAPI, "Makes API calls to", "REST")
     Rel(InvoicesAPI, TimeAPI, "Requests tracked hours and employee data", "REST")
+    Rel(InvoicesAPI, EmployeesAPI, "Requests employee name", "REST")
 
     Rel(EmailSender, MailBox, "Sends emails", "SMTP")
 
