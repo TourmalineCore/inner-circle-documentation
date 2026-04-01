@@ -7,12 +7,12 @@ Accepted (2026-04-01)
 We need to make it possible for time-api to provide data about total tracked hours by project for each employee to other API services.
 
 ## Decision
-Сделать калькулятор в сервисе time-api потому что time-api обладает всеми данными о затреканных часах сотрудника по всем проектам. 
+Implementing a calculator in the time-api service because time-api has all the data regarding tracked hours per employee across all projects.
 
 ## Consequences
-Сможем легко считать общее количество часов по задачи или другому типу entry и с помощью [internal запросов](../../adrs/002-internal-requests.md) отдавать необходимые данные другим API сервисам. Также эта логика будет находиться в одном месте и ее можно масштабировать под нужды других сервисов. 
+We will be able to easily calculate the total hours tracked as tasks or other entry types, and use [internal requests](../../adrs/002-internal-requests.md) to provide the necessary data to other API services. This logic will also be placed in a single location and can be scaled to meet the needs of other services.
 
 ## Alternatives
 
-### Получать данные по всем записям и на основе ним считать в конечном сервисе
-Это менее производительно по сравнению с выбранным решением т.к придется пересылать больший объем данных. И это также усложняет переиспользование этого функционала другими сервисами.
+### Retrieve all entries data and calculate total in the consuming service
+This is less efficient compared to the chosen solution, as it would require transferring a larger volume of data. It also makes it more difficult to reuse this functionality across other services.
