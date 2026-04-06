@@ -111,7 +111,7 @@ Disadvantages:
 1. The implicit absence of a date
 2. The risk of using an invalid date (1970)
 
-### Сделать date, start и end опциональными в типе 
+### Make date, start, and end optional in the type
 ```typescript
 type TrackedEntry = {
   id?: number,
