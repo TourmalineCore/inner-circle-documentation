@@ -120,7 +120,7 @@ type TrackedEntry = {
   project?: ProjectDto,
   description?: string,
   type?: EntryType,
-  date?: Date ,
+  date?: Date,
   start?: Date,
   end?: Date,
 }
