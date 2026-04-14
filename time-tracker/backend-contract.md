@@ -36,11 +36,11 @@ AND employeeId = @employeeId
 CREATE INDEX a ON tracked_entries
 ```
 
-## Endpoints
+## Tracking Endpoints 
 
 #### entries
 
-1. **GET** /api/time/tracking/entries?startDate={startDate}&endDate={endDate} - get list by period
+1. **GET** /api/tracking/entries?startDate={startDate}&endDate={endDate} - get list by period
 
 **Response body:**
 ```ts
@@ -68,7 +68,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2.  **DELETE** /api/time/tracking/entries/{entryId}/soft-delete - soft delete 
+2.  **DELETE** /api/tracking/entries/{entryId}/soft-delete - soft delete 
 **Request body:**
 ```ts
 {
@@ -78,7 +78,7 @@ CREATE INDEX a ON tracked_entries
 
 ## task-entries
 
-1. **POST** /api/time/tracking/task-entries - add task entry
+1. **POST** /api/tracking/task-entries - add task entry
 
 **Request body:**
 ```ts
@@ -101,7 +101,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-3. **POST** /api/time/tracking/task-entries/{id} - update task entry
+3. **POST** /api/tracking/task-entries/{id} - update task entry
 
 **Request body:**
 ```ts
@@ -118,7 +118,7 @@ CREATE INDEX a ON tracked_entries
 
 **Response body:** 200 OK
 
-4. **GET** /api/time/tracking/task-entries/projects?date={date} - get employee's projects
+4. **GET** /api/tracking/task-entries/projects?date={date} - get employee's projects
 
 **Response body:**
 
@@ -135,7 +135,7 @@ CREATE INDEX a ON tracked_entries
 
 #### unwell-entries
 
-1. **POST** /api/time/tracking/unwell-entries - add unwell entries
+1. **POST** /api/tracking/unwell-entries - add unwell entries
 
 **Request body:**
 ```ts
@@ -154,7 +154,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **POST** /api/time/tracking/unwell-entries/{id} - update unwell entry
+2. **POST** /api/tracking/unwell-entries/{id} - update unwell entry
 
 **Request body:**
 ```ts
@@ -162,6 +162,51 @@ CREATE INDEX a ON tracked_entries
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
+}
+```
+
+## Reporting Endpoints 
+
+1. **GET** /api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month}
+
+**Response body:**
+```c#
+{
+  trackedEntries: [
+    {
+      id: long,
+      trackedHoursPerDay: decimal,
+      startTime: DateTime,
+      endTime: DateTime,
+      hours: decimal,
+      entryType: int,
+      project?: {
+        id: long,
+        name: string,
+      },
+      task?: {
+        id: string,
+        title: string,
+      },
+      description?: string
+    }
+  ],
+  taskHours: decimal,
+  unwellHours: decimal
+}
+```
+
+2. **GET** /api/reporting/employees
+
+**Response body:**
+```c#
+{
+  Employees: [
+    {
+      id: long,
+      fullName: string,
+    }
+  ]
 }
 ```
 
