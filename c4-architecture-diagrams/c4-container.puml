@@ -91,6 +91,7 @@ Boundary(InnerCircleBoundary, "Inner Circle"){
 
     Rel(TimeUI, TimeAPI, "Makes API calls to", "REST")
     Rel(TimeAPI, TimeDB, "Read from and write to")
+    Rel(TimeAPI, EmployeesAPI, "Requests employees list data", "REST")
 
     Rel(InvoicesUI, InvoicesAPI, "Makes API calls to", "REST")
     Rel(InvoicesAPI, TimeAPI, "Requests tracked hours and employee data", "REST")
