@@ -19,6 +19,12 @@ We adopt a **five‑stage workflow** for new features invloving backend and fron
 4. Write happy‑path E2E tests against the agreed contract.  
 5. Actually implement backend logic.
 
+<!-- Move or replicate to the file with guidelines on processes when we have one -->
+### Notes on processes
+>PR review is supposed to take place within a short period of time after it was requested so that no tasks are blocked waiting for the feedback.
+
+>Flaky tests are the top priority if there aren't any urgent tasks, they should be fixed ASAP and not put away for later.
+
 ## Consequences
 ### Advantages
 1. Unblocks frontend at early stage.  
