@@ -1,7 +1,7 @@
 # Report: Time Tracking Calculation Error For Invoices
 
 ## Context
-After the implementation of the new logic for calculating tracked task hours, there were discrepancies in the invoices service for April. For example, the tracked time of the user (Yulia) changed from 7.16 hours (confirmed by manual calculation) to 7 hours in the system.
+After the implementation of the new logic for calculating tracked task hours, there were discrepancies in the invoices service for April. For example, the tracked time of employee Yulia changed from 7.16 hours (confirmed by manual calculation) to 7 hours in the system.
 
 ## Cause of error
 
