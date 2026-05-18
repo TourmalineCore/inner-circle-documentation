@@ -8,7 +8,6 @@ After the implementation of the new logic for calculating tracked task hours, th
 GetDurationInMinutes() returned an int for TrackedMinutes.
 
 ```c#
-// Old code - truncated seconds to whole minutes
 public int GetDurationInMinutes()
 {
     return (int)(EndTime - StartTime).TotalMinutes;
@@ -16,7 +15,6 @@ public int GetDurationInMinutes()
 ```
 
 ```c#
-// Old code - causes data loss
 TrackedHours = TrackedMinutes / 60  // int / int = int (decimal part discarded)
 ```
 
@@ -36,7 +34,6 @@ public decimal GetDurationInMinutes()
 ```
 
 ```c#
-// Old code - causes data loss
 TrackedHours = TrackedMinutes / 60  // decimal / int = decimal (decimal part not discarded)
 ```
 
