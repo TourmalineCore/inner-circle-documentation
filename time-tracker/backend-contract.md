@@ -36,14 +36,24 @@ AND employeeId = @employeeId
 CREATE INDEX a ON tracked_entries
 ```
 
+## Endpoints
+- [Tracking Endpoints](#tracking-endpoints)
+  - [Entries](#entries)
+  - [Task Entries](#task-entries)
+  - [Unwell Entries](#unwell-entries)
+- [Reporting Endpoints](#reporting-endpoints)
+- [Internal Endpoints](#internal-endpoints)
+
+---
+
 ## Tracking Endpoints 
 
-#### entries
+### entries
 
-1. **GET** /api/tracking/entries?startDate={startDate}&endDate={endDate} - get list by period
+1. **GET** /api/tracking/entries?startDate={startDate}&endDate={endDate} - return entries by period
 
 **Response body:**
-```ts
+```c#
 {
   workEntries: [
     {
@@ -70,18 +80,18 @@ CREATE INDEX a ON tracked_entries
 
 2.  **DELETE** /api/tracking/entries/{entryId}/soft-delete - soft delete 
 **Request body:**
-```ts
+```c#
 {
   deletionReason: string,
 }
 ``` 
 
-## task-entries
+### task-entries
 
 1. **POST** /api/tracking/task-entries - add task entry
 
 **Request body:**
-```ts
+```c#
 {
   title: string,
   taskId: string,
@@ -90,12 +100,11 @@ CREATE INDEX a ON tracked_entries
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
-  type: int,
 }
 ```
 
 **Response body:**
-```ts
+```c#
 {
   newTaskEntryId: long
 }
@@ -104,7 +113,7 @@ CREATE INDEX a ON tracked_entries
 3. **POST** /api/tracking/task-entries/{id} - update task entry
 
 **Request body:**
-```ts
+```c#
 {
   title: string,
   taskId: string,
@@ -118,11 +127,11 @@ CREATE INDEX a ON tracked_entries
 
 **Response body:** 200 OK
 
-4. **GET** /api/tracking/task-entries/projects?date={date} - get employee's projects
+4. **GET** /api/tracking/task-entries/projects?date={date} - return employee's projects
 
 **Response body:**
 
-```ts
+```c#
 {
   projects: [
     {
@@ -138,17 +147,16 @@ CREATE INDEX a ON tracked_entries
 1. **POST** /api/tracking/unwell-entries - add unwell entries
 
 **Request body:**
-```ts
+```c#
 {
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
-  type: int,
 }
 ```
 
 **Response body:**
-```ts
+```c#
 {
   newUnwellEntryId: long
 }
@@ -157,7 +165,7 @@ CREATE INDEX a ON tracked_entries
 2. **POST** /api/tracking/unwell-entries/{id} - update unwell entry
 
 **Request body:**
-```ts
+```c#
 {
   startTime: DateTime,
   endTime: DateTime,
@@ -167,7 +175,7 @@ CREATE INDEX a ON tracked_entries
 
 ## Reporting Endpoints 
 
-1. **GET** /api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month}
+1. **GET** /api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month} - return personal report 
 
 **Response body:**
 ```c#
@@ -196,12 +204,12 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **GET** /api/reporting/employees
+2. **GET** /api/reporting/employees - return employees
 
 **Response body:**
 ```c#
 {
-  Employees: [
+  employees: [
     {
       id: long,
       fullName: string,
@@ -209,6 +217,37 @@ CREATE INDEX a ON tracked_entries
   ]
 }
 ```
+
+## Internal endpoints
+
+1. **GET** /api/projects/tracked-task-hours?projectId={projectId}&startDate={startDate}&endDate={endDate} - return employees tracked task hours
+
+
+**Response body:**
+```c#
+{
+  employeesTrackedTaskHours: [
+    {
+      employeeId: long,
+      trackedHours: decimal,
+    }
+  ]
+}
+```
+
+2. **GET** /api/projects - Get all projects
+
+**Response body:**
+```c#
+{
+  projects: [
+    {
+      id: long,
+      name: string,
+    }
+  ]
+}
+``
 
 ## db diagram
 
