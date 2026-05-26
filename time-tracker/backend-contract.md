@@ -41,6 +41,7 @@ CREATE INDEX a ON tracked_entries
   - [Entries](#entries)
   - [Task Entries](#task-entries)
   - [Unwell Entries](#unwell-entries)
+  - [Away unpaid](#away-unpaid)
 - [Reporting Endpoints](#reporting-endpoints)
 - [Internal Endpoints](#internal-endpoints)
 
@@ -110,7 +111,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-3. **POST** /api/tracking/task-entries/{id} - update task entry
+2. **POST** /api/tracking/task-entries/{id} - update task entry
 
 **Request body:**
 ```c#
@@ -127,7 +128,7 @@ CREATE INDEX a ON tracked_entries
 
 **Response body:** 200 OK
 
-4. **GET** /api/tracking/task-entries/projects?date={date} - return employee's projects
+3. **GET** /api/tracking/task-entries/projects?date={date} - return employee's projects
 
 **Response body:**
 
@@ -170,6 +171,49 @@ CREATE INDEX a ON tracked_entries
   startTime: DateTime,
   endTime: DateTime,
   timeZoneId: string
+}
+```
+
+#### away-unpaid
+
+1. **POST** /api/tracking/away-unpaid-entries - add away unpaid entries
+
+**Request body:**
+```c#
+{
+  description: string, // or awayReason
+  startTime: DateTime,
+  endTime: DateTime,
+  makeUpTime: [
+    {
+      startTime: DateTime,
+      endTime: DateTime,
+    }
+  ]
+}
+```
+
+**Response body:**
+```c#
+{
+  newAwayUnpaidEntryId: long
+}
+```
+
+2. **POST** /api/tracking/away-unpaid-entries/{id} - update away unpaid entry
+
+**Request body:**
+```c#
+{
+  description: string, // or awayReason
+  startTime: DateTime,
+  endTime: DateTime,
+  makeUpTime: [
+    {
+      startTime: DateTime,
+      endTime: DateTime,
+    }
+  ]
 }
 ```
 
