@@ -41,7 +41,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
 
     public string Description { get; set; }
 
-    public List<MakeUpTimeEntry> MakeUpTime { get; set; }
+    public List<MakeUpTimeEntry> MakeUpTimeList { get; set; }
 }
 ```
 
