@@ -5,7 +5,9 @@
 Need to design tracking of Away (Unpaid) Entry feature. 
 
 ## Entries model
-Дописать причину почему для Make Up Time требуется отдельная модель (валидация на уровне БД). Не будет иметь собственных эндпоинтов, будет создаваться в других. 
+We will have a separate model for Make Up Time entry which will be validated at the database level.
+It will have different rules of validation in comparison with other entries, e.g. it can overlap with a Task entry, whereas Away entry cannot overlap with a Task entry (for the full list see [ADR on overlap validation](003-time-api-overlap-validation.md)).
+Make Up Time entry will not have its own endpoints, because it will be created in a parent entry (in this case Away entry) when calling this parent's endpoints for create/update.
 
 ### Make Up Time Entry
 
@@ -19,7 +21,6 @@ public class MakeUpTimeEntry : TrackedEntryBase
     {
         Type = EntryType.MakeUpTime;
     }
-
 
     public long ParentEntryId { get; set; }
 }
@@ -46,7 +47,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
 
 ## Endpoints
 
-1. **POST** /api/tracking/away-unpaid-entries - add away unpaid entries
+1. **POST** `/api/tracking/away-unpaid-entries` - add Away (unpaid) entry
 
 **Request body:**
 ```c#
@@ -54,7 +55,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
   description: string, // or awayReason
   startTime: DateTime,
   endTime: DateTime,
-  makeUpTime: [
+  makeUpTimeList: [
     {
       startTime: DateTime,
       endTime: DateTime,
@@ -70,7 +71,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
 }
 ```
 
-2. **POST** /api/tracking/away-unpaid-entries/{id} - update away unpaid entry
+2. **POST** `/api/tracking/away-unpaid-entries/{id}` - update Away (unpaid) entry
 
 **Request body:**
 ```c#
@@ -78,7 +79,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
   description: string, // or awayReason
   startTime: DateTime,
   endTime: DateTime,
-  makeUpTime: [
+  makeUpTimeList: [
     {
       startTime: DateTime,
       endTime: DateTime,
@@ -90,7 +91,7 @@ public class AwayUnpaidEntry : TrackedEntryBase
 ## Validation
 
 1. Add new migrations with updated overlap constraint.
-2. Make sure make up time is equal to away unpaid time.
+2. Make sure make up time is equal to away unpaid time. These checks will be made on the level of Handler (or maybe separate validator?).
 
 ## Testing strategy
 
@@ -101,18 +102,18 @@ Cases:
 
 Steps:
 - Authorization under an account without permissions
-- Call **POST** /api/tracking/away-unpaid-entries and check response status it should be 403
-- Call **POST** /api/tracking/away-unpaid-entries/{id} and check response status it should be 403
+- Call **POST** `/api/tracking/away-unpaid-entries` and check response status it should be 403
+- Call **POST** `/api/tracking/away-unpaid-entries/{id}` and check response status it should be 403
 
 2. Happy path 
 
 Steps:
 - Authorization under an account with all permissions
-- Call **POST** /api/tracking/away-unpaid-entries to add away paid entry
-- Call **POST** /api/tracking/away-unpaid-entries/{id} to update away paid entry
-- Call **GET** /api/tracking/entries to verify added away paid entry
-- Call **DELETE** /api/tracking/entries to hard delete the away unpaid entry
-- Call **GET** /api/tracking/entries to verify that away unpaid entry was deleted
+- Call **POST** `/api/tracking/away-unpaid-entries` to add Away unpaid entry
+- Call **POST** `/api/tracking/away-unpaid-entries/{id}` to update Away unpaid entry
+- Call **GET** `/api/tracking/entries` to verify added Away unpaid entry with related Make-up entry/entries
+- Call **DELETE** `/api/tracking/entries/{id}/hard-delete` to hard delete the Away unpaid entry with related Make-up entry/entries
+- Call **GET** `/api/tracking/entries` to verify that Away unpaid entry with related Make-up entry/entries were deleted
 
 ### Integration tests
 
@@ -122,6 +123,13 @@ Cases:
 3. Make up time can overlap with task entries
 4. Make up time cannot overlap with unwell entries
 5. Make up time cannot overlap with away unpaid entries
+
+### Unit tests
+
+Cases:
+1. Check exception message in case Make up time slot (or sum of slots if there are more than one Make up time slot) is not equal to Away unpaid time.
+
+Exception message: `Away time must be equal to Make-up time.`
 
 ## Out Of Scope
 Update personal report
