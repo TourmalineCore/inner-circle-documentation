@@ -41,7 +41,7 @@ CREATE INDEX a ON tracked_entries
   - [Entries](#entries)
   - [Task Entries](#task-entries)
   - [Unwell Entries](#unwell-entries)
-  - [Away unpaid](#away-unpaid)
+  - [Away (unpaid)](#away-unpaid)
 - [Reporting Endpoints](#reporting-endpoints)
 - [Internal Endpoints](#internal-endpoints)
 
@@ -51,7 +51,7 @@ CREATE INDEX a ON tracked_entries
 
 ### entries
 
-1. **GET** /api/tracking/entries?startDate={startDate}&endDate={endDate} - return entries by period
+1. **GET** `/api/tracking/entries?startDate={startDate}&endDate={endDate}` - return entries by period
 
 **Response body:**
 ```c#
@@ -79,7 +79,8 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2.  **DELETE** /api/tracking/entries/{entryId}/soft-delete - soft delete 
+2.  **DELETE** `/api/tracking/entries/{entryId}/soft-delete` - soft delete 
+
 **Request body:**
 ```c#
 {
@@ -89,7 +90,7 @@ CREATE INDEX a ON tracked_entries
 
 ### task-entries
 
-1. **POST** /api/tracking/task-entries - add task entry
+1. **POST** `/api/tracking/task-entries` - add Task entry
 
 **Request body:**
 ```c#
@@ -111,7 +112,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **POST** /api/tracking/task-entries/{id} - update task entry
+2. **POST** `/api/tracking/task-entries/{id}` - update Task entry
 
 **Request body:**
 ```c#
@@ -128,7 +129,7 @@ CREATE INDEX a ON tracked_entries
 
 **Response body:** 200 OK
 
-3. **GET** /api/tracking/task-entries/projects?date={date} - return employee's projects
+3. **GET** `/api/tracking/task-entries/projects?date={date}` - return employee's projects
 
 **Response body:**
 
@@ -145,7 +146,7 @@ CREATE INDEX a ON tracked_entries
 
 #### unwell-entries
 
-1. **POST** /api/tracking/unwell-entries - add unwell entries
+1. **POST** `/api/tracking/unwell-entries` - add Unwell entries
 
 **Request body:**
 ```c#
@@ -163,7 +164,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **POST** /api/tracking/unwell-entries/{id} - update unwell entry
+2. **POST** `/api/tracking/unwell-entries/{id}` - update Unwell entry
 
 **Request body:**
 ```c#
@@ -176,7 +177,7 @@ CREATE INDEX a ON tracked_entries
 
 #### away-unpaid
 
-1. **POST** /api/tracking/away-unpaid-entries - add away unpaid entries
+1. **POST** `/api/tracking/away-unpaid-entries` - add Away (unpaid) entry
 
 **Request body:**
 ```c#
@@ -184,7 +185,7 @@ CREATE INDEX a ON tracked_entries
   description: string, // or awayReason
   startTime: DateTime,
   endTime: DateTime,
-  makeUpTime: [
+  makeUpTimeList: [
     {
       startTime: DateTime,
       endTime: DateTime,
@@ -200,7 +201,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **POST** /api/tracking/away-unpaid-entries/{id} - update away unpaid entry
+2. **POST** `/api/tracking/away-unpaid-entries/{id}` - update Away (unpaid) entry
 
 **Request body:**
 ```c#
@@ -208,7 +209,7 @@ CREATE INDEX a ON tracked_entries
   description: string, // or awayReason
   startTime: DateTime,
   endTime: DateTime,
-  makeUpTime: [
+  makeUpTimeList: [
     {
       startTime: DateTime,
       endTime: DateTime,
@@ -219,7 +220,7 @@ CREATE INDEX a ON tracked_entries
 
 ## Reporting Endpoints 
 
-1. **GET** /api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month} - return personal report 
+1. **GET** `/api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month}` - return personal report 
 
 **Response body:**
 ```c#
@@ -248,7 +249,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **GET** /api/reporting/employees - return employees
+2. **GET** `/api/reporting/employees` - return employees
 
 **Response body:**
 ```c#
@@ -264,7 +265,7 @@ CREATE INDEX a ON tracked_entries
 
 ## Internal endpoints
 
-1. **GET** /api/projects/tracked-task-hours?projectId={projectId}&startDate={startDate}&endDate={endDate} - return employees tracked task hours
+1. **GET** `/api/projects/tracked-task-hours?projectId={projectId}&startDate={startDate}&endDate={endDate}` - return employees tracked task hours
 
 
 **Response body:**
@@ -279,7 +280,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **GET** /api/projects - Get all projects
+2. **GET** `/api/projects` - Get all projects
 
 **Response body:**
 ```c#
