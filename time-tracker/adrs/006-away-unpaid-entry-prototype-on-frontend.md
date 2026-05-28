@@ -4,7 +4,25 @@
 Need to design tracking of Away (Unpaid) Entry feature. 
 
 ## Folder Structure
-src/pages/time-tracker/sections/entry-modal/sections/AwayUnpaidEntry/AwayUnpaidEntryContent.tsx
+
+
+```bash
+src/
+└── pages/
+    └── time-tracker/
+        └── sections/
+            └── entry-modal/
+                └── sections/
+                    └── AwayUnpaidEntry
+                        └── state
+                            └── AwayUnpaidEntryState.ts
+                            └── AwayUnpaidEntryState.cy.ts
+                            └── AwayUnpaidEntryContext.ts
+                        └── strategy.tsx
+                        └── AwayUnpaidEntryContent.tsx
+                        └── AwayUnpaidEntry.cy.tsx
+                        └── AwayUnpaidEntry.scss
+```
 
 ## Testing strategy
 
