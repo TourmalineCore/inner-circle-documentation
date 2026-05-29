@@ -154,6 +154,21 @@ All methods that return tasks must end with `Async`.
 public async Task DoSomethingAsync()
 ```
 
+### Lists
+When naming collections (lists, arrays), use plural nouns — not the singular + List suffix.
+
+| ✅ Correct | ❌ Incorrect |
+|-----------|-------------|
+| `Users` | `UserList` |
+| `Transactions` | `TransactionList` |
+
+But if the noun is uncountable (e.g. time, money, knowledge, information, equipment, traffic, etc.), use the singular + List suffix
+
+| ✅ Correct | ❌ Incorrect |
+|-----------|-------------|
+| `MakeUpTimeList` | `MakeUpTimes` |
+| `EquipmentList` | `Equipments` |
+
 
 ## 4. Controller Responses Naming
 
