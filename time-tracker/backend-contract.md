@@ -6,8 +6,8 @@
 
 Events:
 - Task
-- Away (unpaid)
-- Away (paid)
+- Away (with make-up time)
+- Away (with make-up time)
 - Late
 - Unwell
 - Make-up time
@@ -41,13 +41,14 @@ CREATE INDEX a ON tracked_entries
   - [Entries](#entries)
   - [Task Entries](#task-entries)
   - [Unwell Entries](#unwell-entries)
-  - [Away (unpaid)](#away-unpaid)
+  - [Away With Make-Up Time](#away-with-make-up-time)
 - [Reporting Endpoints](#reporting-endpoints)
 - [Internal Endpoints](#internal-endpoints)
 
 ---
 
 ## Tracking Endpoints 
+We made a decision to split endpoints by entry type to have strict, predictable contract. With separate endpoints for each entry type, every field in the contract can be required and non-nullable because there's no need to accommodate multiple schemas in one payload.
 
 ### entries
 
@@ -175,14 +176,15 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-#### away-unpaid
+#### away-with-make-up-time
 
-1. **POST** `/api/tracking/away-unpaid-entries` - add Away (unpaid) entry
+1. **POST** `/api/tracking/away-with-make-up-time-entries` - add Away With Make-Up Time entry
 
 **Request body:**
 ```c#
 {
-  description: string, // or awayReason
+  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
+  description: string,
   startTime: DateTime,
   endTime: DateTime,
   makeUpTimeList: [
@@ -197,16 +199,17 @@ CREATE INDEX a ON tracked_entries
 **Response body:**
 ```c#
 {
-  newAwayUnpaidEntryId: long
+  newAwayWithMakeUpTimeEntryId: long
 }
 ```
 
-2. **POST** `/api/tracking/away-unpaid-entries/{id}` - update Away (unpaid) entry
+2. **POST** `/api/tracking/away-with-make-up-time-entries/{id}` - update Away With Make-Up Time entry
 
 **Request body:**
 ```c#
 {
-  description: string, // or awayReason
+  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
+  description: string,
   startTime: DateTime,
   endTime: DateTime,
   makeUpTimeList: [
