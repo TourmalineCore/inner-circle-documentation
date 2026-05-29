@@ -133,6 +133,39 @@ Cases:
 
 Exception message: `Away time must be equal to Make-up time.`
 
+## Use Cases for e2e Tests
+
+1. 
+```
+GIVEN time-tracker page, 
+WHEN add Away With Make-Up Time card with one Make-Up Time slot, 
+SHOULD create this card and one Make-Up Time card in time-tracker 
+```
+
+2. 
+```
+GIVEN time-tracker page, 
+WHEN add Away With Make-Up Time card with two Make-Up Time slots, 
+SHOULD create this card and two Make-Up Time cards in time-tracker 
+```
+
+Maybe it is worth uniting use cases 1 & 2.
+
+3.
+``` 
+GIVEN an Away entry with two Make-Up Time slots,
+WHEN track Task into first Make-Up Time slot,
+THEN update date of this Make-Up Time slot
+SHOULD display the Task on the same slot and move Make-Up Time card to the new date 
+```
+
+4.
+```
+GIVEN an Away entry with two Make-Up Time slots,
+WHEN update Away entry start time and end time without changing its duration,
+SHOULD move Away card to the new time and leave Make-Up Time slots untouched
+```
+
 ## Out Of Scope
 Update personal report
 Why?
