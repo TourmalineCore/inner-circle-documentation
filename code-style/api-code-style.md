@@ -157,14 +157,14 @@ public async Task DoSomethingAsync()
 ### Lists
 When naming collections (lists, arrays), use plural nouns — not the singular + List suffix.
 
-| ✅ Correct | ❌ Incorrect |
+| Correct | Incorrect |
 |-----------|-------------|
 | `Users` | `UserList` |
 | `Transactions` | `TransactionList` |
 
 But if the noun is uncountable (e.g. time, money, knowledge, information, equipment, traffic, etc.), use the singular + List suffix
 
-| ✅ Correct | ❌ Incorrect |
+| Correct | Incorrect |
 |-----------|-------------|
 | `MakeUpTimeList` | `MakeUpTimes` |
 | `EquipmentList` | `Equipments` |
