@@ -135,11 +135,18 @@ Exception message: `Away time must be equal to Make-up time.`
 
 ## Use Cases for e2e Tests
 
+Cypress Happy path
 1. 
 ```
 GIVEN time-tracker page, 
 WHEN add Away With Make-Up Time card with one Make-Up Time slot, 
 SHOULD create this card and one Make-Up Time card in time-tracker 
+```
+or
+```
+I was away one hour
+I will Make-Up for it today after my working hours
+I did as it planned
 ```
 
 2. 
@@ -155,8 +162,23 @@ Maybe it is worth uniting use cases 1 & 2.
 ``` 
 GIVEN an Away entry with two Make-Up Time slots,
 WHEN track Task into first Make-Up Time slot,
-THEN update date of this Make-Up Time slot
+AND update date of this Make-Up Time slot
 SHOULD display the Task on the same slot and move Make-Up Time card to the new date 
+```
+
+Karate Happy path
+```
+I was away two hours
+I want Make-Up 30 minutes tomorrow and 1:30 day after tomorrow
+Then i realized that i can't Make-up tomorrow and want to move this 30 minutes Make-Up to another day 
+```
+
+```
+I plan to be away tommorow from for 4PM to 5PM
+I will Make-Up in advance today
+I Made-Up as planned
+But my away reason was cancelled and thus I will not be away (I delete it)
+And my task tracked yesterday remains untouched  
 ```
 
 4.
