@@ -1,6 +1,6 @@
 # QR Printing In Windows OS
 
-[Drivers](..\qr-printing\TSC-11.6.0.zip)
+[Drivers](./TSC-11.6.0.zip)
 
 
 >The printer only works via a wire.
