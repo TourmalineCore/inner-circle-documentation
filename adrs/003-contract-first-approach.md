@@ -14,7 +14,7 @@ Moreover, we pursue a **Test‑Driven Development (TDD) approach** in the team. 
 We adopt a **five‑stage workflow** for new features invloving backend and frontend collaboration:
 
 1. Design and agree on the contract 
-2. Deploy the pure contract on the backend – no business logic, only mock implementation of endpoints for requests and responses. This unblocks frontend development.  
+2. Deploy the pure contract on the backend – no business logic, only mock implementation of endpoints for requests and responses. This is done to publish a js-client package, so that it unblocks frontend development.
 3. Discuss and agree on the testing strategy for the new functionality.  
 4. Write happy‑path E2E tests against the agreed contract.  
 5. Actually implement backend logic.
