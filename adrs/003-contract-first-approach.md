@@ -1,7 +1,7 @@
 # 005: Contract‑First Approach to Feature Design with Backend and Frontend Collaboration
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 One of the principles we follow when we start working on a feature is that API contract should be agreed upon before implementation, to avoid rework and late discovery of mismatches. 
