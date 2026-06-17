@@ -1,7 +1,6 @@
 # 005: Away With Make-Up Time Entry Prototype (Backend)
 
 ## Context
-
 Need to design tracking of ***Away With Make-Up Time*** entry feature. 
 
 ## Entries model
