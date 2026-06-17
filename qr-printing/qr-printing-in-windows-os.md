@@ -1,6 +1,6 @@
 # QR Printing In Windows OS
 
-Drivers - https://kaywa.me/ipx1s
+[Drivers](./TSC-11.6.0.zip)
 
 
 >The printer only works via a wire.
