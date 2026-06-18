@@ -6,8 +6,8 @@
 
 Events:
 - Task
-- Away (unpaid)
-- Away (paid)
+- Away (with make-up time)
+- Away (with make-up time)
 - Late
 - Unwell
 - Make-up time
@@ -41,16 +41,18 @@ CREATE INDEX a ON tracked_entries
   - [Entries](#entries)
   - [Task Entries](#task-entries)
   - [Unwell Entries](#unwell-entries)
+  - [Away With Make-Up Time](#away-with-make-up-time)
 - [Reporting Endpoints](#reporting-endpoints)
 - [Internal Endpoints](#internal-endpoints)
 
 ---
 
 ## Tracking Endpoints 
+We made a decision to split endpoints by entry type to have strict, predictable contract. With separate endpoints for each entry type, every field in the contract can be required and non-nullable because there's no need to accommodate multiple schemas in one payload.
 
 ### entries
 
-1. **GET** /api/tracking/entries?startDate={startDate}&endDate={endDate} - return entries by period
+1. **GET** `/api/tracking/entries?startDate={startDate}&endDate={endDate}` - return entries by period
 
 **Response body:**
 ```c#
@@ -78,7 +80,8 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2.  **DELETE** /api/tracking/entries/{entryId}/soft-delete - soft delete 
+2.  **DELETE** `/api/tracking/entries/{entryId}/soft-delete` - soft delete 
+
 **Request body:**
 ```c#
 {
@@ -88,7 +91,7 @@ CREATE INDEX a ON tracked_entries
 
 ### task-entries
 
-1. **POST** /api/tracking/task-entries - add task entry
+1. **POST** `/api/tracking/task-entries` - add Task entry
 
 **Request body:**
 ```c#
@@ -110,7 +113,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-3. **POST** /api/tracking/task-entries/{id} - update task entry
+2. **POST** `/api/tracking/task-entries/{id}` - update Task entry
 
 **Request body:**
 ```c#
@@ -127,7 +130,7 @@ CREATE INDEX a ON tracked_entries
 
 **Response body:** 200 OK
 
-4. **GET** /api/tracking/task-entries/projects?date={date} - return employee's projects
+3. **GET** `/api/tracking/task-entries/projects?date={date}` - return employee's projects
 
 **Response body:**
 
@@ -144,7 +147,7 @@ CREATE INDEX a ON tracked_entries
 
 #### unwell-entries
 
-1. **POST** /api/tracking/unwell-entries - add unwell entries
+1. **POST** `/api/tracking/unwell-entries` - add Unwell entries
 
 **Request body:**
 ```c#
@@ -162,7 +165,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **POST** /api/tracking/unwell-entries/{id} - update unwell entry
+2. **POST** `/api/tracking/unwell-entries/{id}` - update Unwell entry
 
 **Request body:**
 ```c#
@@ -173,9 +176,54 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
+#### away-with-make-up-time
+
+1. **POST** `/api/tracking/away-with-make-up-time-entries` - add Away With Make-Up Time entry
+
+**Request body:**
+```c#
+{
+  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
+  description: string,
+  startTime: DateTime,
+  endTime: DateTime,
+  makeUpTimeList: [
+    {
+      startTime: DateTime,
+      endTime: DateTime,
+    }
+  ]
+}
+```
+
+**Response body:**
+```c#
+{
+  newAwayWithMakeUpTimeEntryId: long
+}
+```
+
+2. **POST** `/api/tracking/away-with-make-up-time-entries/{id}` - update Away With Make-Up Time entry
+
+**Request body:**
+```c#
+{
+  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
+  description: string,
+  startTime: DateTime,
+  endTime: DateTime,
+  makeUpTimeList: [
+    {
+      startTime: DateTime,
+      endTime: DateTime,
+    }
+  ]
+}
+```
+
 ## Reporting Endpoints 
 
-1. **GET** /api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month} - return personal report 
+1. **GET** `/api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month}` - return personal report 
 
 **Response body:**
 ```c#
@@ -204,7 +252,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **GET** /api/reporting/employees - return employees
+2. **GET** `/api/reporting/employees` - return employees
 
 **Response body:**
 ```c#
@@ -220,7 +268,7 @@ CREATE INDEX a ON tracked_entries
 
 ## Internal endpoints
 
-1. **GET** /api/projects/tracked-task-hours?projectId={projectId}&startDate={startDate}&endDate={endDate} - return employees tracked task hours
+1. **GET** `/api/projects/tracked-task-hours?projectId={projectId}&startDate={startDate}&endDate={endDate}` - return employees tracked task hours
 
 
 **Response body:**
@@ -235,7 +283,7 @@ CREATE INDEX a ON tracked_entries
 }
 ```
 
-2. **GET** /api/projects - Get all projects
+2. **GET** `/api/projects` - Get all projects
 
 **Response body:**
 ```c#

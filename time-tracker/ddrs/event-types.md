@@ -14,8 +14,8 @@ This document doesn’t specify event states and delete process. You can find th
 
 Events:
 1. Task
-2. Away (unpaid)
-3. Away (paid)
+2. Away (with make-up time)
+3. Away (without make-up time)
 4. Late
 5. Unwell
 6. Make-up time
@@ -50,7 +50,7 @@ Contains:
 7. Time spent (required field).
 8. "Add Task" button.
 
-### Away (unpaid)
+### Away (With Make-Up Time)
 Time spent away from work for a personal reason that needs to be compensated for, timewise. Example: urgent need to leave, doctor's appointment, family reasons.
 
 Contains:
@@ -62,7 +62,7 @@ Contains:
 6. "Add more make-up time" button.
 7. "Add" button.
 
-### Away (paid)
+### Away (Without Make-Up Time)
 Time spent away from work for a reason agreed with the management that does not need to be compensated for. Example: corporate or study issues.
 
 Contains:
@@ -83,7 +83,7 @@ Contains:
 6. "Add more make-up time" button.
 7. "Add" button.
 
-Late event now has the same structure as Unpaid Away, but we make it separate for the future.
+Late event now has the same structure as Away With Make-Up Time, but we make it separate for the future.
 
 In the future we will think on how to track being late very quickly and easily (perhaps it will be very different from tracking other events), so now we are laying down the logic that being late is a separate event.
 
