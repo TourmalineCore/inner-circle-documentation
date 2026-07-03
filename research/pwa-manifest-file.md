@@ -33,10 +33,10 @@ Leaving only one manifest file in e.g. *layout-ui* or *employees-ui* has no effe
 
 Example Configuration:
   URL Structure:
-    https://innercircle.com/          # Root with unified manifest
-    https://innercircle.com/documents # Documents service
-    https://innercircle.com/employees # Employees service
-    https://innercircle.com/auth      # Auth service
+    http://localhost:30090/          # Root with unified manifest
+    http://localhost:30090/documents # Documents service
+    http://localhost:30090/employees # Employees service
+    http://localhost:30090/auth      # Auth service
 
 2. Next.js as shell app
 Next.js provides routing capabilities and could potentially serve as the shell/container app. Needs configuration to handle cross-service navigation while maintaining PWA context.
