@@ -37,7 +37,7 @@ public class MakeUpTimeEntry : TrackedEntryBase
 {
     public MakeUpTimeEntry()
     {
-        Type = EntryType.MakeUpTime;
+        EntryType = EntryType.MakeUpTime;
     }
 
     public long RelatedEntryId { get; set; }
@@ -67,7 +67,7 @@ public class MakeUpTimeEntry : TrackedEntryBase
 {
     public MakeUpTimeEntry()
     {
-        Type = EntryType.MakeUpTime;
+        EntryType = EntryType.MakeUpTime;
     }
 
     public long AwayWithMakeUpTimeEntryId { get; set; }
@@ -86,7 +86,7 @@ public class AwayWithMakeUpTimeEntry : TrackedEntryBase
 {
     public AwayWithMakeUpTimeEntry()
     {
-        Type = EntryType.AwayWithMakeUpTime;
+        EntryType = EntryType.AwayWithMakeUpTime;
     }
 
     public string Description { get; set; }
