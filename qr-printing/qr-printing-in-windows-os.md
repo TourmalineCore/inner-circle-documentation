@@ -1,7 +1,8 @@
 # QR Printing In Windows OS
 
-Drivers - https://kaywa.me/ipx1s
+## Installing the driver
 
+1. Install Windows driver from the drives folder
 
 >The printer only works via a wire.
 

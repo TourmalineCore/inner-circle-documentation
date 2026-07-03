@@ -1,6 +1,8 @@
 # QR Printing In MacOS
 
-Drivers - https://kaywa.me/ipx1s
+## Installing the driver
+
+1. Install MAC driver from the drives folder
 
 Currently, the installer package for MacOS can be found here:
 */TSC/MAC Driver/tsc-11.29-install*
