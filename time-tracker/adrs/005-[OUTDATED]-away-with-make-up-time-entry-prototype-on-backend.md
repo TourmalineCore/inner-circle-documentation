@@ -1,5 +1,8 @@
 # 005: Away With Make-Up Time Entry Prototype (Backend)
 
+## Status
+Outdated 
+
 ## Context
 Need to design tracking of ***Away With Make-Up Time*** entry feature. 
 
@@ -46,60 +49,19 @@ public class AwayWithMakeUpTimeEntry : TrackedEntryBase
 
 ## Endpoints
 
-1. **POST** `/api/tracking/away-with-make-up-time-entries` - add Away With Make-Up Time entry
-
-**Request body:**
-```c#
-{
-  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
-  description: string, 
-  startTime: DateTime,
-  endTime: DateTime,
-  makeUpTimeList: [
-    {
-      startTime: DateTime,
-      endTime: DateTime,
-    }
-  ]
-}
-```
-
-**Response body:**
-```c#
-{
-  newAwayWithMakeUpTimeEntryId: long
-}
-```
-
-2. **POST** `/api/tracking/away-with-make-up-time-entries/{id}` - update Away With Make-Up Time entry
-
-**Request body:**
-```c#
-{
-  // we discarded the idea to call this field "awayReason" in favor of consistency across all entry types
-  description: string,
-  startTime: DateTime,
-  endTime: DateTime,
-  makeUpTimeList: [
-    {
-      startTime: DateTime,
-      endTime: DateTime,
-    }
-  ]
-}
-```
+[Away With Make-Up Time Endpoints](../backend-contract.md#away-with-make-up-time)
 
 ## Validation
 
 1. Add new migrations with updated overlap constraint.
-2. Make sure Make-Up Time is equal to Away With Make-Up Time. These checks will be made on the level of Handler (or maybe separate validator?).
+2. Make sure Make-Up Time is equal to Away With Make-Up Time. These checks will be made on the level of Handler.
 
 ## Testing Strategy
 
 ### E2E Karate Tests
 
 Cases:
-1. No Permissions Lead to Unauthorized
+1. No Permissions Lead to Unauthorized (403 error)
 
 Steps:
 - Authorization under an account without permissions
@@ -130,7 +92,7 @@ Cases:
 Cases:
 1. Check exception message in case Make-up Time slot (or sum of slots if there are more than one Make-up Time slot) is not equal to Away With Make-Up Time time.
 
-Exception message: `Away time must be equal to Make-up time.`
+Exception message: `Total make-up time must equal your away time. Please check and adjust your entries.`
 
 ## Use Cases for e2e Tests
 
