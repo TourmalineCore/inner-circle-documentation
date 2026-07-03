@@ -1,7 +1,7 @@
 # 006: Make-Up Entry Relations with Other Entries (Backend)
 
 ## Status
-Proposed (2026-06-17)
+Accepted (2026-06-17)
 
 ## Context
 Make-up entry can be related to several different entries (e.g. Away With Make-Up Time, Day-Off, Late).
