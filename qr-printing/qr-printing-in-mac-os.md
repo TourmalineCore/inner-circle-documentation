@@ -2,7 +2,7 @@
 
 ## Installing the driver
 
-1. Install MAC driver from the drives folder
+1. Install [MAC driver](./drivers/Linux%20Driver/Linux64_v1.2.13/barcodedriver-1.2.13-x86_64.tar.gz)
 
 Currently, the installer package for MacOS can be found here:
 */TSC/MAC Driver/tsc-11.29-install*

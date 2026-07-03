@@ -2,7 +2,7 @@
 
 ## Installing the driver
 
-1. Install Windows driver from the drives folder
+1. Install [Windows driver](./drivers/Windows%20Driver/TSC_11.11.1.zip)
 
 >The printer only works via a wire.
 
