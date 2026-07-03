@@ -57,7 +57,7 @@ We made a decision to split endpoints by entry type to have strict, predictable 
 **Response body:**
 ```c#
 {
-  workEntries: [
+  taskEntries: [
     {
       id: long,
       title: string,
@@ -66,7 +66,7 @@ We made a decision to split endpoints by entry type to have strict, predictable 
       description: string,
       startTime: DateTime,
       endTime: DateTime,
-      type: int,
+      entryType: int,
     },
   ]
   unwellEntries: [
@@ -74,8 +74,29 @@ We made a decision to split endpoints by entry type to have strict, predictable 
       id: long,
       startTime: DateTime,
       endTime: DateTime,
-      type: int,
+      entryType: int,
     },
+  ],
+  awayWithMakeUpTimeEntries: [
+    {
+      id: long,
+      description: string,
+      startTime: DateTime,
+      endTime: DateTime,
+      makeUpTimeList: [
+        {
+          startTime: DateTime,
+          endTime: DateTime,
+        }
+      ]
+    }
+  ],
+  makeUpTimeEntries: [
+    relatedEntryId: long,
+    entryType: int,
+    relatedEntryType: int,
+    startTime: DateTime,
+    endTime: DateTime
   ]
 }
 ```
@@ -130,7 +151,24 @@ We made a decision to split endpoints by entry type to have strict, predictable 
 
 **Response body:** 200 OK
 
-3. **GET** `/api/tracking/task-entries/projects?date={date}` - return employee's projects
+
+3. **GET** `/api/tracking/task-entries/{id}` - get Task entry
+
+**Response body:**
+```c#
+{
+  id: long,
+  title: string,
+  taskId: string,
+  projectId: long,
+  description: string,
+  startTime: DateTime,
+  endTime: DateTime,
+  entryType: int,
+}
+```
+
+4. **GET** `/api/tracking/task-entries/projects?date={date}` - return employee's projects
 
 **Response body:**
 
@@ -176,6 +214,18 @@ We made a decision to split endpoints by entry type to have strict, predictable 
 }
 ```
 
+3. **GET** `/api/tracking/unwell-entries/{id}` - get Unwell entry
+
+**Response body:**
+```c#
+{
+  id: long,
+  startTime: DateTime,
+  endTime: DateTime,
+  entryType: int
+}
+```
+
 #### away-with-make-up-time
 
 1. **POST** `/api/tracking/away-with-make-up-time-entries` - add Away With Make-Up Time entry
@@ -216,6 +266,26 @@ We made a decision to split endpoints by entry type to have strict, predictable 
     {
       startTime: DateTime,
       endTime: DateTime,
+    }
+  ]
+}
+```
+
+3. **GET** `/api/tracking/away-with-make-up-time-entries/{id}` - get Away With Make-Up Time entry
+
+**Response body:**
+```c#
+{
+  id: long,
+  startTime: DateTime,
+  endTime: DateTime,
+  entryType: int,
+  description: string,
+  makeUpTimeList: [
+    {
+      id: long,
+      startTime: DateTime,
+      endTime: DateTime
     }
   ]
 }
@@ -307,13 +377,14 @@ erDiagram
       tenant_id long FK
       employee_id long FK
       project_id long FK "Nullable. Internal request projects list"
-      parent_id long FK "Nullable. A self-reference to the original card from the same table"
+      related_entry_id long FK "Nullable. A self-reference to the original card from the same table"
       start_time timestamp
       end_time timestamp
       time_zone_id text
       duration interval "(calculated), positive for overtime, negative for time off"
       amount interval "Nullable. To think about whether time is deducted from working hours or not"
-      type int
+      entry_type int
+      related_entry_type int
       title text "Nullable."
       task_id text "Nullable."
       description text "Nullable."
