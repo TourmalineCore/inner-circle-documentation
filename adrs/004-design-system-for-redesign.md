@@ -1,7 +1,7 @@
-# 007: Choice of Design System for Inner Circle Redesign
+# 004: Choice of Design System for Inner Circle Redesign
 
 ## Status
-Proposed (2026-06-29)
+Accepted (2026-07-3)
 
 ## Context
 We need to redesign Inner Circle to unify the user experience across its multiple services. 
@@ -158,5 +158,3 @@ Suitable if speed is the only priority, but too opinionated and rigid from the l
     </tr>
   </tbody>
 </table>
-
-Test
