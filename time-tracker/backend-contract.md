@@ -92,11 +92,13 @@ We made a decision to split endpoints by entry type to have strict, predictable 
     }
   ],
   makeUpTimeEntries: [
-    relatedEntryId: long,
-    entryType: int,
-    relatedEntryType: int,
-    startTime: DateTime,
-    endTime: DateTime
+    {
+      relatedEntryId: long,
+      entryType: int,
+      relatedEntryType: int,
+      startTime: DateTime,
+      endTime: DateTime
+    }
   ]
 }
 ```
