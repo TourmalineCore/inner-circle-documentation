@@ -2,9 +2,16 @@
 
 ## Installing the driver
 
+> Before installing the driver, connect the printer via a wire to your computer and turn on the printer. The printer only works via a wire.
+
 1. Install [Windows driver](./drivers/Windows%20Driver/TSC_11.11.1.zip)
 
->The printer only works via a wire.
+![alt text](./images/download-drivers.png)
+
+> After clicking on the download button, the driver may not start downloading immediately, you need to wait
+
+Currently, the installer package for Window can be found here:
+*/drivers/Windows Driver/TSC_11.11.1.zip*
 
 ## Setting up Printing options
 1. In the browser, press Ctrl + Shift + P.
