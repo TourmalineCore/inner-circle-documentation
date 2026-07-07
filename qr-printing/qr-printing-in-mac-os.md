@@ -2,9 +2,9 @@
 
 ## Installing the driver
 
-> Before installing the driver, connect the printer via a wire to your computer and turn on the printer. The printer only works via a wire.
+> IMPORTANT: Before installing the driver, connect the printer via a wire to your computer and turn on the printer (the power button is located on the back cover of the printer). The printer only works via a wire.
 
-1. Install [MAC driver](./drivers/Linux%20Driver/Linux64_v1.2.13/barcodedriver-1.2.13-x86_64.tar.gz)
+1. Download [MAC driver](./drivers/Linux%20Driver/Linux64_v1.2.13/barcodedriver-1.2.13-x86_64.tar.gz)
 
 ![alt text](./images/download-drivers.png)
 
