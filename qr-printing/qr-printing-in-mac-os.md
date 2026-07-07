@@ -1,9 +1,17 @@
 # QR Printing In MacOS
 
-Drivers - https://kaywa.me/ipx1s
+## Installing the driver
+
+> IMPORTANT: Before installing the driver, connect the printer via a wire to your computer and turn on the printer (the power button is located on the back cover of the printer). The printer only works via a wire.
+
+1. Download [MAC driver](./drivers/Linux%20Driver/Linux64_v1.2.13/barcodedriver-1.2.13-x86_64.tar.gz)
+
+![alt text](./images/download-drivers.png)
+
+> After clicking on the download button, the driver may not start downloading immediately, you need to wait
 
 Currently, the installer package for MacOS can be found here:
-*/TSC/MAC Driver/tsc-11.29-install*
+*/drivers/MAC Driver/tsc-11.29-install.zip*
 
 <img src="./images/pkg-file-for-macos.png" alt="" width="50%"/>
 
