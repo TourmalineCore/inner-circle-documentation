@@ -116,6 +116,6 @@ You must select the TSC TE200 printer, then click the *More settings* button.
 
 ![alt text](./images/modal-qr.png)
 
-3. In the print window, select the TSC TE200 printer, select *Landscape* in the Layout field, and select the configuration you created, and сlick on the *Print* button..
+3. In the print window, select the TSC TE200 printer, select *Landscape* in the Layout field, and select the configuration you created, and сlick on the *Print* button.
 
 ![alt text](./images/browser-print-popup-win11.png)
