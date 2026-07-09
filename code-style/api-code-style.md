@@ -355,5 +355,13 @@ Do not use `?.` in these cases. However, there are cases when `?.` is what you n
 ```csharp
 var value = context.User!.Id;
 ```
+
+
+## 12. Adding unauthorized karate tests
+
+Karate tests for unauthorized must be added at the time of adding endpoints without implementation.
+
+Endpoints without implementation are made in order to publish a new version of the js client package, this is necessary so that the UI can start development using a specific contract
+
 ---
 to be continued..
