@@ -6,6 +6,7 @@ In order for the tests to run in parallel and not overlap in periods, we use dif
 
 | Test Name | Year |
 | :--- | :--- |
+| Vacation Entries - Happy Path | 2036 |
 | Sick Leave Entries - Happy Path | 2035 |
 | Away with Make Up Time Entries - Happy Path | 2034 |
 | Personal Reporting - Happy Path | 2033 |
@@ -22,3 +23,4 @@ In order for the tests to run in parallel and not overlap in periods, we use dif
 | Unwell Entries - Happy Path | 2023 |
 | Copy Entries - Happy Path | 2022 |
 | Sick Leave Entries - Happy Path | 2021 |
+| Vacation Entries - Happy Path | 2020 |
