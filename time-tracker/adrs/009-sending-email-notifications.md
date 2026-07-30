@@ -14,7 +14,7 @@ SMTP Limitations (VK WorkMail):
 
 [Source about 30 recipients](https://help.mail.ru/mail/letters/sent/send/?platform=desktop#receiver)
 
-## Send one email to all recipients (employees)
+## Decision (Send one email to all recipients (employees))
 Sends a single message with all employees listed as recipients. 
 
 ### How to get around the 30-recipient limit?
@@ -24,6 +24,8 @@ You can split the message and send it multiple times with different recipient gr
 - Avoids the 30-recipient limit per email
 - Low load on API and SMTP
 - Hourly email limit is used up slowly
+
+### Alternatives
 
 ## Shared Email with Delegated Access
 We create a dedicated mailbox (e.g., notifications@tourmalinecore.com). The time-tracker sends all notifications to this single mailbox. Employees are then given read access to it via the "Assistant" feature in VK WorkMail.
@@ -40,8 +42,6 @@ We create a dedicated mailbox (e.g., notifications@tourmalinecore.com). The time
 ### Things to check:
 - Will each employee have their own read/unread status for emails? Or if one person reads an email, will it be marked as read for everyone else too?
 - How will this actually appear in each employee's email? Will there be a separate folder, or will it work differently?
-
-### Alternatives
 
 ### Sending individually to each employee
 Sends a separate email to each employee's personal email.
