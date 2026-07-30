@@ -42,6 +42,8 @@ CREATE INDEX a ON tracked_entries
   - [Task Entries](#task-entries)
   - [Unwell Entries](#unwell-entries)
   - [Away With Make-Up Time](#away-with-make-up-time)
+  - [Sick leave](#sick-leave)
+  - [Vacation](#vacation)
 - [Reporting Endpoints](#reporting-endpoints)
 - [Internal Endpoints](#internal-endpoints)
 
@@ -98,6 +100,27 @@ We made a decision to split endpoints by entry type to have strict, predictable 
       relatedEntryType: int,
       startTime: DateTime,
       endTime: DateTime
+    }
+  ],
+  sickLeaveEntries: [
+    {
+      id: long,
+      entryType: int,
+      period: { 
+         startDate: DateOnly,
+         endDate: DateOnly,
+      }
+    }
+  ],
+  vacationEntries: [
+    {
+      id: long,
+      entryType: int,
+      period: { 
+         startDate: DateOnly,
+         endDate: DateOnly,
+      },
+      isUnpaid: bool
     }
   ]
 }
@@ -293,6 +316,103 @@ We made a decision to split endpoints by entry type to have strict, predictable 
 }
 ```
 
+#### sick-leave
+
+1. **POST** `/api/tracking/sick-leave-entries` - add Sick Leave entry
+
+**Request body:**
+```c#
+{
+  period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  }
+}
+```
+
+**Response body:**
+```c#
+{
+  newSickLeaveEntryId: long
+}
+```
+
+2. **POST** `/api/tracking/sick-leave-entries/{id}` - update Sick Leave entry
+
+**Request body:**
+```c#
+{
+   period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  }
+}
+```
+
+3. **GET** `/api/tracking/sick-leave-entries/{id}` - get Sick Leave entry
+
+**Response body:**
+```c#
+{
+  id: long,
+  entryType: int,
+  period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  }
+}
+```
+
+#### vacation
+
+1. **POST** `/api/tracking/vacation-entries` - add Vacation entry
+
+**Request body:**
+```c#
+{
+  period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  },
+  isUnpaid: bool
+}
+```
+
+**Response body:**
+```c#
+{
+  newVacationEntryId: long
+}
+```
+
+2. **POST** `/api/tracking/vacation-entries/{id}` - update Vacation entry
+
+**Request body:**
+```c#
+{
+   period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  },
+  isUnpaid: bool
+}
+```
+
+3. **GET** `/api/tracking/vacation-entries/{id}` - get Vacation entry
+
+**Response body:**
+```c#
+{
+  id: long,
+  entryType: int,
+  period: { 
+     startDate: DateOnly,
+     endDate: DateOnly,
+  },
+  isUnpaid: bool
+}
+```
+
 ## Reporting Endpoints 
 
 1. **GET** `/api/reporting/personal-report?employeeId={employeeId}&year={year}&month={month}` - return personal report 
@@ -392,9 +512,7 @@ erDiagram
       description text "Nullable."
       deleted_at_utc timestamp with timezone "Nullable."
       deletion_reason string "Nullable."
-      sick_leave_reason int "Nullable."
-      is_paid boolean "Nullable."
-      is_full_day boolean "Nullable."
+      is_unpaid boolean "Nullable."
     }
     projects {
       id long PK
