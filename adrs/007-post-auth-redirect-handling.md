@@ -6,8 +6,13 @@ Accepted (2026-07-24)
 
 ## Context
 
-Currently, after successful authorization, users are redirected to ```/employees``` regardless of their original destination. This creates a poor user experience, particularly in scenarios like QR code scanning where users expect to land on a specific resource page after authentication.
+Currently, after successful authorization, users are redirected to ```/employees``` regardless of their original destination. 
 
+![what we have](./images/img-redirect-before.png)
+
+This creates a poor user experience, particularly in scenarios like QR code scanning where users expect to land on a specific resource page after authentication.
+
+![what we want to get](./images/img-redirect-after.png)
 
 ## Desicion
 
