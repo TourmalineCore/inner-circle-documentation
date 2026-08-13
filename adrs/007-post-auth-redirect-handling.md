@@ -20,11 +20,19 @@ Implement a **returnUrl** query parameter system with security validations to re
 
 ### Technical Implementation
 
-1. **Authentication flow changes**
+1. **Authentication flow changes**</br>
+Modify the ```useAuthenticated.ts``` file in the **auth-ui** service to use **returnUrl** from query parameters:
 
-***auth-ui service***: modify the ```useAuthenticated.ts``` file to use returnUrl from query parameters. Replace ```window.location.href = /employees``` with ```window.location.href = returnUrl || "/"```.
+```javascript
+// Before
+window.location.href = '/employees'
 
-2. **URL validation** to prevent Open Redirect vulnerabilities (probably in auth-ui) 
+// After
+const returnUrl = new URLSearchParams(window.location.search).get('returnUrl')
+window.location.href = returnUrl || '/'
+```
+
+2. **URL validation** to prevent Open Redirect vulnerabilities
 
 ```
 function isSafeReturnUrl(returnUrl) {
@@ -39,13 +47,16 @@ function isSafeReturnUrl(returnUrl) {
 
 If validation fails, fall back to "/".
 
-**Example attack: unsafe redirect after login**
+**Why This Matters**
 
-A web app redirects the user to the URL in the returnUrl query parameter after login, without checking it.
+**Example attack (unsafe redirect after login):**
 
-The victim sees malicious a link ```http://localhost:30090/auth?returnUrl=http://attacker-site.com/fake-login``` that starts with our own host, so they trust it. Without validation, after login the app redirects them to the attacker's site, which can copy our UI and steal the victim's credentials.
+```http://localhost:30090/auth?returnUrl=http://attacker-site.com/fake-login```
 
-With ```isSafeReturnUrl``` added:
+A web app redirects the user to the URL in the **returnUrl** query parameter after login, without checking it.
+The victim sees a malicious link that starts with our own host, so they trust it. Without validation, after login the app redirects them to the attacker's site, which can copy our UI and steal the victim's credentials.
+
+**With validation:**
 ```
 isSafeReturnUrl("http://attacker-site.com/fake-login")
 // new URL(...).origin === "http://attacker-site.com"
@@ -53,26 +64,25 @@ isSafeReturnUrl("http://attacker-site.com/fake-login")
 // falls back to "/"
 ```
 
-A legitimate case, for example, returning to the book copy page after login via QR scan, passes validation and works correctly:
+**Legitimate case:** returning to the book copy page after login via QR scan, passes validation and works correctly:
 
 ```
 isSafeReturnUrl("http://localhost:30090/copy/1?s=2222")
 // origin "http://localhost:30090" === "http://localhost:30090" -> true
+// redirects to the book copy page
 ```
 
 Our site runs on a single host, so it's enough to check that the redirect stays on that host.
 
 #### Alternative
-Using ```startsWith``` instead of ```origin```
-
-An earlier version of this check used ```returnUrl.startsWith("http://localhost:30090/")```
+An earlier version used string matching: ```returnUrl.startsWith("http://localhost:30090/")```
 
 #### Advantages:
 - trailing slash blocks the obvious domain-spoofing trick (```http://localhost:30090.bad-domain.com```)
 
 #### Disadvatnages: 
 - plain string-prefix check is still weaker than parsing the URL and comparing origins
-- browsers always lowercase the scheme and host when parsing a URL, but ```startsWith``` does not:
+- browsers always lowercase the scheme and host when parsing a URL, but ```startsWith``` does not. This could cause legitimate redirects to fail in edge cases:
 
 ```
 new URL('HTTP://LocalHost:30090/employees').origin === 'http://localhost:30090' // -> true -> /employees
@@ -81,13 +91,28 @@ new URL('HTTP://LocalHost:30090/employees').origin === 'http://localhost:30090' 
 
 3. **Nested redirect protection**
 
-In each UI service, replace ```window.location.href = /auth``` with ```window.location.href = `/auth?returnUrl=${encodeURIComponent(window.location.href)}` ``` in the ```RequireAccessToken``` file.
+To prevent redirect chains where a compromised page could use **returnUrl** to redirect off-site, implement nested parameter detection in each UI service:
+
+```javascript
+// RequireAccessToken file
+// Before
+window.location.href = '/auth'
+
+// After
+window.location.href = `/auth?returnUrl=${encodeURIComponent(window.location.href)}`
+```
 
 Why ```encodeURIComponent``` is required? It preserves multi-parameter URLs.
 
 Without ```encodeURIComponent```:
 
-```http://localhost:30090/auth?returnUrl=http://localhost:30090/books?copyId=1&s=2222```. Here ```?copyId=1&s=2222``` would be truncated without proper encoding.
+```http://localhost:30090/auth?returnUrl=http://localhost:30090/books?copyId=1&s=2222```
+
+The ```&``` is parsed as a delimiter, so the URL becomes:
+
+- ```returnUrl``` = ```http://localhost:30090/books?copyId=1```
+
+- ```s``` = ```2222``` (lost/truncated)
 
 With ```encodeURIComponent```:
 
@@ -95,4 +120,4 @@ With ```encodeURIComponent```:
 `http://localhost:30090/auth?returnUrl=${encodeURIComponent(window.location.href)}`
 // http://localhost:30090/auth?returnUrl=http%3A%2F%2Flocalhost%3A30090%2Fbooks%2Fcopy%2F1%3FcopyId%3D1%26s%3D2epq
 ```
-The ```&``` inside the value is now encoded (%26), so it's not confused with the outer query parameters, and auth-ui restores the full original URL correctly.
+The ```&``` inside the value is now encoded (```%26```), so it's not confused with the outer query parameters, and auth-ui restores the complete original URL correctly.
