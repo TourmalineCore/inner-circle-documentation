@@ -34,7 +34,9 @@ window.location.href = returnUrl || '/'
 
 2. **URL validation** to prevent Open Redirect vulnerabilities
 
-```
+Validate by parsing the URL and comparing its origin to the app's own origin:
+
+```javascript
 function isSafeReturnUrl(returnUrl) {
   try {
     const url = new URL(returnUrl, window.location.origin)
@@ -57,7 +59,7 @@ A web app redirects the user to the URL in the **returnUrl** query parameter aft
 The victim sees a malicious link that starts with our own host, so they trust it. Without validation, after login the app redirects them to the attacker's site, which can copy our UI and steal the victim's credentials.
 
 **With validation:**
-```
+```javascript
 isSafeReturnUrl("http://attacker-site.com/fake-login")
 // new URL(...).origin === "http://attacker-site.com"
 // "http://attacker-site.com" !== "http://localhost:30090" -> false
@@ -66,7 +68,7 @@ isSafeReturnUrl("http://attacker-site.com/fake-login")
 
 **Legitimate case:** returning to the book copy page after login via QR scan, passes validation and works correctly:
 
-```
+```javascript
 isSafeReturnUrl("http://localhost:30090/copy/1?s=2222")
 // origin "http://localhost:30090" === "http://localhost:30090" -> true
 // redirects to the book copy page
@@ -81,18 +83,25 @@ An earlier version used string matching: ```returnUrl.startsWith("http://localho
 - trailing slash blocks the obvious domain-spoofing trick (```http://localhost:30090.bad-domain.com```)
 
 #### Disadvatnages: 
-- plain string-prefix check is still weaker than parsing the URL and comparing origins
+- plain string-prefix check is still weaker than parsing the URL and comparing origins, as a string can be read differently from hown the browser reads it
 - browsers always lowercase the scheme and host when parsing a URL, but ```startsWith``` does not. This could cause legitimate redirects to fail in edge cases:
 
-```
+```javascript
 new URL('HTTP://LocalHost:30090/employees').origin === 'http://localhost:30090' // -> true -> /employees
 'HTTP://LocalHost:30090/employees'.startsWith('http://localhost:30090/')  // -> false -> /
 ```
 
 3. **Nested redirect protection**
 
-To prevent redirect chains where a compromised page could use **returnUrl** to redirect off-site, implement nested parameter detection in each UI service. 
-Reject a **returnUrl** whose own query string contains another **returnUrl** parameter nested inside it. If one is found, treat the URL as unsafe and fall back to "/":
+If any page on our own site does its own unsafe redirect from its own query parameter, an attacker could set a nested **returnUrl**, and the page with such redirect chain could redirect off-site.
+
+**Example of nested redirect attack:**
+
+```http://localhost:30090/auth?returnUrl=http://localhost:30090/some-page?returnUrl=http://evil.com```
+
+This passes every origin check, but the user still ends up off our site once that internal page runs its own redirect.
+
+To guard against this, extend **isSafeReturnUrl** to also reject a **returnUrl** whose own query string contains another **returnUrl** parameter nested inside it. If one is found, treat the URL as unsafe and fall back to "/":
 
 ```javascript
 function isSafeReturnUrl(returnUrl) {
@@ -107,11 +116,20 @@ function isSafeReturnUrl(returnUrl) {
   }
 }
 ```
-**Example of nested redirect attack:**
 
-```http://localhost:30090/auth?returnUrl=http://localhost:30090/some-page?returnUrl=http://evil.com```
+**Example**:
 
-This passes every origin check, but the user still ends up off our site once that internal page runs its own redirect.
+```javascript
+isSafeReturnUrl("http://localhost:30090/some-page?returnUrl=http://evil.com")
+// origin check passes, but it has a nested "returnUrl" param -> false
+// falls back to "/"
+```
+
+This fix only catches redirects built with the **returnUrl** name. You should either be very careful or make sure that no page on our site other than the login page performs its own unchecked redirect from a query parameter.
+
+**References**:
+- [OWASP Cheat Sheet — Unvalidated Redirects and Forwards](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html)
+- [OWASP — Open Redirect](https://owasp.org/www-community/attacks/open_redirect) (listed under Broken Access Control, A01 in the OWASP Top 10)
 
 4. **Encoding in redirect URLs**
 
