@@ -91,10 +91,33 @@ new URL('HTTP://LocalHost:30090/employees').origin === 'http://localhost:30090' 
 
 3. **Nested redirect protection**
 
-To prevent redirect chains where a compromised page could use **returnUrl** to redirect off-site, implement nested parameter detection in each UI service:
+To prevent redirect chains where a compromised page could use **returnUrl** to redirect off-site, implement nested parameter detection in each UI service. 
+Reject a **returnUrl** whose own query string contains another **returnUrl** parameter nested inside it. If one is found, treat the URL as unsafe and fall back to "/":
 
 ```javascript
-// RequireAccessToken file
+function isSafeReturnUrl(returnUrl) {
+  try {
+    const url = new URL(returnUrl, window.location.origin)
+    if (url.origin !== window.location.origin) return false
+    // Block nested redirects
+    if (url.searchParams.has('returnUrl')) return false
+    return true
+  } catch {
+    return false
+  }
+}
+```
+**Example of nested redirect attack:**
+
+```http://localhost:30090/auth?returnUrl=http://localhost:30090/some-page?returnUrl=http://evil.com```
+
+This passes every origin check, but the user still ends up off our site once that internal page runs its own redirect.
+
+4. **Encoding in redirect URLs**
+
+In each UI service's RequireAccessToken file, replace:
+
+```javascript
 // Before
 window.location.href = '/auth'
 
