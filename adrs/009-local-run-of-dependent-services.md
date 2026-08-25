@@ -24,11 +24,11 @@ We wanted `npm start` to start a working app with one command, with no manual st
 
 1. `local-run/prepare-local-run.js` downloads the files we need and gets a token from `e2e/mock-server-initialization.json`. It processes the token and adds it to the config files. Which files it downloads, and why one by one instead of through submodule or subtree, is described in [008](./008-downloading-files-for-local-run.md)
 2. `docker compose` starts layout-ui and books-api with its database and mock server
-3. `vite --host` starts the books-ui dev server on port 4005
+3. `vite --host` starts the books-ui dev server on port 3505
 
 The compose files we download build the services from source, but we do not have that source locally. So next to them we keep two override files (`local-run/api-docker-compose.override.yml`, `local-run/layout-ui-docker-compose.override.yml`), and they replace the build step with ready images from `ghcr.io`.
 
-By default we use the `latest` images, but for books-api you can set the tag with the `IMAGE_TAG` variable - for example, to test the image built for a specific PR. You can also override the books-api files: `API_REF` downloads `docker-compose.yml` and `mock-server-initialization.json` from another branch or commit instead of `master`, and `API_LOCAL_PATH` takes `mock-server-initialization.json` straight from your local books-api folder, so you can check changes you have not pushed yet (more about the download mechanism itself in [008](./008-downloading-files-for-local-run.md)). layout-ui has no such switches: its compose file always comes from `master`, and the image in the override file is fixed at `latest`.
+By default we use the `latest` images, but you can set the tag with `API_IMAGE_TAG` for books-api and `LAYOUT_IMAGE_TAG` for layout-ui - for example, to test an image built for a specific PR. You can also override where the compose files themselves come from: `API_REF` and `LAYOUT_REF` fetch `docker-compose.yml` from another branch or commit instead of `master`, one variable per repository. For books-api only, `API_LOCAL_PATH` takes `mock-server-initialization.json` straight from your local checkout, so you can check changes you have not pushed yet (more about the download mechanism itself in [008](./008-downloading-files-for-local-run.md)).
 
 ### Authorization without auth-api
 
@@ -47,7 +47,7 @@ This is controlled by the `DISABLE_DEBUG_TOKEN` flag: the debug login only turns
 
 ### Requests through the vite proxy
 
-In production, books-ui, books-api, and layout-ui sit behind one ingress, so the app calls them with relative paths: `/api/books` and `/layout/...`. Locally these paths do not exist, there is only the books-ui dev server on port 4005.
+In production, books-ui, books-api, and layout-ui sit behind one ingress, so the app calls them with relative paths: `/api/books` and `/layout/...`. Locally these paths do not exist, there is only the books-ui dev server on port 3505.
 
 So the dev server proxies `/api/books` to books-api, and `/layout` to layout-ui. The relative paths work the same locally as in production.
 
@@ -57,15 +57,15 @@ Usually both dependencies run as containers, but you can swap either one for a l
 
 | Command | books-api | layout-ui |
 | --- | --- | --- |
-| `npm start` | container, port 6505 | container, port 4406 |
-| `npm run start:for-local-layout-ui` | container, port 6505 | `vite preview`, port 4006 |
-| `npm run start:for-local-books-api` | local `dotnet run`, port 7000 | container, port 4406 |
+| `npm start` | container, port 6505 | container, port 6500 |
+| `npm run start:for-local-layout-ui` | container, port 6505 | `vite preview`, port 4500 |
+| `npm run start:for-local-books-api` | Dev Container, port 4505 | container, port 6500 |
 
 The `LOCAL_LAYOUT_UI` and `LOCAL_BOOKS_API` variables switch the proxy targets in `vite.config.ts`.
 
-You start the service you want to test with books-ui locally yourself, in its own repository. For books-api, that means `docker compose --profile MockForDevelopment up` for the database and mock server, then `dotnet run --project ./Api`.
+You start the service you want to test with books-ui locally yourself, in its own repository, and priority goes to its own Dev Container. For books-api, that means opening the repository in its Dev Container - its database, mock server, and PgAdmin start automatically - then running `dotnet run --project ./Api` inside it.
 
-If books-ui runs inside a Dev Container while books-api runs locally on the host, `localhost` inside the container points to the container itself, not to the host machine, so books-api becomes unreachable. `vite.config.ts` checks the `/.dockerenv` file to detect that it runs inside a Dev Container, and in that case it uses `host.docker.internal` instead of `localhost` in the proxy.
+If books-ui runs inside a Dev Container, `localhost` inside the container points to the container itself, not to the host machine or another container, so books-api becomes unreachable. `vite.config.ts` checks the `LOCAL_WORKSPACE_FOLDER` variable, which the Dev Container sets, to detect that it runs inside one, and in that case it uses `host.docker.internal` instead of `localhost` in the proxy.
 
 layout-ui runs as a separate compose project (`-p inner-circle-layout-ui`), because when several UI services depend on layout-ui and run locally at the same time, it is better to start one shared container than a copy for each service. `npm run local-services:down` only stops the books-api project and leaves the shared layout-ui container running. To stop that one too, there is a separate command, `npm run local-services:down:layout-ui`.
 
@@ -76,7 +76,7 @@ layout-ui needed two additions for this:
 - the `npm run start:federation` command. A plain `npm start` does not work here: `vite-plugin-federation` only creates the remote file `inner_circle_layout_ui.js` during a build, and the dev server does not serve it
 - its own debug login and a stub route, so layout-ui can render on its own, without a host app and without an auth service
 
-`start:federation` runs in three steps: first `vite build --mode development` builds the project once, then `vite build --watch` and `vite preview --port 4006 --strictPort` run together. `vite preview` serves layout-ui on port 4006, and `vite build --watch` watches the app and rebuilds it on every change, so the process keeps running while the app is up. There is no hot reload, so you need to refresh the page by hand.
+`start:federation` runs in three steps: first `vite build --mode development` builds the project once, then `vite build --watch` and `vite preview` run together. `vite preview` always serves layout-ui on port 4500, wherever you run it from - books-ui's proxy expects it there and has no Dev Container branch of its own for layout-ui. `vite build --watch` watches the app and rebuilds it on every change, so the process keeps running while the app is up. There is no hot reload, so you need to refresh the page by hand.
 
 The `--mode development` flag is also needed so that `.env.development` loads, with `VITE_DISABLE_DEBUG_TOKEN=false`, which turns on the debug login in layout-ui.
 

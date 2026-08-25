@@ -23,7 +23,7 @@ We download the files we need from GitHub one by one with a plain HTTP request, 
 
 A Node script (`local-run/prepare-local-run.js`) takes them from `raw.githubusercontent.com` on every local run and puts them into the `local-run/` folder. All three files are in `.gitignore`, because they are downloaded files, not our code.
 
-By default the files come from `master`. The `API_REF` variable lets you choose another branch or commit, and `API_LOCAL_PATH` lets you take `mock-server-initialization.json` from a local books-api folder, so you can check changes that you have not pushed yet.
+By default the files come from `master`. `API_REF` and `LAYOUT_REF` let you choose another branch or commit for books-api's and layout-ui's files, one variable per repository. `API_LOCAL_PATH` additionally lets you take `mock-server-initialization.json` from a local books-api folder, so you can check changes that you have not pushed yet - layout-ui has no local file to fetch, so it has no such switch.
 
 All of this is needed only for the local run.
 
