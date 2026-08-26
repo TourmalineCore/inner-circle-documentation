@@ -98,8 +98,6 @@ dotnet ef database update --startup-project ./Api/Api.csproj --project ./Applica
 | LocalEnvForDevelopment |   No    |   No   |   Yes  |   No   |   Yes  |   No   |   No   |
 | LocalEnvForPullRequest |   No    |   No   |   Yes  |   No   |   Yes  |   Yes  |   No   |
 
-## Ports
-
 
 ## 1. Layers Structure
 
