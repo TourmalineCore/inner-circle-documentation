@@ -4,7 +4,9 @@
 When we were working on support of GitHub Actions container feature by self-hosted runner we faced a problem with checkout step in [pipeline](https://github.com/TourmalineCore/inner-circle-time-ui/actions/runs/32846287537/job/98489024036). The problem was that if after running a pipeline that uses a container, you ran a pipeline from a different branch, a `File was unable to be removed Error: EACCES: permission denied, unlink '/home/runner/actions-runner/_work/inner-circle-time-ui/inner-circle-time-ui/.git/refs/heads/feature/use-self-hosted-runners-in-pipelines'` error would occur during checkout.
 
 ## Cause of error
-The problem occurs because, when using DinD self-hosted runners and the GitHub Actions container feature, the container is created on the host, and the working directory must be mounted from the host into the runner. While the container is running on the host, all files are created by the root user. When a new pipeline is run, where the checkout is performed on the runner, all actions are executed by the `runner` user, who cannot interact with files owned by the `root` user.
+The problem occurs because, when using a DinD self-hosted runner together with the GitHub Actions container feature, the job container is created by the host Docker daemon, while the runner itself runs inside a container as the `runner` user. The working directory therefore has to be mounted from the host into the job container.
+
+The job container run as `root`, so files created in the mounted working directory are owned by `root` on the host. When the next pipeline starts, the GitHub Actions Runner performs the checkout and workspace cleanup as the `runner` user. Since that user does not own the files created by the previous container job, the runner can fail to remove them with EACCES: permission denied.
 
 ## Decision
 
