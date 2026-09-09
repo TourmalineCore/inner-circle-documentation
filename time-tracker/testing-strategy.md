@@ -14,6 +14,7 @@ In order for the tests to run in parallel and not overlap in periods, we use dif
 | Task Entries - Creation Tenants Isolation | 2031 |
 | Task Entries - Happy Path | 2030 |
 | Unwell Entries - Happy Path | 2029 |
+| Metrics - Happy Path | 2028 |
 
 ## Cypress E2E tests 
 | Test Name | Year |
