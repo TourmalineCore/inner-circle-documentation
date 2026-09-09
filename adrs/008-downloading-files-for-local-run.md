@@ -2,16 +2,14 @@
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
-To run books-ui locally with a mocked API (`npm start`) and to run e2e tests, we need two files from `inner-circle-books-api`:
+To run books-ui locally with a mocked API and layout-ui, and to run e2e tests, we need files from two other repositories:
 
-- `docker-compose.yml` - how to start books-api and its database and MockServer
-- `e2e/mock-server-initialization.json` - the mocked endpoints, including the login response. books-ui takes the local debug token from it
-
-Later we also needed `docker-compose.yml` from `inner-circle-layout-ui`.
+- from `inner-circle-books-api`: `docker-compose.yml` and the mock server initialization config (the mocked endpoints, including the login response that books-ui takes its local debug token from)
+- from `inner-circle-layout-ui`: `docker-compose.yml`
 
 We do not need other files from these repositories. These files must always match the current state of the branch we need (usually `master`), without any manual steps from the developer.
 
@@ -21,21 +19,21 @@ Git has two built-in ways to work with code from another repository inside your 
 
 We download the files we need from GitHub one by one with a plain HTTP request, instead of connecting the whole repository.
 
-A Node script (`local-run/prepare-local-run.js`) takes them from `raw.githubusercontent.com` on every local run and puts them into the `local-run/` folder. All three files are in `.gitignore`, because they are downloaded files, not our code.
+A Node script, run through `npm run prepare-local-run` (`node --env-file=.env.local local-run/prepare-local-run.js`), fetches them from `raw.githubusercontent.com` and puts them into the `local-run/` folder. They are not committed - they are downloaded on demand, not our code.
 
-By default the files come from `master`. `API_REF` and `LAYOUT_REF` let you choose another branch or commit for books-api's and layout-ui's files, one variable per repository. `API_LOCAL_PATH` additionally lets you take `mock-server-initialization.json` from a local books-api folder, so you can check changes that you have not pushed yet - layout-ui has no local file to fetch, so it has no such switch.
+By default the files come from `master`. `API_REF` and `LAYOUT_REF` let you choose another branch or commit for books-api's and layout-ui's files, one variable per repository. `API_LOCAL_PATH` additionally lets you take the mock server initialization config from a local books-api folder, so you can check changes that you have not pushed yet - layout-ui has no local file to fetch, so it has no such switch.
 
-All of this is needed only for the local run.
+`prepare-local-run` runs as the first step of `npm run local-services:up` (which also starts the books-api and layout-ui containers), and it also runs automatically every time the Dev Container starts. All of this is needed only for the local run.
 
 ### Advantages
 
 - The files are always fresh, nobody has to update them by hand
 - No code and no history from other repositories gets into the books-ui repository
-- A new developer only runs `npm ci && npm start`, with no extra commands
+- A new developer only needs the Dev Container - the files are fetched automatically, with no extra commands
 
 ### Disadvantages
 
-- We need the internet on every start, not once during setup: if GitHub is not available, `npm start` fails
+- We need the internet on every start, not once during setup: if GitHub is not available, the local run fails
 - We depend on the current state of `master` in another repository (for example, if somebody renames a file or changes it in a way that does not work for us)
 
 ## Alternatives

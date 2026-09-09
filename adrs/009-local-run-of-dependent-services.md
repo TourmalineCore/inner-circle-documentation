@@ -2,96 +2,70 @@
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
-books-ui cannot work alone. It needs three things:
+books-ui cannot work alone. It needs two things:
 
 - books-api - gives data about books
-- an auth service - gives an authorization token
-- layout-ui - gives the header, footer, and sidebar. The app loads them at runtime with module federation
+- layout-ui - gives the header, footer, and sidebar. The app loads it at runtime with module federation
 
-Before this change, `npm start` only started the vite dev server. The developer had to start books-api, auth-api, and layout-ui by hand. It was hard to get a working page quickly, so everyone used local-env instead.
+There is no separate auth service in the local run: the app logs itself in as a debug user (see below), so a running auth-api is not one of the dependencies.
 
-local-env works, but it is too slow for everyday UI work.
+Running everything by hand across three repositories was slow and error-prone, so the repo used to lean on `local-env` (the full kind/helmfile cluster) for everyday UI work. `local-env` works, but it is too slow for everyday UI work.
 
-We wanted `npm start` to start a working app with one command, with no manual steps, and with hot reload.
+We wanted a new developer to get a working page with no manual cross-repository setup, and with hot reload.
 
 ## Decision
 
-`npm start` starts everything books-ui needs, then starts the vite dev server:
+The repo is built around a Dev Container. Opening it in VS Code/Codespaces does the setup automatically:
 
-1. `local-run/prepare-local-run.js` downloads the files we need and gets a token from `e2e/mock-server-initialization.json`. It processes the token and adds it to the config files. Which files it downloads, and why one by one instead of through submodule or subtree, is described in [008](./008-downloading-files-for-local-run.md)
-2. `docker compose` starts layout-ui and books-api with its database and mock server
-3. `vite --host` starts the books-ui dev server on port 3505
+1. `npm ci` installs dependencies (once, when the container is created)
+2. `npm run create-config:local` builds `public/env-config.js` from the keys listed in `.env-vars`, taking their values from the container environment (`containerEnv` in `.devcontainer/devcontainer.json`)
+3. `npm run local-services:up` downloads the compose files (and, for books-api, the mock server config) from GitHub as described in [008](./008-downloading-files-for-local-run.md), then starts books-api and layout-ui as containers
 
-The compose files we download build the services from source, but we do not have that source locally. So next to them we keep two override files (`local-run/api-docker-compose.override.yml`, `local-run/layout-ui-docker-compose.override.yml`), and they replace the build step with ready images from `ghcr.io`.
+Steps 2 and 3 run on every container start, so each session begins with a fresh config and up to date images. `npm start` (`vite --host`) then just starts the dev server on port 3505; the config and containers are already in place.
 
-By default we use the `latest` images, but you can set the tag with `API_IMAGE_TAG` for books-api and `LAYOUT_IMAGE_TAG` for layout-ui - for example, to test an image built for a specific PR. You can also override where the compose files themselves come from: `API_REF` and `LAYOUT_REF` fetch `docker-compose.yml` from another branch or commit instead of `master`, one variable per repository. For books-api only, `API_LOCAL_PATH` takes `mock-server-initialization.json` straight from your local checkout, so you can check changes you have not pushed yet (more about the download mechanism itself in [008](./008-downloading-files-for-local-run.md)).
+The compose files are downloaded as-is; they build the services from source, which the developer does not have locally. Local overrides (`local-run/api-docker-compose.override.yml`, `local-run/layout-ui-docker-compose.override.yml`) replace the build step with ready images from `ghcr.io`.
+
+By default we use the `latest` images, but `API_IMAGE_TAG` and `LAYOUT_IMAGE_TAG` let you pin a different tag - for example, the image built for an open pull request (published as `sha-<commit sha>`, in both short and full form). `API_REF` and `LAYOUT_REF` let you fetch the compose files themselves from another branch or commit instead of `master`. All four variables are set independently and can be combined.
 
 ### Authorization without auth-api
 
 Instead of running the real auth service, the app logs itself in as a debug user.
 
-The books-api mock server already has a ready login response with all permissions. `prepare-local-run.js` takes the token from it and writes two values into `env-config.js`:
+The books-api mock config already has a ready login response with all permissions. `prepare-local-run` takes the token from it and writes it into `public/env-config.js` as `DEBUG_TOKEN`. `DEBUG_TOKEN` is not one of the keys listed in `.env-vars`, so a plain `create-config:local` does not produce it - `prepare-local-run` appends it afterwards, and both steps are needed for a working login.
 
-- `LOCAL_DEBUG_TOKEN` - the token in the form the mock server returns
-- `LOCAL_DEBUG_JWT` - the same token, wrapped as an unsigned JWT
-
-The app puts `LOCAL_DEBUG_JWT` into `authService`, which sends it in the `Authorization` header. The wrapping is needed because the app reads permissions from the token with `jwtDecode`, and that library only understands the JWT format.
-
-`LOCAL_DEBUG_TOKEN` goes into the `X-DEBUG-TOKEN` header, which books-api checks.
-
-This is controlled by the `DISABLE_DEBUG_TOKEN` flag: the debug login only turns on when the flag is explicitly set to `false` in `.config-local`. Production never sets this variable, so this login path is off there by default.
+This is controlled by the `DISABLE_DEBUG_TOKEN` flag, one of the keys in `.env-vars`/`containerEnv`. Production does not set this variable to enable it, so this login path is off there by default.
 
 ### Requests through the vite proxy
 
 In production, books-ui, books-api, and layout-ui sit behind one ingress, so the app calls them with relative paths: `/api/books` and `/layout/...`. Locally these paths do not exist, there is only the books-ui dev server on port 3505.
 
-So the dev server proxies `/api/books` to books-api, and `/layout` to layout-ui. The relative paths work the same locally as in production.
+So the dev server proxies `/api/books` to `API_URL`, and `/layout` to `LAYOUT_UI_URL`. The relative paths work the same locally as in production. Both variables live in `.env.local` and default to the container ports (`http://localhost:6505` and `http://localhost:6500`).
 
-### Three modes
+### Running a service from its own repo instead of a container
 
-Usually both dependencies run as containers, but you can swap either one for a local checkout.
+Usually both dependencies run as containers, but you can point the proxy at a local checkout instead by overriding `API_URL` or `LAYOUT_UI_URL` and stopping the matching container:
 
-| Command | books-api | layout-ui |
-| --- | --- | --- |
-| `npm start` | container, port 6505 | container, port 6500 |
-| `npm run start:for-local-layout-ui` | container, port 6505 | `vite preview`, port 4500 |
-| `npm run start:for-local-books-api` | Dev Container, port 4505 | container, port 6500 |
+- **layout-ui**: start it from its own repo with `npm run start:federation` (served on port 4500 - see the layout-ui README), stop the shared container with `npm run local-services:down:layout-ui`, then run books-ui with `LAYOUT_UI_URL=http://localhost:4500/layout npm start`
+- **books-api**: start it from its own repo (Dev Container, port 4505), stop its container with `npm run local-services:down:api`, then run books-ui with `API_URL=http://localhost:4505 npm start`. If your books-api checkout also changes the mock config, take it from there instead of GitHub with `API_LOCAL_PATH=../inner-circle-books-api npm run prepare-local-run` - this only works outside the Dev Container, since only the books-ui repo is mounted inside it
 
-The `LOCAL_LAYOUT_UI` and `LOCAL_BOOKS_API` variables switch the proxy targets in `vite.config.ts`.
-
-You start the service you want to test with books-ui locally yourself, in its own repository, and priority goes to its own Dev Container. For books-api, that means opening the repository in its Dev Container - its database, mock server, and PgAdmin start automatically - then running `dotnet run --project ./Api` inside it.
-
-If books-ui runs inside a Dev Container, `localhost` inside the container points to the container itself, not to the host machine or another container, so books-api becomes unreachable. `vite.config.ts` checks the `LOCAL_WORKSPACE_FOLDER` variable, which the Dev Container sets, to detect that it runs inside one, and in that case it uses `host.docker.internal` instead of `localhost` in the proxy.
-
-layout-ui runs as a separate compose project (`-p inner-circle-layout-ui`), because when several UI services depend on layout-ui and run locally at the same time, it is better to start one shared container than a copy for each service. `npm run local-services:down` only stops the books-api project and leaves the shared layout-ui container running. To stop that one too, there is a separate command, `npm run local-services:down:layout-ui`.
-
-### Working with a local layout-ui
-
-layout-ui needed two additions for this:
-
-- the `npm run start:federation` command. A plain `npm start` does not work here: `vite-plugin-federation` only creates the remote file `inner_circle_layout_ui.js` during a build, and the dev server does not serve it
-- its own debug login and a stub route, so layout-ui can render on its own, without a host app and without an auth service
-
-`start:federation` runs in three steps: first `vite build --mode development` builds the project once, then `vite build --watch` and `vite preview` run together. `vite preview` always serves layout-ui on port 4500, wherever you run it from - books-ui's proxy expects it there and has no Dev Container branch of its own for layout-ui. `vite build --watch` watches the app and rebuilds it on every change, so the process keeps running while the app is up. There is no hot reload, so you need to refresh the page by hand.
-
-The `--mode development` flag is also needed so that `.env.development` loads, with `VITE_DISABLE_DEBUG_TOKEN=false`, which turns on the debug login in layout-ui.
+layout-ui runs as a separate compose project (`-p inner-circle-layout-ui`), because when several UI services depend on layout-ui and run locally at the same time, it is better to start one shared container than a copy for each service. `npm run local-services:down` only stops the books-api project and leaves the shared layout-ui container running; `npm run local-services:down:layout-ui` stops that one too.
 
 ### Advantages
 
-- `npm ci && npm start` is enough for a new developer, with no manual setup across repositories
+- Opening the Dev Container is enough for a new developer, with no manual setup across repositories
 - Normal hot reload works
 - You do not need to run the auth service or enter login details
-- You can test books-ui with a locally running api or layout-ui
+- You can test books-ui with a locally running API or layout-ui
 
 ### Disadvantages
 
-- You need Docker and internet access, or `npm start` fails
+- You need Docker and internet access, or the container setup fails
 - The local debug login flow does not fully match production
-- Ports are hardcoded in `vite.config.ts` and in the compose files, and you have to keep them in sync by hand
+- Ports are hardcoded in `vite.config.ts`, `.env.local`, and the compose files, and you have to keep them in sync by hand
 
 ## Alternatives
 
