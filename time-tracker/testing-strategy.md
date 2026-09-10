@@ -19,6 +19,7 @@ In order for the tests to run in parallel and not overlap in periods, we use dif
 ## Cypress E2E tests 
 | Test Name | Year |
 | :--- | :--- |
+| Metrics - Happy Path | 2026 |
 | Away with Make Up Time Entries - Happy Path | 2025 |
 | Task Entries - Happy Path | 2024 |
 | Unwell Entries - Happy Path | 2023 |
