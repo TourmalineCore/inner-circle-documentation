@@ -11,9 +11,7 @@ books-ui cannot work alone. It needs two things:
 - books-api - gives data about books
 - layout-ui - gives the header, footer, and sidebar. The app loads it at runtime with module federation
 
-There is no separate auth service in the local run: the app logs itself in as a debug user (see below), so a running auth-api is not one of the dependencies.
-
-Running everything by hand across three repositories was slow and error-prone, so the repo used to lean on `local-env` (the full kind/helmfile cluster) for everyday UI work. `local-env` works, but it is too slow for everyday UI work.
+Running everything by hand across three repositories was slow and error-prone, so the repo used to lean on `local-env` for everyday UI work. `local-env` works, but it is too slow for everyday UI work.
 
 We wanted a new developer to get a working page with no manual cross-repository setup, and with hot reload.
 
@@ -41,18 +39,17 @@ This is controlled by the `DISABLE_DEBUG_TOKEN` flag, one of the keys in `.env-v
 
 ### Requests through the vite proxy
 
-In production, books-ui, books-api, and layout-ui sit behind one ingress, so the app calls them with relative paths: `/api/books` and `/layout/...`. Locally these paths do not exist, there is only the books-ui dev server on port 3505.
-
-So the dev server proxies `/api/books` to `API_URL`, and `/layout` to `LAYOUT_UI_URL`. The relative paths work the same locally as in production. Both variables live in `.env.local` and default to the container ports (`http://localhost:6505` and `http://localhost:6500`).
+In the production environment, the books-ui, books-api, and layout-ui components share the same origin, so the application can access them using relative paths: /api/books and /layout/.... Locally, only the books-ui dev server is running, so it proxies these paths itself: /api/books to API_URL, and /layout to LAYOUT_UI_URL. This way, the relative paths resolve the same way locally as in production. Both variables live in .env.local and default to the container ports (http://localhost:6505 and http://localhost:6500).
 
 ### Running a service from its own repo instead of a container
 
 Usually both dependencies run as containers, but you can point the proxy at a local checkout instead by overriding `API_URL` or `LAYOUT_UI_URL` and stopping the matching container:
 
-- **layout-ui**: start it from its own repo with `npm run start:federation` (served on port 4500 - see the layout-ui README), stop the shared container with `npm run local-services:down:layout-ui`, then run books-ui with `LAYOUT_UI_URL=http://localhost:4500/layout npm start`
-- **books-api**: start it from its own repo (Dev Container, port 4505), stop its container with `npm run local-services:down:api`, then run books-ui with `API_URL=http://localhost:4505 npm start`. If your books-api checkout also changes the mock config, take it from there instead of GitHub with `API_LOCAL_PATH=../inner-circle-books-api npm run prepare-local-run` - this only works outside the Dev Container, since only the books-ui repo is mounted inside it
 
-layout-ui runs as a separate compose project (`-p inner-circle-layout-ui`), because when several UI services depend on layout-ui and run locally at the same time, it is better to start one shared container than a copy for each service. `npm run local-services:down` only stops the books-api project and leaves the shared layout-ui container running; `npm run local-services:down:layout-ui` stops that one too.
+- **layout-ui**: start it from its own repo with `npm run start:federation` (served on port 4500 - see the layout-ui README), stop the shared container with `npm run local-services:down:layout-ui`, then run books-ui with `LAYOUT_UI_URL=http://localhost:4500/layout npm start`, or change the value in `.env.local` and run `npm start`.
+- **books-api**: start it from its own repo ([README](https://github.com/TourmalineCore/inner-circle-books-api#develop-inside-dev-container)), stop its container with `npm run local-services:down:api`, then run books-ui with `API_URL=http://localhost:4505 npm start`, or change the value in `.env.local` and run `npm start`. If your books-api checkout also changes the mock config, take it from there instead of GitHub with `API_LOCAL_PATH=../inner-circle-books-api npm run prepare-local-run` - this only works outside the Dev Container, since only the books-ui repo is mounted inside it.
+
+layout-ui runs as a separate compose project (`-p inner-circle-layout-ui`), because when several UI services depend on layout-ui and run locally at the same time, it's better to start one shared container than a separate copy for each service. `npm run local-services:api` only stops the books-api project and leaves the shared layout-ui container running; `npm run local-services:down:layout-ui` stops that one too. `npm run local-services:down` stops everything.
 
 ### Advantages
 
