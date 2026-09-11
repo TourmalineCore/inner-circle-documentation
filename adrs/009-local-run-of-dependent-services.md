@@ -11,7 +11,7 @@ books-ui cannot work alone. It needs two things:
 - books-api - gives data about books
 - layout-ui - gives the header, footer, and sidebar. The app loads it at runtime with module federation
 
-Running everything by hand across three repositories was slow and error-prone, so the repo used to lean on `local-env` for everyday UI work. `local-env` works, but it is too slow for everyday UI work: to see a change, you have to rebuild the image and redeploy it every time.
+Running everything by hand across three repositories was slow and error-prone, so the repo used to lean on [local-env](https://github.com/TourmalineCore/inner-circle-local-env) for everyday UI work. `local-env` works, but it is too slow for everyday UI work: to see a change, you have to rebuild the image and redeploy it every time.
 
 We wanted a new developer to get a working page with no manual cross-repository setup, and with hot reload.
 
