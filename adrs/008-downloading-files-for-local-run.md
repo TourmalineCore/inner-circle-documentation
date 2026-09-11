@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted (2026-09-07)
 
 ## Context
 
@@ -19,7 +19,7 @@ Git has two built-in ways to work with code from another repository inside your 
 
 We download the files we need from GitHub one by one with a plain HTTP request, instead of connecting the whole repository.
 
-A Node script, run through `npm run prepare-local-run` (`node --env-file=.env.local local-run/prepare-local-run.js`), fetches them from `raw.githubusercontent.com` and puts them into the `local-run/` folder. They are not committed - they are downloaded on demand, not our code.
+A Node script, run through `npm run prepare-local-run` (`node --env-file=.env.local local-run/prepare-local-run.js`), fetches them from `raw.githubusercontent.com` and puts them into the `local-run/` folder. This flag requires Node.js 20.6.0 or higher. The downloaded files are not committed - the `local-run/` folder is listed in `.gitignore`, so a developer cannot commit them by mistake; they are downloaded on demand, not our code.
 
 By default the files come from `master`. `API_REF` and `LAYOUT_REF` let you choose another branch or commit for books-api's and layout-ui's files, one variable per repository. `API_LOCAL_PATH` additionally lets you take the mock server initialization config from a local books-api folder, so you can check changes that you have not pushed yet - layout-ui has no local file to fetch, so it has no such switch.
 
