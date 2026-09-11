@@ -45,7 +45,6 @@ In the production environment, the books-ui, books-api, and layout-ui components
 
 Usually both dependencies run as containers, but you can point the proxy at a local checkout instead by overriding `API_URL` or `LAYOUT_UI_URL` and stopping the matching container:
 
-
 - **layout-ui**: start it from its own repo with `npm run start:federation` (served on port 4500 - see the layout-ui README), stop the shared container with `npm run local-services:down:layout-ui`, then run books-ui with `LAYOUT_UI_URL=http://localhost:4500/layout npm start`, or change the value in `.env.local` and run `npm start`.
 - **books-api**: start it from its own repo ([README](https://github.com/TourmalineCore/inner-circle-books-api#develop-inside-dev-container)), stop its container with `npm run local-services:down:api`, then run books-ui with `API_URL=http://localhost:4505 npm start`, or change the value in `.env.local` and run `npm start`. If your books-api checkout also changes the mock config, take it from there instead of GitHub with `API_LOCAL_PATH=../inner-circle-books-api npm run prepare-local-run` - this only works outside the Dev Container, since only the books-ui repo is mounted inside it.
 
