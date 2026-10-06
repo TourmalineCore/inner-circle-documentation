@@ -40,7 +40,35 @@ export function concatDateAndTime({
 
 ## Decision
 
-The system does not work with seconds — this is a business rule. So we need to reset seconds at the domain level when we create `TrackedEntryBase` and all its child classes. This will fix the problem at the root and protect us from any way of creating entries with seconds.
+The system does not work with seconds — this is a business rule. That's why it was decided to add a constraint that checks that time with seconds cannot be saved. This will allow validating start_time and end_time at the database level and will close all possible ways of saving incorrect data.
+
+Before adding the new constraint, we need to write a migration that will reset the seconds to zero in all existing records on prod.
+
+The server-side solution fully fixes the problem. In addition, we should also change the UI function so that it resets seconds before sending data to the server. This will prevent sending time with seconds.
+
+```js
+export function concatDateAndTimeToMinute({
+  date,
+  time,
+}: {
+  date: Date,
+  time: Date,
+}) {
+  return moment(date)
+    .hours(moment(time)
+      .hours())
+    .minutes(moment(time)
+      .minutes())
+    .startOf('minute')
+    .format(`YYYY-MM-DDTHH:mm:ss`)
+}
+```
+
+We also discussed adding extra attributes with validation to all requests that have startTime and endTime.
+But in the end, we decided not to add them, because testing these attributes would require building testing infrastructure that would have to be maintained, and for an optional validation layer this is unnecessary.
+
+## Alternatives
+Reset seconds at the domain level when we create `TrackedEntryBase` and all its child classes.
 
 ```c#
 public class TrackedEntryBase : EntityBase, IOwnedByEmployee, ICanBeDeleted
@@ -76,22 +104,5 @@ public class TrackedEntryBase : EntityBase, IOwnedByEmployee, ICanBeDeleted
 }
 ```
 
-The server-side solution fully fixes the problem. In addition, we should also change the UI function so that it resets seconds before sending data to the server. This will prevent sending time with seconds.
-
-```js
-export function concatDateAndTimeToMinute({
-  date,
-  time,
-}: {
-  date: Date,
-  time: Date,
-}) {
-  return moment(date)
-    .hours(moment(time)
-      .hours())
-    .minutes(moment(time)
-      .minutes())
-    .startOf('minute')
-    .format(`YYYY-MM-DDTHH:mm:ss`)
-}
-```
+### Disadvantages
+- It does not protect against adding incorrect data directly through the database.
