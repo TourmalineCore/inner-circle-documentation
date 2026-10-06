@@ -17,7 +17,7 @@ When we checked the production database backup, we found 4 entries with seconds 
 
 The main reason is that the server saves seconds if they come in the request and does not validate them. According to business rules, the system does not work with seconds, but this rule is not written anywhere.
 
-One of the triggers was a function on the UI. This function joins the date and time before sending them to the server, but it does not reset seconds if they are in the input data.
+One of the reasons was a function on the UI. This function joins the date and time before sending them to the server, but it does not reset seconds if they are in the input data.
 
 ```js
 export function concatDateAndTime({
