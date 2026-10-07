@@ -120,15 +120,44 @@ Now we agreed to use 3 layers:
    
    Our **Application** layer accepts models, transforms them into Core classes in commands, and saves them in the database. Similarly, queries extract Core classes from the database but immediately convert them into models for passing up (for example, to responses).
 
+## 2. Folder Naming
 
-## 2. Test location
+### When should I add the Shared prefix and when not?
+
+**Inside Feature Folders (`Application/Features/<FeatureName>/`)** 
+
+Name folders without the `Shared` prefix, guided by uniformity with the `Handlers` folder.
+
+**✅ Good**
+- `Features/ToDos/Handlers`
+- `Features/ToDos/Dtos`
+- `Features/ToDos/Validators`
+
+**❌ Bad**
+- `Features/ToDos/SharedHandlers`
+- `Features/ToDos/SharedDtos`
+
+**At the Root of the Layer/Project** (`Application/`)
+
+Everything that is used in several different features and is located in the root of the project should be named with the prefix `Shared`. Thus, it becomes clear that these components are global.
+
+**✅ Good**
+- `Application/SharedDtos`
+- `Application/SharedQueries`
+- `Application/SharedCommands`
+
+**❌ Bad**
+- `Application/Dtos`
+- `Application/Queries`
+
+## 3. Test location
 
 We place unit-tests next to the classes they test on all layers of the application. You can read [our article](https://www.tourmalinecore.com/articles/dotnet-unit-testing) about it. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
 
 ![Tests Location Example](./images/tests-location-example.png)
 
 
-## 3. Naming Convention of Methods That Return Tasks
+## 4. Naming Convention of Methods That Return Tasks
 
 All methods that return tasks must end with `Async`.
 
@@ -152,7 +181,7 @@ But if the noun is uncountable (e.g. time, money, knowledge, information, equipm
 | `EquipmentList` | `Equipments` |
 
 
-## 4. Controller Responses Naming
+## 5. Controller Responses Naming
 
 Everything that comes back from the controller must end with `Response`.
 
@@ -161,7 +190,7 @@ public async Task<SomeElseResponse> DoSomethingElseAsync()
 ```
 
 
-## 5. Explicit Response Mapping
+## 6. Explicit Response Mapping
 
 In the controller, explicit mapping of data should always occur before returning the response.
 
@@ -184,13 +213,13 @@ public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
 ```
 
 
-## 6. RORO pattern
+## 7. RORO pattern
 
 We use RORO pattern (Request Object Response Object). You can read 
 [our article](https://www.tourmalinecore.com/articles/React) about it.
 
 
-## 7. DTO Naming for Response Models
+## 8. DTO Naming for Response Models
 
 All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
 
@@ -209,7 +238,7 @@ public class ProjectDto
 ```
 
 
-## 8. Separate DTOs for Requests and Responses
+## 9. Separate DTOs for Requests and Responses
 
 Don't use shared DTO for different requests and responses. Even if they share the same fields.
 In the future DTOs are likely to become different.
@@ -265,7 +294,7 @@ public class ItemTypesDto
 ```
 
 
-## 9. Lambda Parameter Naming
+## 10. Lambda Parameter Naming
 
 - Use `x` as the default lambda parameter name.
 - Use a full, meaningful name only when it improves readability.
@@ -297,7 +326,7 @@ var result = orders
 ```
 
 
-## 10. Async Methods and Returning Tasks
+## 11. Async Methods and Returning Tasks
 
 - Methods that perform `await` inside must be marked as `async`.
 
@@ -325,7 +354,7 @@ public async Task<int> GetProcessedValueAsync()
 ```
 
 
-## 11. Null-Forgiving Operator (!)
+## 12. Null-Forgiving Operator (!)
 
 When the linter reports possible null, use the null-forgiving operator `!.`
 
@@ -339,7 +368,7 @@ var value = context.User!.Id;
 ```
 
 
-## 12. Adding unauthorized karate tests
+## 13. Adding unauthorized karate tests
 
 Karate tests for unauthorized must be added at the time of adding endpoints without implementation.
 
