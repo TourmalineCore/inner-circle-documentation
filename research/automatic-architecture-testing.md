@@ -59,7 +59,6 @@ Below is a configuration. It describes the following rules:
 
 **Limitations:**
 - The analyzer works at the namespace level, not at the type level. If a handler and a command are in the same namespace, it is impossible to add the rule "controllers call only handlers".
-- The analyzer does not check signatures or whether methods exist. So it is impossible to add rules like "every handler must have a HandleAsync method".
 
 **Pros:**
 - Easy to set up.
@@ -328,7 +327,13 @@ public class ArchNetTests
 - No errors at compile time.
 - Harder to set up.
 
+## Microsoft.CodeAnalysis.CSharp (https://github.com/dotnet/roslyn)
+
+This is a Roslyn analyzer that gives you access to the C# syntax tree. With it, we can also implement all our rules. But so far, we have not started researching this package yet.
+
 ## Comparative Table
+
+Testing the architecture with tests is worse than a Roslyn analyzer, because you have to move the tests from project to project.
 
 | Check | ArchitectureAnalyzer | NetArchTest | ArchUnitNET |
 | :--- | :---: | :---: | :---: |
