@@ -328,8 +328,15 @@ public class ArchNetTests
 - No errors at compile time.
 - Harder to set up.
 
-| Rule | ArchitectureAnalyzer | NetArchTest | ArchUnitNET |
-|---|---|---|---|
-| Layer dependencies | Yes | Yes | Yes |
-| Every handler has `HandleAsync` | No | Yes | Yes |
-| Only a `handler` is called in a controller | No | ? | Yes |
+## Comparative Table
+
+| Check | ArchitectureAnalyzer | NetArchTest | ArchUnitNET |
+| :--- | :---: | :---: | :---: |
+| **Layer dependency direction** | + | + | + |
+| **Namespace existence validation** | + | + | + |
+| **Type and naming conventions** | - | + | + |
+| **Method/Member existence** (e.g., `HandleAsync`) | - |  + | + |
+| **Method body analysis** (e.g., controller can call only `handler`) | - | - | + |
+| **Compile-time error reporting** | + | - | - |
+| **Configuration format** | JSON | C# | C# |
+| **Flexibility for custom rules** | Low | High | High |
