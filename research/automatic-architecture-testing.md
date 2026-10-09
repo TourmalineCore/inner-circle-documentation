@@ -335,7 +335,7 @@ public class ArchNetTests
 | **Layer dependency direction** | + | + | + |
 | **Namespace existence validation** | + | + | + |
 | **Type and naming conventions** | - | + | + |
-| **Method/Member existence** (e.g., `HandleAsync`) | - |  + | + |
+| **Method/Member existence** (e.g., `HandleAsync`, `ExecuteAsync`) | - |  + | + |
 | **Method body analysis** (e.g., controller can call only `handler`) | - | - | + |
 | **Compile-time error reporting** | + | - | - |
 | **Configuration format** | JSON | C# | C# |
