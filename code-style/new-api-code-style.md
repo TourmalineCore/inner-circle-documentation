@@ -11,7 +11,6 @@
   - [2.1. Feature Structure](#21-feature-structure)
   - [2.2. File and Folder Naming](#22-file-and-folder-naming)
   - [2.3. Test Location](#23-test-location)
-  - [2.4. Process Rules for Testing](#24-process-rules-for-testing)
 - [3. Code Style Standards](#3-code-style-standards)
   - [3.1. Method Naming](#31-method-naming)
   - [3.2. Request / Response Naming](#32-request--response-naming)
@@ -20,6 +19,8 @@
   - [3.5. Parameter Naming in Lambda Expressions](#35-parameter-naming-in-lambda-expressions)
   - [3.6. Async Methods](#36-async-methods)
   - [3.7. Null-Forgiving Operator (!)](#37-null-forgiving-operator-)
+  - [3.8. Adding unauthorized karate tests](#38-adding-unauthorized-karate-tests)
+  - [3.9. AsNoTracking in Queries](#39-asnotracking-in-queries)
 
 # 1. Architecture and Components
 
@@ -297,7 +298,7 @@ public class GetToDoByIdQuery(AppDbContext context)
   public async Task<ToDo> GetAsync(long id)
   {
     var toDo = await context
-      .Queryable<ToDo>()
+      .QueryableAsNoTracking<ToDo>()
       .SingleAsync(x => x.Id == id);
 
     // ❌ Query must not change the database state
@@ -606,3 +607,44 @@ var value = context.User?.Id;
 ```
 
 **Rationale:** Using `!.` will help detect the error faster if the value does not arrive, whereas using `?.` will make the code swallow the error, making it harder to find.
+
+## 3.8. Adding unauthorized karate tests
+
+Karate tests for unauthorized must be added at the time of adding endpoints without implementation.
+
+Endpoints without implementation are made in order to publish a new version of the js client package, this is necessary so that the UI can start development using a specific contract.
+
+**Rationale:** Unauthorized tests check that the endpoint returns 401 without a valid permission, not the implementation. So they can and should be added when the stub endpoint appears: the contract is already fixed and published in the js client, so the authorization behavior is defined. Later, there is a risk of forgetting to add this test.
+
+## 3.9. AsNoTracking in Queries
+
+Always use `.AsNoTracking()` in `Query`.
+
+**Rationale**: Disabling change tracking for read-only operations significantly improves performance by reducing memory allocation and CPU overhead.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    return context
+      .Set<ToDo>()
+      .AsNoTracking()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    return context
+      .Set<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
