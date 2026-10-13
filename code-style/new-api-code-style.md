@@ -25,6 +25,20 @@
 
 ## 1.1. Layer Dependencies
 
+Now we agreed to use 3 layers:
+
+1. **Api**
+
+- This layer accepts HTTP requests, passes them to the Application layer, and returns responses back to the client.
+
+2. **Application**
+
+- Here lies the business logic, including handlers, commands, queries, and mapping with DbContext.
+
+3. **Core**
+
+- Describes the domain: entities and the rules that belong to them. These classes shape the database schema, but they are never exposed outside the application.
+
 Dependencies point from the outer layers to the inner ones.
 
 - The `Core` layer does not depend on anything.
@@ -38,7 +52,7 @@ graph LR
     Application --> Core
 ```
 
-## 1.1. Controller
+## 1.2. Controller
 
 - A controller must always call only a `Handler` and nothing more. All business logic and data access are delegated to it.
 
@@ -76,7 +90,9 @@ public Task<CreateToDoResponse> CreateToDoAsync(
 }
 ```
 
-## 1.2. Handler
+**Rationale:** TODO?
+
+## 1.3. Handler
 
 - A `Handler` may call only a `Command` or a `Query`.
 - Only a `Handler` may build a response.
@@ -182,7 +198,9 @@ public class GetToDosHandler(
 }
 ```
 
-## 1.3. Command
+**Rationale:** TODO?
+
+## 1.4. Command
 
 - A `Command` may change the database state.
 - A `Command` may not call a `Query` or a `Handler`.
@@ -251,10 +269,48 @@ public class DeleteToDoCommand(
 }
 ```
 
-## 1.4. Query
+**Rationale:** TODO?
+
+## 1.5. Query
 
 - A `Query` may read from the database, but it may not change its state.
 - A `Query` may not call a `Command` or a `Handler`.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    // ✅ Query only reads from the database
+    return context
+      .QueryableAsNoTracking<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public async Task<ToDo> GetAsync(long id)
+  {
+    var toDo = await context
+      .Queryable<ToDo>()
+      .SingleAsync(x => x.Id == id);
+
+    // ❌ Query must not change the database state
+    toDo.LastViewedAtUtc = DateTime.UtcNow;
+
+    await context.SaveChangesAsync();
+
+    return toDo;
+  }
+}
+```
+
+**Rationale:** TODO?
 
 # 2. Project Structure and Code Organization
 
