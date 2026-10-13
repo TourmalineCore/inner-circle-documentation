@@ -366,7 +366,7 @@ A file name must match its contents and the type of the class inside it.
 - If the file contains a handler -> `CreateToDoHandler.cs`
 - If the file contains a command -> `CreateToDoCommand.cs`
 - If the file contains a query -> `CreateToDoQuery.cs`
-...
+- ...
 
 **Rationale:** This makes navigation and search across the codebase in the IDE easier.
 
