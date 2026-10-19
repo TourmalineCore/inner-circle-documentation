@@ -1,4 +1,4 @@
-## Configurations
+# Configurations
 
 - DbOnly - spins up only database and its pgAdmin in docker compose, especially useful to add migrations
 - MockForDevelopment - used locally when you run the service in Visual Studio e.g. in Debug and don't want to spin up any external deps
