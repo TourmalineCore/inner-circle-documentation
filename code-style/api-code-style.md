@@ -1,4 +1,4 @@
-## API Code Style
+# API Code Style
 
 ## Contents
 - [1. Architecture and Components](#1-architecture-and-components)
