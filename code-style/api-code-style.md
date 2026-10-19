@@ -663,56 +663,55 @@ public class GetToDoByIdQuery(AppDbContext context)
 ## 3.10. Separate DTOs for Requests and Responses
 
 Don't use shared DTO for different requests and responses. Even if they share the same fields.
-In the future DTOs are likely to become different.
 
-**Avoid using shared DTO between different Responses and Requests**
-
-```csharp
-public class GetItemsResponse : ItemDto
-{
-    public required List<ItemDto> Items { get; set; }
-}
-```
-
-```csharp
-public class GetItemTypesResponse : ItemDto
-{
-    public required List<ItemDto> ItemTypes { get; set; }
-}
-```
-
-**Create separate DTOs** 
-
-```csharp
+**✅ Good**
+```c#
+// ✅ Create separate DTOs 
 public class GetItemsResponse
 {
-    public required List<ItemDto> Items { get; set; }
+  public required List<ItemDto> Items { get; set; }
 }
 
 public class ItemDto
 {
-    public required long Id { get; set; }
+  public required long Id { get; set; }
 
-    public required string Title { get; set; }
+  public required string Title { get; set; }
 
-    public required string Description { get; set; }
+  public required string Description { get; set; }
 }
 ```
 
-```csharp
+```c#
 public class GetItemTypesResponse
 {
-    public required List<ItemTypesDto> ItemTypes { get; set; }
+  public required List<ItemTypesDto> ItemTypes { get; set; }
 }
 
 public class ItemTypesDto
 {
-    public required long Id { get; set; }
+  public required long Id { get; set; }
 
-    public required string Title { get; set; }
+  public required string Title { get; set; }
 
-    public required string Description { get; set; }
+  public required string Description { get; set; }
 }
 ```
 
-**Rationale**: TODO?
+**❌ Bad**
+```c#
+// ❌ Avoid reusing the same DTO for different concepts just because fields match
+public class GetItemsResponse
+{
+  public required List<ItemDto> Items { get; set; }
+}
+
+public class GetItemTypesResponse
+{
+  // ❌ Bad: Reusing ItemDto here creates hidden coupling. 
+  // It should have its own ItemTypesDto.
+  public required List<ItemDto> ItemTypes { get; set; } 
+}
+```
+
+**Rationale**: In the future DTOs are likely to become different.
