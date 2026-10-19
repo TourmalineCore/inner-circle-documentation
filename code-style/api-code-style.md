@@ -15,7 +15,7 @@
   - [3.1. Method Naming](#31-method-naming)
   - [3.2. Async Methods](#32-async-methods)
   - [3.3. Request / Response Naming](#33-request--response-naming)
-  - [3.4. DTO Naming](#34-dto-naming)
+  - [3.4. DTO Naming for Request and Response Models](#34-dto-naming-for-request-and-response-models)
   - [3.5. List Naming](#35-list-naming)
   - [3.6. Parameter Naming in Lambda Expressions](#36-parameter-naming-in-lambda-expressions)
   - [3.7. Null-Forgiving Operator (!)](#37-null-forgiving-operator-)
@@ -244,7 +244,7 @@ public class DeleteToDoCommand(AppDbContext context)
 {
   public async Task<bool> ExecuteAsync(long toDoId)
   {
-    // ✅ Получается данные используя context напрямую, а не использует query
+    // ✅ Gets data using context directly instead of using a query
     var toDoToDelete = await context
       .Queryable<ToDo>()
       .SingleAsync(x => x.Id == toDoId);
@@ -514,7 +514,7 @@ public class CreateToDo
 
 **Rationale:** The `Request/Response` suffixes make it possible to tell a request and a response apart from each other.
 
-## 3.4. DTO Naming for Request / Response Models
+## 3.4. DTO Naming for Request and Response Models
 
 All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
 
