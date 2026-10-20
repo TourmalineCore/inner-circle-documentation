@@ -34,15 +34,14 @@ Now we agreed to use 3 layers:
 
 1. **Api**
 
-- This layer accepts HTTP requests, passes them to the Application layer, and returns responses back to the client.
+- This is a thin layer. It receives the request, runs all the decorators (middlewares), for example, checks whether the account has permissions, and delegates the processing of the request to the next layer (Application).
 
 2. **Application**
 
-- Here lies the business logic, including handlers, commands, queries, and mapping with DbContext.
+- This layer implements all the use cases, works with the database, turns entities into response models, and makes requests to neighbouring services. This is where the main work happens.
 
 3. **Core**
-
-- Describes the domain: entities and the rules that belong to them. These classes shape the database schema, but they are never exposed outside the application.
+- This layer contains domain entities and performs business calculations.
 
 Dependencies point from the outer layers to the inner ones.
 
@@ -434,7 +433,7 @@ CreateToDo/
 
 - The `Handler` method must be named `HandleAsync`.
 - The `Command` method must be named `ExecuteAsync`.
-- The `Query` method must be named `GetAsync`. (There are very rare exceptions when overloading is not enough to understand which method should be used.) TODO?
+- The `Query` method must be named `GetAsync`. (There are very rare exceptions when overloading is not enough to understand which method should be used, for example, getting a book by bookId and copyId)
 - All methods that return a `Task` must have the `Async` suffix, even if they do not use `await` inside.
 
 **Rationale:** Consistent method names help keep the project uniform. The `Async` suffix signals that the method returns a `Task` and needs to be awaited.
