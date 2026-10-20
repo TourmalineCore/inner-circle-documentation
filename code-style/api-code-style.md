@@ -706,8 +706,8 @@ public class GetItemsResponse
 
 public class GetItemTypesResponse
 {
-  // ❌ Bad: Reusing ItemDto here creates hidden coupling. 
-  // It should have its own ItemTypesDto.
+  // ❌ Reusing ItemDto here creates hidden coupling
+  // It should have its own ItemTypesDto
   public required List<ItemDto> ItemTypes { get; set; } 
 }
 ```
