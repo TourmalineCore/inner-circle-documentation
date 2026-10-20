@@ -23,7 +23,6 @@
   - [3.9. AsNoTracking in Queries](#39-asnotracking-in-queries)
   - [3.10. Separate DTOs for Requests and Responses](#310-separate-dtos-for-requests-and-responses)
 
-
 # 1. Architecture and Components
 
 Our entire architecture is built so that its components can be easily tested in isolation.
