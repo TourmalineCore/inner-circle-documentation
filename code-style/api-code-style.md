@@ -1,132 +1,394 @@
 # API Code Style
 
-This document outlines the code style guidelines for API services.
+## Contents
+- [1. Architecture and Components](#1-architecture-and-components)
+  - [1.1. Layer Dependencies](#11-layer-dependencies)
+  - [1.2. Controller](#12-controller)
+  - [1.3. Handler](#13-handler)
+  - [1.4. Command](#14-command)
+  - [1.5. Query](#15-query)
+- [2. Project Structure and Code Organization](#2-project-structure-and-code-organization)
+  - [2.1. Feature Structure](#21-feature-structure)
+  - [2.2. File and Folder Naming](#22-file-and-folder-naming)
+  - [2.3. Test Location](#23-test-location)
+- [3. Code Style Standards](#3-code-style-standards)
+  - [3.1. Method Naming](#31-method-naming)
+  - [3.2. Async Methods](#32-async-methods)
+  - [3.3. Request / Response Naming](#33-request--response-naming)
+  - [3.4. DTO Naming for Request and Response Models](#34-dto-naming-for-request-and-response-models)
+  - [3.5. List Naming](#35-list-naming)
+  - [3.6. Parameter Naming in Lambda Expressions](#36-parameter-naming-in-lambda-expressions)
+  - [3.7. Null-Forgiving Operator (!)](#37-null-forgiving-operator-)
+  - [3.8. Adding unauthorized karate tests](#38-adding-unauthorized-karate-tests)
+  - [3.9. AsNoTracking in Queries](#39-asnotracking-in-queries)
+  - [3.10. Separate DTOs for Requests and Responses](#310-separate-dtos-for-requests-and-responses)
 
-## Develop in Dev Container VSCode/Codespaces
+# 1. Architecture and Components
 
-This section contains insructions on how to run, debug, and test the API in Dev Container in VSCode and GitHub Codespaces.
+Our entire architecture is built so that its components can be easily tested in isolation.
 
-Super useful guidelinse about C#/.NET development in VSCode available [here](https://code.visualstudio.com/docs/csharp/introvideos-csharp) and all its other chapters of C# section.
-
-By default `db` and `mock-server` start at Dev Container startup. Thus, the only thing you need to do is to run the API itself.
-
-### Simple Run
-You can run the API executing the following script in Terminal:
-```cli
-dotnet run --project ./Api
-```
->Docs: [dotnet run](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run).
-
-We don't specify configuration because Dev Container contains `ASPNETCORE_ENVIRONMENT` env var with `MockForDevelopment` to make the start command short and use this configuration everywhere else by default.
-
-### Simple Testing
-
-#### Rest Client
-The simplest way you can test the API is using `*.http` requests collections for Rest Client. For instance, use `App.http` to generate a debug auth token using running `mock-sever` and calling the API endpoints with it.
-
->Docs: [Rest Client with Examples of Requests](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
-
-#### xUnit Tests
-
-To run xUnit unit and integrational tests execute the following script in Terminal:
-```cli
-dotnet test --verbosity detailed
-```
-
-#### Karate Tests
-
-To run Karate E2E tests execute the following script in Terminal:
-```cli
-java -jar /karate.jar .
-```
-
-
-### Generate HTML coverage report
-First you need to get an xml file, the commands for generating an xml file can be found in `calculate-tests-coverage-on-pull-request`:
-
-To generate HTML coverage report execute the following script in Terminal:
-
-```cli
-reportgenerator -reports:e2e-coverage.xml -targetdir:coverage-report   
--reporttypes:Html
-```
-
-
-### Migrations
-
-Go through [these](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) Migrations chapters to pick up some basic understanding of Migrations.
-
-Connection string is taken from `MockForDevelopment` configuration due to `ASPNETCORE_ENVIRONMENT` env variable in `removeEnv` of Dev Container. 
-
-#### Add Migration
-
-To add a new migration with the domain changes execute the following script in Terminal:
-```cli
-dotnet ef migrations add <YOUR_NEW_MIGRATION_NAME> --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
-```
-
-#### Remove Migration
-
-To remove the last migration execute the following script in Terminal:
-```cli
-dotnet ef migrations remove --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
-```
->Note: You cannot do that if this migration applied to production!
-
-#### Update Database
-
-To apply pending migrations execute the following script in Terminal:
-```cli
-dotnet ef database update --startup-project ./Api/Api.csproj --project ./Application/Application.csproj --context AppDbContext --verbose
-```
-
-## Configurations
-
-- DbOnly - spins up only database and its pgAdmin in docker compose, especially useful to add migrations
-- MockForDevelopment - used locally when you run the service in Visual Studio e.g. in Debug and don't want to spin up any external deps
-- MockForTests - used locally to run the service in isolation (no external deps) and later separately run its Karate tests
-- MockForPullRequest - used in PR pipeline to run the service in isolation (no external deps) and its Karate tests
-- LocalEnvForDevelopment - used locally when you run the service in Visual Studio and you want to connect to its external deps from Local Env, including Local Env's running api's database. Thus locally running api and Local Env api target the same db and the same dependent services from Local Env
-- LocalEnvForPullRequest - used in PR pipeline to run the service as part of Local Env and later separately run Karate tests against it
-
-| Configuration              | Db in Docker Compose | Api in Docker Compose | Api in Local Env | MockServer for External Deps |  Local Env for External Deps | Run Karate Tests | PgAdmin |
-| :---------------- | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
-| DbOnly                 |   Yes   |   No   |   No   |   No   |   No   |   No   |   Yes  |
-| MockForDevelopment     |   Yes   |   No   |   No   |   Yes  |   No   |   No   |   Yes  |
-| MockForTests           |   Yes   |   Yes  |   No   |   Yes  |   No   |   No   |   No   |
-| MockForPullRequest     |   Yes   |   Yes  |   No   |   Yes  |   No   |   Yes  |   No   |
-| LocalEnvForDevelopment |   No    |   No   |   Yes  |   No   |   Yes  |   No   |   No   |
-| LocalEnvForPullRequest |   No    |   No   |   Yes  |   No   |   Yes  |   Yes  |   No   |
-
-## Ports
-
-This information has been moved to [ports.md](./ports.md).
-
-## 1. Layers Structure
+## 1.1. Layer Dependencies
 
 Now we agreed to use 3 layers:
 
 1. **Api**
 
-- This layer contains controllers, requests and responses. This helps to group all request-related code within the Api context.
+- This is a thin layer. It receives the request, runs all the decorators (middlewares), for example, checks whether the account has permissions, and delegates the processing of the request to the next layer (Application).
 
 2. **Application**
 
-- Here lies the business logic, including commands, queries, and mapping with DbContext.
+- This layer implements all the use cases, works with the database, turns entities into response models, and makes requests to neighbouring services. This is where the main work happens.
 
 3. **Core**
+- This layer contains domain entities and performs business calculations.
 
-- This layer contains classes that describe entities. These classes are used in DbContext to create tables. We do not return Core classes to user or perform any operations with them. 
-   
-   Our **Application** layer accepts models, transforms them into Core classes in commands, and saves them in the database. Similarly, queries extract Core classes from the database but immediately convert them into models for passing up (for example, to responses).
+Dependencies point from the outer layers to the inner ones.
 
-## 2. Folder Naming
+- The `Core` layer does not depend on anything.
+- The `Application` layer may depend only on `Core`.
+- The `Api` layer may depend on `Application` and/or `Core`, but not the other way around.
 
-### When should I add the Shared prefix and when not?
+```mermaid
+graph LR
+    Api --> Application
+    Api --> Core
+    Application --> Core
+```
 
-**Inside Feature Folders (`Application/Features/<FeatureName>/`)** 
+## 1.2. Controller
 
-Name folders without the `Shared` prefix, guided by uniformity with the `Handlers` folder.
+- A controller must always call only a `Handler` and nothing more. All business logic and data access are delegated to `Handler`.
+
+**✅ Good**
+```c#
+[HttpPost]
+public Task<CreateToDoResponse> CreateToDoAsync(
+  [Required] [FromBody] CreateToDoRequest createToDoRequest,
+  [FromServices] CreateToDoHandler createToDoHandler
+)
+{
+  // ✅ Controller calls handler
+  return createToDoHandler.HandleAsync(createToDoRequest);
+}
+```
+
+**❌ Bad**
+```c#
+[HttpPost]
+public Task<CreateToDoResponse> CreateToDoAsync(
+  [Required] [FromBody] CreateToDoRequest createToDoRequest,
+  [FromServices] CreateToDoCommand createToDoCommand
+)
+{
+  // ❌ Controller operates on the handler's logic directly
+  var newToDo = new ToDo
+  {
+    Name = createToDoRequest.Name,
+    CreatedAtUtc = dateTimeProvider.UtcNow,
+  };
+
+  await context.ToDos.AddAsync(newToDo);
+
+  await context.SaveChangesAsync();
+
+  return newToDo.Id;
+}
+```
+
+**Rationale:** TODO?
+
+## 1.3. Handler
+
+- A `Handler` may call only a `Command` or a `Query`.
+- Only a `Handler` may build a response.
+
+**✅ Good**
+```c#
+public class CreateToDoHandler(
+  CreateToDoCommand createToDoCommand
+)
+{
+  public async Task<CreateToDoResponse> HandleAsync(CreateToDoRequest createToDoRequest)
+  {
+    // ✅ Handler calls a command
+    var id = await createToDoCommand.ExecuteAsync(createToDoRequest);
+
+    return new CreateToDoResponse
+    {
+      Id = id,
+    };
+  }
+}
+```
+
+**✅ Good**
+```c#
+public class GetToDosHandler(
+  GetToDosQuery getToDosQuery,
+  IDateTimeProvider dateTimeProvider
+)
+{
+  public async Task<GetToDosResponse> HandleAsync()
+  {
+    // ✅ Handler calls a query
+    var toDos = await getToDosQuery.GetAsync();
+
+    return new GetToDosResponse
+    {
+      ToDos = toDos
+        .Select(x => new ToDoDto
+        {
+          Id = x.Id,
+          Name = x.Name,
+          Status = x.GetStatus(dateTimeProvider),
+        })
+        .ToList(),
+    };
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class CreateToDoHandler(
+  AppDbContext context,
+  IDateTimeProvider dateTimeProvider
+)
+{
+  public async Task<CreateToDoResponse> HandleAsync(CreateToDoRequest createToDoRequest)
+  {
+    // ❌ Handler works with the database directly instead of calling a command
+    var newToDo = new ToDo
+    {
+      Name = createToDoRequest.Name,
+      CreatedAtUtc = dateTimeProvider.UtcNow,
+    };
+
+    await context.ToDos.AddAsync(newToDo);
+
+    await context.SaveChangesAsync();
+
+    return new CreateToDoResponse { Id = newToDo.Id };
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDosHandler(
+  AppDbContext context,
+  IDateTimeProvider dateTimeProvider
+)
+{
+  public async Task<GetToDosResponse> HandleAsync()
+  {
+    // ❌ Handler queries the database directly instead of calling a query
+    var toDos = await context
+      .QueryableAsNoTracking<ToDo>()
+      .OrderByDescending(x => x.CreatedAtUtc)
+      .ToListAsync();;
+
+    return new GetToDosResponse
+    {
+      ToDos = toDos
+        .Select(x => new ToDoDto
+        {
+          Id = x.Id,
+          Name = x.Name,
+          Status = x.GetStatus(dateTimeProvider),
+        })
+        .ToList(),
+    };
+  }
+}
+```
+
+**Rationale:** TODO?
+
+## 1.4. Command
+
+`Command` is responsible for database state changes (creation, updates, deletion).
+
+- A `Command` may change the database state.
+- A `Command` may not call a `Query` or a `Handler`.
+
+**✅ Good**
+```c#
+public class CreateToDoCommand(
+  AppDbContext context,
+  IDateTimeProvider dateTimeProvider
+)
+{
+  public async Task<long> ExecuteAsync(CreateToDoRequest createToDoRequest)
+  {
+    // ✅ Command changes the database state
+    var newToDo = new ToDo
+    {
+      Name = createToDoRequest.Name,
+      CreatedAtUtc = dateTimeProvider.UtcNow,
+    };
+
+    await context.ToDos.AddAsync(newToDo);
+    await context.SaveChangesAsync();
+
+    return newToDo.Id;
+  }
+}
+```
+
+**✅ Good**
+```c#
+public class DeleteToDoCommand(AppDbContext context)
+{
+  public async Task<bool> ExecuteAsync(long toDoId)
+  {
+    // ✅ Gets data using context directly instead of using a query
+    var toDoToDelete = await context
+      .Queryable<ToDo>()
+      .SingleAsync(x => x.Id == toDoId);
+
+    context.Set<ToDo>().Remove(toDoToDelete);
+
+    await context.SaveChangesAsync();
+
+    return true;
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class DeleteToDoCommand(
+  AppDbContext context,
+  GetToDoByIdQuery getToDoByIdQuery
+)
+{
+  public async Task<bool> ExecuteAsync(DeleteToDoRequest deleteToDoRequest)
+  {
+    // ❌ Command calls a query
+    var toDoToDelete = await getToDoByIdQuery.GetAsync(deleteToDoRequest.Id);
+
+    context.Set<ToDo>().Remove(toDoToDelete);
+
+    await context.SaveChangesAsync();
+
+    return true;
+  }
+}
+```
+
+**Rationale:** TODO?  
+
+## 1.5. Query
+
+`Query` is responsible for reading from the database, but does not change the database state.
+
+- A `Query` may read from the database, but it may not change its state.
+- A `Query` may not call a `Command` or a `Handler`.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    // ✅ Query only reads from the database
+    return context
+      .QueryableAsNoTracking<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public async Task<ToDo> GetAsync(long id)
+  {
+    var toDo = await context
+      .QueryableAsNoTracking<ToDo>()
+      .SingleAsync(x => x.Id == id);
+
+    // ❌ Query changes the database state
+    toDo.LastViewedAtUtc = DateTime.UtcNow;
+
+    await context.SaveChangesAsync();
+
+    return toDo;
+  }
+}
+```
+
+**Rationale:** TODO?
+
+# 2. Project Structure and Code Organization
+
+## 2.1. Feature Structure
+
+At all layers (`Api`, `Application`, `Core`) there must be a root `Features/` folder, inside which folders for specific features are created (for example, `ToDos/`).
+
+Inside a feature folder there must be everything that belongs exclusively to it (`Handlers`, `Commands`, `Response`, `Tests`, `Dtos`, `Validators`, etc.).
+
+**API layer**
+```bash
+Features
+ └── ToDos
+      ├── ToDosController.cs
+      ├── ToDosControllerValidationTests.cs
+```
+
+**Application layer**
+```bash
+Features/
+└── ToDos/
+      └── Handlers/
+            └── CreateToDo/
+                  ├── CreateToDoCommand.cs
+                  ├── CreateToDoCommandTests.cs
+                  ├── CreateToDoHandler.cs
+                  ├── CreateToDoRequest.cs
+                  ├── CreateToDoResponse.cs
+```
+
+**Core layer**
+```bash
+Features/
+└── ToDos/
+      └── Entities/
+            ├── ToDo.cs
+            ├── ToDoStatus.cs
+            ├── ToDoTests.cs
+```
+
+**Rationale:** We follow the "Local First" principle to increase cohesion.
+
+## 2.2. File and Folder Naming
+
+**File Naming**
+
+A file name must match its contents and the type of the class inside it.
+
+- If the file contains a controller -> `ToDoController.cs`
+- If the file contains a response -> `CreateToDoResponse.cs`
+- If the file contains a request -> `CreateToDoRequest.cs`
+- If the file contains a handler -> `CreateToDoHandler.cs`
+- If the file contains a command -> `CreateToDoCommand.cs`
+- If the file contains a query -> `CreateToDoQuery.cs`
+...
+
+**Rationale:** This makes navigation and search across the codebase in the IDE easier.
+
+**Test File Naming**
+
+- Test files must have the `Tests` suffix (for example, `CreateToDoHandlerTests.cs`).
+- Helper files that are used exclusively in tests must have the `TestsRelated` suffix (for example, `IntegrationTestBaseTestsRelated.cs`).
+
+**Rationale:** Having an explicit `Tests` or `TestsRelated` suffix makes it easy to exclude these files from the final Docker build via `.dockerignore`, so that test files do not end up in the production image and do not increase its size.
+
+**The `Shared` prefix in a folder name**
+
+Inside feature folders (`Application/Features/<FeatureName>/`) name folders without the `Shared` prefix.
 
 **✅ Good**
 - `Features/ToDos/Handlers`
@@ -137,9 +399,7 @@ Name folders without the `Shared` prefix, guided by uniformity with the `Handler
 - `Features/ToDos/SharedHandlers`
 - `Features/ToDos/SharedDtos`
 
-**At the Root of the Layer/Project** (`Application/`)
-
-Everything that is used in several different features and is located in the root of the project should be named with the prefix `Shared`. Thus, it becomes clear that these components are global.
+Everything that is used in several different features and is located in the root of the project should be named with the prefix `Shared`.
 
 **✅ Good**
 - `Application/SharedDtos`
@@ -150,22 +410,146 @@ Everything that is used in several different features and is located in the root
 - `Application/Dtos`
 - `Application/Queries`
 
-## 3. Test location
+**Rationale:** At the feature level, we name things without the `Shared` prefix, following the naming convention of the `handlers` folder for consistency. Everything that is used in several features and lives in the project root we name with the `Shared` prefix so that this is explicit.
+This is not an architectural decision, because we can change it at any moment in a couple of minutes and nothing will break.
 
-We place unit-tests next to the classes they test on all layers of the application. You can read [our article](https://www.tourmalinecore.com/articles/dotnet-unit-testing) about it. For example, in the **Application** layer, commands are placed alongside their corresponding tests, as shown in the image below:
+## 2.3. Test Location
 
-![Tests Location Example](./images/tests-location-example.png)
+Tests should be placed as close as possible to the code under test, inside the corresponding folders of features, calculators, etc. You can read [our article](https://www.tourmalinecore.com/articles/dotnet-unit-testing) about it.
 
-
-## 4. Naming Convention of Methods That Return Tasks
-
-All methods that return tasks must end with `Async`.
-
-```csharp
-public async Task DoSomethingAsync()
+**✅ Good**
+```bash
+CreateToDo/
+  ├── CreateToDoCommand.cs
+  ├── CreateToDoCommandTests.cs
 ```
 
-### Lists
+**Rationale:** We get rid of duplicating the folder structure in a test project (we do not create a test project at all), tests are always in plain sight, and we follow the "Local First" principle.
+
+# 3. Code Style Standards
+
+## 3.1. Method Naming
+
+- The `Handler` method must be named `HandleAsync`.
+- The `Command` method must be named `ExecuteAsync`.
+- The `Query` method must be named `GetAsync`. (There are very rare exceptions when overloading is not enough to understand which method should be used, for example, getting a book by bookId and copyId)
+- All methods that return a `Task` must have the `Async` suffix, even if they do not use `await` inside.
+
+**Rationale:** Consistent method names help keep the project uniform. The `Async` suffix signals that the method returns a `Task` and needs to be awaited.
+
+## 3.2. Async Methods
+
+- Methods that perform `await` inside must be marked as `async`.
+- All methods that return a `Task` must have the `Async` postfix, even if they do not use `await` inside.
+- If a method does not `await` anything inside, you can return the `Task` directly without marking the method `async`. This allows the caller to await it.
+
+**✅ Good**
+```c#
+public async Task<int> GetProcessedValueAsync()
+{
+  var result = await _service.CalculateAsync();
+  return result + 1;
+}
+```
+
+**✅ Good**
+```c#
+public Task<int> GetValueAsync()
+{
+  return _service.CalculateAsync();
+}
+```
+
+**❌ Bad**
+```c#
+public async Task<int> GetValueAsync()
+{
+  return await _service.CalculateAsync();
+}
+```
+
+**Rationale:** Without `await`, the `async` modifier is not needed — it adds overhead (state machine generation, unnecessary `Task` wrapping) without any benefit.
+
+## 3.3. Request / Response naming
+
+- Response classes must have the `Response` suffix.
+
+**✅ Good**
+```c#
+public class CreateToDoResponse
+{
+  public required long NewToDoId { get; set; }
+}
+```
+
+**❌ Bad**
+```c#
+public class CreateToDo
+{
+  public required long NewToDoId { get; set; }
+}
+```
+
+- Request classes must have the `Request` suffix.
+
+**✅ Good**
+```c#
+public class CreateToDoRequest
+{
+  [Required]
+  public required string Name { get; set; }
+}
+```
+
+**❌ Bad**
+```c#
+public class CreateToDo
+{
+  [Required]
+  public required string Name { get; set; }
+}
+```
+
+**Rationale:** The `Request/Response` suffixes make it possible to tell a request and a response apart from each other.
+
+## 3.4. DTO Naming for Request and Response Models
+
+All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
+
+**✅ Good**
+```c#
+public class ProjectsResponse
+{
+  public required List<ProjectDto> Projects { get; set; }
+}
+
+public class ProjectDto
+{
+  public required long Id { get; set; }
+
+  public required string Name { get; set; }
+}
+```
+
+**❌ Bad**
+```c#
+public class ProjectsResponse
+{
+  public required List<Project> Projects { get; set; }
+}
+
+public class Project
+{
+  public required long Id { get; set; }
+
+  public required string Name { get; set; }
+}
+```
+
+**Rationale:** The `Dto` suffix helps tell DTOs apart from domain models.
+
+# 3.5. List naming
+
 When naming collections (lists, arrays), use plural nouns — not the singular + List suffix.
 
 | Correct | Incorrect |
@@ -180,141 +564,26 @@ But if the noun is uncountable (e.g. time, money, knowledge, information, equipm
 | `MakeUpTimeList` | `MakeUpTimes` |
 | `EquipmentList` | `Equipments` |
 
+**Rationale:** The plural form already means a collection, so `List` is redundant. However, uncountable nouns have no plural form, so there `List` is the only way to indicate a collection.
 
-## 5. Controller Responses Naming
-
-Everything that comes back from the controller must end with `Response`.
-
-```csharp
-public async Task<SomeElseResponse> DoSomethingElseAsync()
-```
-
-
-## 6. Explicit Response Mapping
-
-In the controller, explicit mapping of data should always occur before returning the response.
-
-```csharp
-public async Task<CreateResponse> CreateAsync(CreateRequest createRequest)
-{
-    var createCommandParams = new CreateCommandParams
-    {
-        FirstParam = createRequest.FirstParam,
-        SecondParam = createRequest.SecondParam,
-    };
-
-    var newId = await _createCommand.CreateAsync(createCommandParams);
-
-    return new CreateResponse()
-    {
-        NewId = newId
-    };
-}
-```
-
-
-## 7. RORO pattern
-
-We use RORO pattern (Request Object Response Object). You can read 
-[our article](https://www.tourmalinecore.com/articles/React) about it.
-
-
-## 8. DTO Naming for Response Models
-
-All classes used in API responses must have the Dto postfix in their class names. This convention should help us to better distinguish domain entities from their alter egos that are here to be transferred via network which DTO (Data Transfer Object) means in essence. 
-
-```csharp
-public class ProjectsResponse
-{
-    public required List<ProjectDto> Projects { get; set; }
-}
-
-public class ProjectDto
-{
-    public required long Id { get; set; }
-
-    public required string Name { get; set; }
-}
-```
-
-
-## 9. Separate DTOs for Requests and Responses
-
-Don't use shared DTO for different requests and responses. Even if they share the same fields.
-In the future DTOs are likely to become different.
-
-### Avoid using shared DTO between different Responses and Requests
-
-```csharp
-public class GetItemsResponse : ItemDto
-{
-    public required List<ItemDto> Items { get; set; }
-}
-```
-
-```csharp
-public class GetItemTypesResponse : ItemDto
-{
-    public required List<ItemDto> ItemTypes { get; set; }
-}
-```
-
-### Create separate DTOs 
-
-```csharp
-public class GetItemsResponse
-{
-    public required List<ItemDto> Items { get; set; }
-}
-
-public class ItemDto
-{
-    public required long Id { get; set; }
-
-    public required string Title { get; set; }
-
-    public required string Description { get; set; }
-}
-```
-
-```csharp
-public class GetItemTypesResponse
-{
-    public required List<ItemTypesDto> ItemTypes { get; set; }
-}
-
-public class ItemTypesDto
-{
-    public required long Id { get; set; }
-
-    public required string Title { get; set; }
-
-    public required string Description { get; set; }
-}
-```
-
-
-## 10. Lambda Parameter Naming
+## 3.6. Parameter naming in lambda expressions
 
 - Use `x` as the default lambda parameter name.
 - Use a full, meaningful name only when it improves readability.
 - Do not use abbreviated names.
 
-### Avoid Abbreviated Naming
-
-```csharp
-items.Where(i => i.IsActive);
-```
-
-### Use `x` as default
-
-```csharp
+**✅ Good**
+```c#
 items.Where(x => x.IsActive);
 ```
 
-### Use full name when it improves readability
+**❌ Bad**
+```c#
+items.Where(i => i.IsActive);
+```
 
-```csharp
+**✅ Good**
+```c#
 var result = orders
     .Where(order => order.IsPaid && order.CreatedAt >= startDate)
     .GroupBy(order => order.CustomerId)
@@ -325,36 +594,9 @@ var result = orders
     });
 ```
 
+**Rationale:** Using `x` by default lowers the cognitive load when choosing a name in trivial lambdas, the full name brings back meaning in complex ones, while abbreviations give neither — they only force the reviewer to think extra about why it was named that way. It is also a move toward consistency.
 
-## 11. Async Methods and Returning Tasks
-
-- Methods that perform `await` inside must be marked as `async`.
-
-- All methods that return a `Task` must have the `Async` postfix, even if they do not use `await` inside.
-
-- If a method does not `await` anything inside, you can return the `Task` directly without marking the method `async`. This allows the caller to await it.
-
-### Returning Task Directly (No Await)
-
-```csharp
-public Task<int> GetValueAsync()
-{
-    return _service.CalculateAsync();
-}
-```
-
-### Async Method with Await
-
-```csharp
-public async Task<int> GetProcessedValueAsync()
-{
-    var result = await _service.CalculateAsync();
-    return result + 1;
-}
-```
-
-
-## 12. Null-Forgiving Operator (!)
+## 3.7. Null-Forgiving Operator (!)
 
 When the linter reports possible null, use the null-forgiving operator `!.`
 
@@ -363,16 +605,111 @@ If it is null, the code should fail immediately.
 
 Do not use `?.` in these cases. However, there are cases when `?.` is what you need, when null is possible and expected to happen. Thus, we use a stronger operator `!.` by default and a weaker one `?.` only when necessary.
 
-```csharp
+**✅ Good**
+```c#
 var value = context.User!.Id;
 ```
 
+**❌ Bad**
+```c#
+var value = context.User?.Id;
+```
 
-## 13. Adding unauthorized karate tests
+**Rationale:** Using `!.` will help detect the error faster if the value does not arrive, whereas using `?.` will make the code swallow the error, making it harder to find.
+
+## 3.8. Adding unauthorized karate tests
 
 Karate tests for unauthorized must be added at the time of adding endpoints without implementation.
 
-Endpoints without implementation are made in order to publish a new version of the js client package, this is necessary so that the UI can start development using a specific contract
+Endpoints without implementation are made in order to publish a new version of the js client package, this is necessary so that the UI can start development using a specific contract.
 
----
-to be continued..
+**Rationale:** Unauthorized tests check that the endpoint returns 401 without a valid permission, not the implementation. So they can and should be added when the stub endpoint appears: the contract is already fixed and published in the js client, so the authorization behavior is defined. Later, there is a risk of forgetting to add this test.
+
+## 3.9. AsNoTracking in Queries
+
+Always use `.AsNoTracking()` in `Query`.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    return context
+      .Set<ToDo>()
+      .AsNoTracking()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    return context
+      .Set<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**Rationale**: Disabling change tracking for read-only operations significantly improves performance by reducing memory allocation and CPU overhead.
+
+## 3.10. Separate DTOs for Requests and Responses
+
+Don't use shared DTO for different requests and responses. Even if they share the same fields.
+
+**✅ Good**
+```c#
+// ✅ Create separate DTOs 
+public class GetItemsResponse
+{
+  public required List<ItemDto> Items { get; set; }
+}
+
+public class ItemDto
+{
+  public required long Id { get; set; }
+
+  public required string Title { get; set; }
+
+  public required string Description { get; set; }
+}
+```
+
+```c#
+public class GetItemTypesResponse
+{
+  public required List<ItemTypesDto> ItemTypes { get; set; }
+}
+
+public class ItemTypesDto
+{
+  public required long Id { get; set; }
+
+  public required string Title { get; set; }
+
+  public required string Description { get; set; }
+}
+```
+
+**❌ Bad**
+```c#
+// ❌ Avoid reusing the same DTO for different concepts just because fields match
+public class GetItemsResponse
+{
+  public required List<ItemDto> Items { get; set; }
+}
+
+public class GetItemTypesResponse
+{
+  // ❌ Reusing ItemDto here creates hidden coupling
+  // It should have its own ItemTypesDto
+  public required List<ItemDto> ItemTypes { get; set; } 
+}
+```
+
+**Rationale**: In the future DTOs are likely to become different.
