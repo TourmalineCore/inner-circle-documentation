@@ -124,5 +124,5 @@ The constraint name `ck_entries_1_2_3_no_time_overlap` does not appear anywhere 
 
 **Is there a problem in production?**
 
-The likelihood of this issue occurring in production is extremely low, as the probability that two users will create absolutely identical overlapping records for the same employee at the exact same millisecond is virtually zero.
+This issue is very unlikely to happen in production. The chance of two users creating the exact same overlapping record for the same employee at the exact same millisecond is almost zero.
 
