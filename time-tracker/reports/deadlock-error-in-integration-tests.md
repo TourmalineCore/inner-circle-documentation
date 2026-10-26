@@ -92,10 +92,10 @@ public async Task GetTrackedEntriesWithNonExistentEmployeeId__ShouldReturnEmptyT
 3. **Locking mechanism:** When executing `INSERT`, PostgreSQL must check this constraint. To do this, it acquires locks (`ShareLock`) on tuples and GiST index pages to compare the new interval with existing ones.
 
 4. **Circular dependency (Deadlock):**
-    - `Transaction A` sees an uncommitted row from `Transaction B`.
-    - To check if its insert will violate a rule once `B` finishes, `Transaction A` tries to acquire a ShareLock on `Transaction B` (waiting for it to complete).
-    - Meanwhile,` Transaction B` sees `Transaction A's` uncommitted row and also tries to acquire a ShareLock on it.
-Result: Deadlock. PostgreSQL terminates one of the transactions with a `40P01` error.
+- `Transaction A` sees an uncommitted row from `Transaction B`.
+- To check if its own insert will break any rules after `Transaction B` finishes, `Transaction A` waits for `Transaction B` to complete.
+- At the same time, ` Transaction B` sees `Transaction A's` uncommitted row and also tries to acquire a ShareLock on it.
+- Result: Deadlock. PostgreSQL terminates one of the transactions with a `40P01` error.
 
 **Important note on isolation:** Transactions are logically isolated, but they are not isolated from physical resources (index rows and pages on disk). Parallel queries compete for the same physical locks.
 
