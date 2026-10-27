@@ -548,7 +548,7 @@ public class Project
 
 **Rationale:** The `Dto` suffix helps tell DTOs apart from domain models.
 
-# 3.5. List naming
+## 3.5. List naming
 
 When naming collections (lists, arrays), use plural nouns — not the singular + List suffix.
 
