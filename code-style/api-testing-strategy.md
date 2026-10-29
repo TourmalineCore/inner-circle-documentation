@@ -20,7 +20,8 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | Type    | Target | Run Against Prod | Use Real DB | Need Data Cleanup | Language |
 | -------- | ------- | ------- |------- |------- |------- |
 | E2E  | Whole API    | Yes    | Yes    | Yes    | Karate |
-| Integrational | Controller, Handler, Command, Query (everything that interacts with the Db) | No    | Yes    | No (Auto)    | C# |
+| Integrational | Handler, Command, Query (everything that interacts with the Db) | No    | Yes    | No (Auto) | C# |
+| Integrational with HTTP | Controller | No    | No    | No    | C# |
 | Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No    | No    | No    |  C# |
 
 
@@ -74,9 +75,41 @@ Edge cases with different deviations of input data.
 
 ### Integrational
 
-ToDo
-- DB Validation
-- Problem Details (?)
-- 
+#### Why do we test with a real database?
+
+We use a real database because it lets us test the code using the same database as in production.
+Unlike InMemoryDb, a real database lets us check real SQL queries, transactions, or business rules at the database level (constraints).
+
+#### Test isolation
+
+Each test runs in its own transaction with the Serializable isolation level, and after the test passes, the transaction is rolled back, so tests don't interfere with each other. This allows us not to clean up data at the beginning or end of tests.
+
+TODO: finish after fixing the deadlock problems.
+
+#### What we test
+
+We test the logic of Commands, Queries, Handlers, and possibly other components that work with the database. Integration tests check everything that is not covered by E2E tests.
+
+Commands and Queries — we test not the C# logic, but what happens in SQL: filtering, sorting, grouping, or business logic checked in the database (constraints).
+
+Handlers — we test validation, work with external services, edge cases, and negative cases (for example, an external service returned null).
+
+#### What we don't test
+
+Integration tests don't duplicate the checks that are already in E2E.
+
+### Integrational with HTTP
+
+#### Why do we use InMemoryDb in this type of test?
+
+For these tests we use InMemoryDb, because in these tests we don't need to save anything to the database. In this type of test, transaction logic is not implemented, so if we used a real database and tests were run before validation was added or if it was implemented incorrectly, data could be saved to the DB. To avoid adding cleanup logic or transactions, we decided to use InMemoryDb.
+
+#### What we test
+
+We test contract validation at the controller level.
+
+#### What we don't test
+
+We don't test the business logic of the application or work with the database.
 
 ### Unit
