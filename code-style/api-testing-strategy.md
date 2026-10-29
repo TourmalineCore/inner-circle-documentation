@@ -20,10 +20,10 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 
 | Type    | Target | Run Against Prod | Use Real DB | Need Data Cleanup | Language |
 | -------- | ------- | ------- |------- |------- |------- |
-| E2E  | Whole API    | Yes    | Yes    | Yes    | Karate |
-| Integrational | Handler, Command, Query (everything that interacts with the Db) | No    | Yes    | No (Auto) | C# |
-| Integrational with HTTP | Controller | No    | No    | No    | C# |
-| Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No    | No    | No    |  C# |
+| E2E | Whole API | Yes | Yes | Yes | Karate |
+| Integrational | Handler, Command, Query (everything that interacts with the Db) | No | Yes | No (Auto) | C# |
+| Integrational with HTTP | Controller | No | No | No | C# |
+| Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No | No | No | C# |
 
 ### E2E
 
