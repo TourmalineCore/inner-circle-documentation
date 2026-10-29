@@ -20,9 +20,11 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | Type    | Target | Run Against Prod | Use Real DB | Need Data Cleanup | Language |
 | -------- | ------- | ------- |------- |------- |------- |
 | E2E  | Whole API    | Yes    | Yes    | Yes    | Karate |
-| Integrational |   Whole API   | No    | Yes    | No (Auto)    | C# |
-| Modular    | Handler, Command, Query    | No    | No    | No    | C# |
-| Unit    | Mapper, Validator, Calculator    | No    | No    | No    |  C# |
+| Integrational | Controller, Handler, Command, Query (everything that interacts with the Db) | No    | Yes    | No (Auto)    | C# |
+| Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No    | No    | No    |  C# |
+
+
+TODO: Rules of a good test.
 
 ### E2E
 
@@ -48,10 +50,23 @@ However, there might be cases when some E2E tests cannot be executed against Loc
 
 #### What we test
 
-We test only the happy path - the core business flow. We limit the number of E2E tests to only the core business flow to avoid falling back into the situation when we test every change with a coarse-grained tests when it is an overkill and a lighter more fine-grained test is enough. Time to run the tests is also a limitation factor, yet minor at this phase. Tests against Prod are being executed faster than 5 mins, it seems ok.
+We test only the happy path - when everything goes according to plan and no unexpected situations happen, the core business flow. We limit the number of E2E tests to only the core business flow to avoid falling back into the situation when we test every change with a coarse-grained tests when it is an overkill and a lighter more fine-grained test is enough. Basic rule: every endpoint must be called at least once in some E2E test. We try to write separate (atomic) realistic user paths scenarios in the system, instead of one big test that calls all the endpoints. This lets us immediately see where an error happened and makes tests faster through parallel execution. Time to run the tests is also a limitation factor, yet minor at this phase. Tests against Prod are being executed faster than 5 mins, it seems ok.
 
-ToDo
-- Tenants Isolation?
+Before writing an E2E test, we describe a use case, for example:
+
+```
+I have planned a 14 days paid vacation.
+I track my vacation in the time tracker.
+Then, I realized that I need shift it for a month later.
+```
+
+```
+I was away for two hours.
+I want a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow.
+Then I realized I can't do the make-up tomorrow and want to move the 30-minute make-up to another day.
+```
+
+Besides business cases, in E2E we also test that endpoints are protected by permissions, as well as CORS settings and that Swagger works.
 
 #### What we don't test
 
@@ -63,7 +78,5 @@ ToDo
 - DB Validation
 - Problem Details (?)
 - 
-
-### Modular
 
 ### Unit
