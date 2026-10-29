@@ -10,6 +10,7 @@ We have a set of tests examples across various projects and services, we have ex
 - Answer when to write which types of tests in typical situations like implementing a new feature or fixing a bug.
 - Minimize overlap of tests to reduce the efforts that we put into their writing and maintenance while keeping their high value. Tests are code, they come with a price, we need make an effort to make them maximally efficient yet reliable and automatically testable.
 - Make it a piece of cake to write the testing and functional code in the current infrastructural and methodological setup.
+- Tests must run stably. If a test is flaky, fixing it must be prioritized.
 
 ## Parallel Execution of Tests
 
@@ -23,9 +24,6 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | Integrational | Handler, Command, Query (everything that interacts with the Db) | No    | Yes    | No (Auto) | C# |
 | Integrational with HTTP | Controller | No    | No    | No    | C# |
 | Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No    | No    | No    |  C# |
-
-
-TODO: Rules of a good test.
 
 ### E2E
 
@@ -51,7 +49,11 @@ However, there might be cases when some E2E tests cannot be executed against Loc
 
 #### What we test
 
-We test only the happy path - when everything goes according to plan and no unexpected situations happen, the core business flow. We limit the number of E2E tests to only the core business flow to avoid falling back into the situation when we test every change with a coarse-grained tests when it is an overkill and a lighter more fine-grained test is enough. Basic rule: every endpoint must be called at least once in some E2E test. We try to write separate (atomic) realistic user paths scenarios in the system, instead of one big test that calls all the endpoints. This lets us immediately see where an error happened and makes tests faster through parallel execution. Time to run the tests is also a limitation factor, yet minor at this phase. Tests against Prod are being executed faster than 5 mins, it seems ok.
+We test only the happy path - when everything goes according to plan and no unexpected situations happen, the core business flow. We limit the number of E2E tests to only the core business flow to avoid falling back into the situation when we test every change with a coarse-grained tests when it is an overkill and a lighter more fine-grained test is enough.
+
+Basic rule: every endpoint must be called at least once in some E2E test. We try to write separate (atomic) realistic user paths scenarios in the system, instead of one big test that calls all the endpoints. This lets us immediately see where an error happened and makes tests faster through parallel execution.
+ 
+Time to run the tests is also a limitation factor, yet minor at this phase. Tests against Prod are being executed faster than 5 mins, it seems ok.
 
 Before writing an E2E test, we describe a use case, for example:
 
@@ -77,8 +79,7 @@ Edge cases with different deviations of input data.
 
 #### Why do we test with a real database?
 
-We use a real database because it lets us test the code using the same database as in production.
-Unlike InMemoryDb, a real database lets us check real SQL queries, transactions, or business rules at the database level (constraints).
+We use a real database because it lets us test the code using the same database as in production. Unlike InMemoryDb, a real database lets us check real SQL queries, transactions, or business rules at the database level (constraints).
 
 #### Test isolation
 
@@ -88,7 +89,7 @@ TODO: finish after fixing the deadlock problems.
 
 #### What we test
 
-We test the logic of Commands, Queries, Handlers, and possibly other components that work with the database. Integration tests check everything that is not covered by E2E tests.
+Logic of Commands, Queries, Handlers, and possibly other components that work with the database. Integration tests check everything that is not covered by E2E tests.
 
 Commands and Queries — we test not the C# logic, but what happens in SQL: filtering, sorting, grouping, or business logic checked in the database (constraints).
 
@@ -106,10 +107,18 @@ For these tests we use InMemoryDb, because in these tests we don't need to save 
 
 #### What we test
 
-We test contract validation at the controller level.
+Contract validation at the controller level.
 
 #### What we don't test
 
-We don't test the business logic of the application or work with the database.
+Business logic of the application or work with the database.
 
 ### Unit
+
+#### What we test
+
+Pure functions without interaction with the database (calculators, mappers, etc.). We fully test the logic of the function.
+
+#### What we don't test
+ 
+Everything that interacts with the database.
