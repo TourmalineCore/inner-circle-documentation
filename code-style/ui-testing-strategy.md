@@ -16,6 +16,8 @@ We have a set of tests examples across various projects and services, we have ex
 
 All tests must support concurrent parallel invocation. Thus, tests don't rely on each other's results, they don't wait for each other as well and their execution completes faster.
 
+> Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
+
 ## Types of Tests
 
 | Type    | Target | Run Against Prod | Use Real DB |Need Data Cleanup |
@@ -27,10 +29,6 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | Types Linting | API Contract Safety | No | No | No |
 
 ### E2E
-
-#### Unit of Parallelism
-
-Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
 
 #### Production Execution
 
@@ -94,3 +92,36 @@ We test components on all regular breakpoints: mobile, tablet, tablet-xl, deskto
 - Components' behavior
 - Components between the breakpoints
 - All browsers, only in Electron
+- Api requests
+
+### Components
+
+Component tests cover layers such as: page, container, content, or a regular component (for example, Button).
+
+#### What we test
+
+#### Page
+
+We test high-level logic, for example, passing data from one state to another.
+
+#### Container
+
+We test the logic of working with requests and their responses.
+
+For example:
+- When the "Submit" button is clicked, a request is triggered
+- The incoming data is saved to the state
+- If an error response comes back, it is shown on the UI
+
+#### Content
+
+We test how components behave depending on the state or the page, and how different components interact with each other. For example, showing a loader, disabling buttons, showing errors, filtering, sorting, etc.
+
+#### Page components or shared components
+
+We test the component's logic and its edge cases separately from the feature/page, for example, showing elements in a certain order.
+
+#### What we don't test
+
+- Logic that is configured outside the UI (nginx)
+- Real interaction with the backend
