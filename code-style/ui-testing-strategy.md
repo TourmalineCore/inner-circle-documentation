@@ -14,9 +14,9 @@ We have a set of tests examples across various projects and services, we have ex
 
 ## Parallel Execution of Tests
 
-All tests must support concurrent parallel invocation. Thus, tests don't rely on each other's results, they don't wait for each other as well and their execution completes faster.
+Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
 
-> Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
+But we want all tests must support concurrent parallel invocation. Thus, tests will not depend on each other’s results, they won’t wait for each other, and their execution will be completed faster.
 
 ## Types of Tests
 
@@ -59,7 +59,7 @@ AND open existing sick leave and extends it until next Monday after the doctor's
 THEN user should see 8-day sick leave
 ```
 
-Besides business cases, in E2E we also test that redirects works.
+Besides business cases, in E2E we also test that redirects works (for example, those configured at the nginx level).
 
 #### What we don't test
 
@@ -125,3 +125,29 @@ We test the component's logic and its edge cases separately from the feature/pag
 
 - Logic that is configured outside the UI (nginx)
 - Real interaction with the backend
+
+### Unit
+
+#### What we test
+
+We test edge cases of the state's behavior and the logic of helper functions. For example, a function that formats a decimal number to two decimal places, the default state, going through all validation cases in the state, and so on.
+
+#### What we don't test
+
+- Components
+- API request
+- Logic that is configured outside the UI (nginx)
+
+#### Types Linting
+
+This is a static type of testing which allows to automatically check the contract between UI & Backend.
+
+Types are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
+
+#### What we test
+
+API contract beetwen UI & API.
+
+#### What we don't test
+
+Nothing except the API contract.
