@@ -73,7 +73,7 @@ Besides business cases, in E2E we also test that endpoints are protected by perm
 
 #### What we don't test
 
-Edge cases with different deviations of input data.
+Edge cases and negative scenarions.
 
 ### Integrational
 
