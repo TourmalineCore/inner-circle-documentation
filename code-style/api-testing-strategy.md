@@ -58,15 +58,15 @@ Time to run the tests is also a limitation factor, yet minor at this phase. Test
 Before writing an E2E test, we describe a use case, for example:
 
 ```
-I have planned a 14 days paid vacation.
-I track my vacation in the time tracker.
-Then, I realized that I need shift it for a month later.
+GIVEN I have planned a 14 days paid vacation.
+WHEN I track my vacation in the time tracker.
+THEN I realized that I need shift it for a month later.
 ```
 
 ```
-I was away for two hours.
-I want a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow.
-Then I realized I can't do the make-up tomorrow and want to move the 30-minute make-up to another day.
+GIVEN I was away for two hours.
+WHEN I want a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow.
+THEN I realized I can't do the make-up tomorrow and want to move the 30-minute make-up to another day.
 ```
 
 Besides business cases, in E2E we also test that endpoints are protected by permissions, as well as CORS settings and that Swagger works.
