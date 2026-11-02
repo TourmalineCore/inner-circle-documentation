@@ -32,7 +32,8 @@ But we want all tests must support concurrent parallel invocation. Thus, tests w
 
 #### Production Execution
 
-All E2E tests must support execution against Prod and Local. 
+All E2E tests must support execution against Prod and Local.
+The tests should use only test accounts for production tests. 
 
 However, there might be cases when some E2E tests cannot be executed against Local Env. For instance, that was the case with testing books-ui URL redirection logic that couldn't be tested locally because it was a DNS feature.
 
