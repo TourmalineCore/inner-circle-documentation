@@ -1,0 +1,68 @@
+# Inner Circle UI Testing Strategy
+
+In principle we develop software according to Test-Driven Development (TDD). Inner Circle is not an exception from this rule.
+
+We have a set of tests examples across various projects and services, we have experience working like that in frontend and backend development. However, we are still struggling to make the right decisions while testing our code. This strategy should facilitate the decision making, reduce the efforts, explain how to write only needed tests, speed up onboarding of the new team members by standardizing the approaches.
+
+## Objectives
+
+- List the available types of tests with refs and examples, explaining their areas of application and limitations.
+- Answer when to write which types of tests in typical situations like implementing a new feature or fixing a bug.
+- Minimize overlap of tests to reduce the efforts that we put into their writing and maintenance while keeping their high value. Tests are code, they come with a price, we need make an effort to make them maximally efficient yet reliable and automatically testable.
+- Make it a piece of cake to write the testing and functional code in the current infrastructural and methodological setup.
+- Tests must run stably. If a test is flaky, fixing it must be prioritized.
+
+## Parallel Execution of Tests
+
+All tests must support concurrent parallel invocation. Thus, tests don't rely on each other's results, they don't wait for each other as well and their execution completes faster.
+
+## Types of Tests
+
+| Type    | Target | Run Against Prod | Use Real DB |Need Data Cleanup |
+| -------- | ------- | ------- |------- |------- |
+| E2E | Whole UI | Yes | Yes | Yes |
+| Screenshot | Content | No | No | No |
+| Components | Page, Container, Content | No | No | No |
+| Unit | State, Utils | No | No | No |
+| Types Linting | API Contract Safety | No | No | No |
+
+### E2E
+
+#### Unit of Parallelism
+
+Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
+
+#### Production Execution
+
+All E2E tests must support execution against Prod and Local. 
+
+However, there might be cases when some E2E tests cannot be executed against Local Env. For instance, that was the case with testing books-ui URL redirection logic that couldn't be tested locally because it was a DNS feature.
+
+#### What we test
+
+We test only the happy path - when everything goes according to plan and no unexpected situations happen, the core business flow. We limit the number of E2E tests to only the core business flow to avoid falling back into the situation when we test every change with a coarse-grained tests when it is an overkill and a lighter more fine-grained test is enough.
+
+We try to write separate (atomic) realistic user paths scenarios in the system, instead of one big test that calls all the endpoints. This lets us immediately see where an error happened and makes tests faster through parallel execution.
+
+Before writing an E2E test, we describe a use case, for example:
+
+```
+GIVEN empty time tracker table
+WHEN user adds a new task entry
+AND user clicks on this task entry for update
+THEN user should see the updated task entry in the time tracking table
+```
+
+```
+GIVEN user has a sick leave from Monday to Friday
+AND user wants to track this sick leave in the time tracker
+WHEN user adds the sick leave period from Monday to Friday
+AND open existing sick leave and extends it until next Monday after the doctor's visit
+THEN user should see 8-day sick leave
+```
+
+Besides business cases, in E2E we also test that redirects works.
+
+#### What we don't test
+
+Edge cases and negative scenarions.
