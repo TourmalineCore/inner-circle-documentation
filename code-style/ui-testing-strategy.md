@@ -66,3 +66,31 @@ Besides business cases, in E2E we also test that redirects works.
 #### What we don't test
 
 Edge cases and negative scenarions.
+
+### Screenshot
+
+We aim at creating a stable robust UI and want keep it under control when the project is growing. We want to make sure that new components or pages don't affect the existing ones.
+We also want to test manually as little as possible, including the stage of design conformance.
+
+We writes these tests when we start to write HTML and add styles for a component.
+Besides, in case you need to update the component, you need to regenerate its screenshot so it was up-to-date with the component's new appearance.
+
+#### Threshold
+
+We set the threshold to 0, because we want to detect any visual change to prevent unintended visual regressions.
+
+#### What we test
+
+Components with static data.
+If a component has several states, we can test all of them with screenshots, e.g. an accordion in both collapsed and open state.
+
+We disable animations if they are present and disable autoplay for a video to make it static.
+We test components on all regular breakpoints: mobile, tablet, tablet-xl, desktop, desktop-xl.
+
+#### What we don't test
+
+- Real dynamic data as it is too unpredictable
+- Animations, videos
+- Components' behavior
+- Components between the breakpoints
+- All browsers, only in Electron
