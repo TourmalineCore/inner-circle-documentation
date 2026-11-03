@@ -16,7 +16,7 @@ We have a set of tests examples across various projects and services, we have ex
 
 Cypress runs tests one by one by default. To run tests in parallel, you need extra configuration. At the moment, we don't have parallel test execution set up.
 
-But we want all tests must support concurrent parallel invocation. Thus, tests will not depend on each other’s results, they won’t wait for each other, and their execution will be completed faster.
+But we want all tests to support concurrent parallel invocation. Thus, tests will not depend on each other’s results, they won’t wait for each other, and their execution will be completed faster.
 
 ## Types of Tests
 
