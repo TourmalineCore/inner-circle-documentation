@@ -21,8 +21,9 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | Type    | Target | Run Against Prod | Use Real DB | Need Data Cleanup | Language |
 | -------- | ------- | ------- |------- |------- |------- |
 | E2E | Whole API | Yes | Yes | Yes | Karate |
-| Integrational | Handler, Command, Query (everything that interacts with the Db) | No | Yes | No (Auto) | C# |
+| Integrational with DB| Handler, Command, Query (everything that interacts with the Db) | No | Yes | No (Auto) | C# |
 | Integrational with HTTP | Controller | No | No | No | C# |
+| Integration with mocks | Handler | No | No | No | C# |
 | Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No | No | No | C# |
 
 ### E2E
@@ -39,7 +40,7 @@ Karate has a few more advantages:
 
 #### Unit of Parallelism
 
-Karate scenario is a unit of parallelism of this type of tests. Scenarios are being executed in parallel. Thus, scenarios should be isolated from each other using different Tenants, Accounts, and more custom approaches. For instance, in time-api we can isolate different scenarios using different week days, Monday for one scenario and Tuesday for another one.  
+Karate scenario is a unit of parallelism of this type of tests. Scenarios are being executed in parallel. Thus, scenarios should be isolated from each other using different Tenants, Accounts, and more custom approaches. For instance, in time-api we can isolate different scenarios using different years, 2026 for one scenario and 2027 for another one.  
 
 #### Production Execution
 
@@ -69,6 +70,8 @@ GIVEN I was away for two hours.
 WHEN I want a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow.
 THEN I realized I can't do the make-up tomorrow and want to move the 30-minute make-up to another day.
 ```
+
+> **Note:** Describe use cases in business language. Do not use API or frontend terms, or mention buttons or endpoints.
 
 Besides business cases, in E2E we also test that endpoints are protected by permissions, as well as CORS settings and that Swagger works.
 
@@ -104,6 +107,8 @@ Integration tests don't duplicate the checks that are already in E2E.
 
 #### Why do we use InMemoryDb in this type of test?
 
+InMemoryDb is only a stub that allows the application to start. Normally, these tests do not access it.
+
 For these tests we use InMemoryDb, because in these tests we don't need to save anything to the database. In this type of test, transaction logic is not implemented, so if we used a real database and tests were run before validation was added or if it was implemented incorrectly, data could be saved to the DB. To avoid adding cleanup logic or transactions, we decided to use InMemoryDb.
 
 #### What we test
@@ -113,6 +118,22 @@ Contract validation at the controller level.
 #### What we don't test
 
 Business logic of the application or work with the database.
+
+### Integration tests with mocks
+
+#### How do we test a handler without a database?
+
+We move database logic to Commands and Queries and define interfaces for them. The handler receives these dependencies through its constructor. In tests, we replace them with mocks. This allows us to test the handler logic without a database. We test Commands and Queries separately with a real database.
+
+For example, GetEmployeesTrackedTaskHoursHandler receives IGetTaskEntriesQuery through its constructor. In the [test](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Internal/Handlers/GetEmployeesTrackedTaskHours/GetEmployeesTrackedTaskHoursHandlerTests.cs), we use a mock of this interface to return two task entries.
+
+#### What we test
+
+Handler logic: validation, calls to dependencies, processing their results, edge cases, and negative cases. We use mocks to return the data needed for each test. For example, we can check how the handler works when an external service returns null.
+
+#### What we don't test
+
+SQL queries, database constraints, or work with real external services. We don't duplicate unit tests for calculators and mappers in the handler tests.
 
 ### Unit
 
