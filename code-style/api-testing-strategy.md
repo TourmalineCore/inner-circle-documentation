@@ -23,7 +23,7 @@ All tests must support concurrent parallel invocation. Thus, tests don't rely on
 | E2E | Whole API | Yes | Yes | Yes | Karate |
 | Integrational with DB| Handler, Command, Query (everything that interacts with the Db) | No | Yes | No (Auto) | C# |
 | Controller validation | Controller | No | No | No | C# |
-| Integration with mocks | Handler | No | No | No | C# |
+| Integrational with mocks | Handler | No | No | No | C# |
 | Unit | Mapper, Validator, Calculator (everything that doesn’t interact with the Db) | No | No | No | C# |
 
 ### E2E
