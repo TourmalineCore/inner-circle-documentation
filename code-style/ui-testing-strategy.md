@@ -30,6 +30,8 @@ But we want all tests to support concurrent parallel invocation. Thus, tests wil
 | Unit | State, Utils | No | No | No | No |
 | Contract Linting | API Contract Safety | No | No | No | No |
 
+All Cypress test types are contained in .cy.ts files.
+
 ### E2E
 
 #### Production Execution
@@ -68,6 +70,10 @@ Besides business cases, in E2E we also test that redirects works (for example, t
 
 Edge cases and negative scenarions.
 
+#### Example and location
+
+E2E tests are in the cypress/e2e folder. The [Sick Leave Entry Happy Path covers](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/cypress/e2e/sick-leave-entries-happy-path.cy.ts) the second use case above.
+
 ### Screenshot
 
 We aim at creating a stable robust UI and want keep it under control when the project is growing. We want to make sure that new components or pages don't affect the existing ones.
@@ -96,6 +102,19 @@ We test components on all regular breakpoints: mobile, tablet, tablet-xl, deskto
 - Components between the breakpoints
 - All browsers, only in Electron (we want to test it in different browsers in the future)
 - Api requests
+
+#### Example and location
+
+Screenshot tests are located next to the component being tested. Their names also match the component names, but end with ScreenshotTest.
+
+Each test has several settings:
+
+- cy.wrap sets the screen parameters and the browser that opens the tests to correctly display the components being tested and eliminate device discrepancies
+- wait for fonts to load before starting the test to avoid flags
+
+If the components have permission-based logic, you need to create a mock wrapper, authService.AuthContext.Provider, with a mock token to correctly display the component being tested.
+
+Example test in the books-ui service: [BookCopyScreenshotTest.cy.tsx](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/book/BookCopyScreenshotTest.cy.tsx)
 
 ### Components
 
@@ -131,6 +150,20 @@ We test the component's logic and its edge cases separately from the feature/pag
 - Logic that is configured outside the UI (nginx)
 - Real interaction with the backend
 
+#### Example and location
+
+Tests are located next to the component being tested. Their files are named the same as the component's component files.
+
+Examples:
+
+- Page test: [AllBooksPage.cy.tsx from inner-circle-books-ui](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/all-books/AllBooksPage.cy.tsx)
+
+- Container tests:   
+[EntryModalContainer.cy.tsx from inner-circle-time-ui](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/src/pages/time-tracker/sections/entry-modal/EntryModalContainer.cy.tsx) with validation and request dispatch checks  
+[InvoicesContainer.cy.tsx from inner-circle-invoices-ui](https://github.com/TourmalineCore/inner-circle-invoices-ui/blob/master/src/pages/invoices/InvoicesContainer.cy.tsx) with checks for invoking requests with the correct parameters when interacting with the interface.
+- Content test: [EntryModalContent.cy.tsx from inner-circle-time-ui](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/src/pages/time-tracker/sections/entry-modal/EntryModalContent.cy.tsx)
+- Test for the component used on the page: [BookCard.cy.tsx from inner-circle-books-ui](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/all-books/components/book-card/BookCard.cy.tsx)
+
 ### Unit
 
 #### What we test
@@ -143,11 +176,17 @@ We test edge cases of the state's behavior and the logic of helper functions. Fo
 - API request
 - Logic that is configured outside the UI (nginx)
 
+#### Example and location
+
+Tests are located next to the component being tested. Their files are named the same as utils or state files.
+
+[formatToTwoDecimalPlaces.cy.ts from inner-circle-time-ui](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/src/common/utils/format-to-two-decimal-places/formatToTwoDecimalPlaces.cy.ts)
+
+[InvoicesState.cy.ts from inner-circle-invoices-ui](https://github.com/TourmalineCore/inner-circle-invoices-ui/blob/master/src/pages/invoices/state/InvoicesState.cy.ts)
+
 #### Contract Linting
 
 This is a static type of testing which allows to automatically check the contract between UI & Backend.
-
-Types and HTTP-client are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
 
 #### What we test
 
@@ -156,3 +195,28 @@ API contract beetwen UI & API.
 #### What we don't test
 
 Nothing except the API contract.
+
+#### Example and location
+
+Types and HTTP-client are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
+
+Example: workflow [sync-js-client-with-api.yml](http://github.com/TourmalineCore/inner-circle-time-ui/blob/master/.github/workflows/sync-js-client-with-api.yml) from inner-circle-time-ui.
+
+## How do we choose which tests to write?
+
+1. Write a user story and list the happy path, business rules, edge cases, and errors.
+2. Check existing coverage and identify which behavior needs a new test.
+3. Choose the smallest test that can reproduce that behavior, using the test types above. 
+4. Check that each test protects a separate responsibility. We don't need every test type for every change. Two tests can use the same input if they check different things, for example, a validation rule and its HTTP error response.
+
+### Example: Take and Return Book Flow
+
+User story: the book has already been added to the library. The user checks it out and notes it in the system. After reading it, they return it and leave a review.
+
+API уже был готов. 
+The existing time-ui tests split the coverage as follows:
+
+| Scenario | Where we test it | Why? |
+| -------- | -------- | -------- |
+| Takes a book, sees their name listed as a reader, returns it after reading, leaves a review, and sees the review on the book's page, but they are not listed as a reader| E2E: [Take and Return Book Flow](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/cypress/e2e/take-and-return-book-flow.cy.ts) | This is the core user flow. We've verified that taking and returning a book and adding a review work correctly|
+
