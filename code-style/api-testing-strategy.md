@@ -153,8 +153,6 @@ SQL queries, database constraints, or work with real external services. We don't
 
 Handler tests are next to the handler in Application/Features, in files ending with HandlerTests.cs. For example, [GetEmployeesTrackedTaskHoursHandlerTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Internal/Handlers/GetEmployeesTrackedTaskHours/GetEmployeesTrackedTaskHoursHandlerTests.cs) uses a mock of IGetTaskEntriesQuery.
 
-> **Note:** This test currently uses the UnitTest attribute in time-api.
-
 ### Unit
 
 #### What we test
