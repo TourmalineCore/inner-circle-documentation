@@ -60,15 +60,15 @@ Time to run the tests is also a limitation factor, yet minor at this phase. Test
 Before writing an E2E test, we describe a use case, for example:
 
 ```
-GIVEN I have planned a 14 days paid vacation.
-WHEN I track my vacation in the time tracker.
-THEN I realized that I need shift it for a month later.
+GIVEN user has planned a 14-day paid vacation
+WHEN user tracks the vacation in the time tracker
+THEN shifts the vacation dates by one month later
 ```
 
 ```
-GIVEN I was away for two hours.
-WHEN I want a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow.
-THEN I realized I can't do the make-up tomorrow and want to move the 30-minute make-up to another day.
+GIVEN user was away for two hours
+WHEN user wants a 30-minute make-up tomorrow and 1 hour 30 minutes the day after tomorrow
+THEN user realizes that they can't do the make-up tomorrow and wants to move the 30-minute make-up to another day
 ```
 
 > **Note:** Describe use cases in business language. Do not use API or frontend terms, or mention buttons or endpoints.
