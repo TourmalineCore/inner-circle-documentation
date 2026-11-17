@@ -213,10 +213,18 @@ Example: workflow [sync-js-client-with-api.yml](http://github.com/TourmalineCore
 
 User story: the book has already been added to the library. The user checks it out and notes it in the system. After reading it, they return it and leave a review.
 
-API уже был готов. 
+The API was already ready.
 The existing time-ui tests split the coverage as follows:
 
 | Scenario | Where we test it | Why? |
 | -------- | -------- | -------- |
 | Takes a book, sees their name listed as a reader, returns it after reading, leaves a review, and sees the review on the book's page, but they are not listed as a reader| E2E: [Take and Return Book Flow](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/cypress/e2e/take-and-return-book-flow.cy.ts) | This is the core user flow. We've verified that taking and returning a book and adding a review work correctly|
+| Keep unchanged make-up entries and replace changed entries with new records | Integrational with DB: [UpdateAwayWithMakeUpTimeEntryCommandTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryCommandTests.cs) | The E2E flow checks the visible result. This test checks which stored entries are preserved |
+| The total make-up time matches or does not match the absence duration | Unit: [MakeUpTimeValidatorTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Validators/MakeUpTimeValidatorTests.cs) | These are input combinations for a pure validation rule. They don't need HTTP or a database |
+| The handler rejects a plan with a different total make-up time | Integrational with DB: [CreateAwayWithMakeUpTimeEntryHandlerTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/CreateAwayWithMakeUpTimeEntry/CreateAwayWithMakeUpTimeEntryHandlerTests.cs) and [UpdateAwayWithMakeUpTimeEntryHandlerTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryHandlerTests.cs) | Checks that the handler applies the validator. One representative invalid case per handler is enough; the validator tests cover the combinations |
+| Creating a plan with mismatched total make-up time returns HTTP 400 with the expected error title and message | Integrational with HTTP: [TrackingControllerValidationTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Api/Features/Tracking/TrackingControllerValidationTests.cs) | Checks how the application error is returned to the caller |
+
+The [create handler tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/CreateAwayWithMakeUpTimeEntry/CreateAwayWithMakeUpTimeEntryHandlerTests.cs) and [update handler tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryHandlerTests.cs) currently use IntegrationTestBase and real Commands.
+
+Access rules are covered by the separate [away with make-up time no permission tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/e2e/away-with-make-up-time-entries-no-permissions-lead-to-unauthorized.feature).
 
