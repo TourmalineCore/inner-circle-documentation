@@ -20,13 +20,15 @@ But we want all tests to support concurrent parallel invocation. Thus, tests wil
 
 ## Types of Tests
 
-| Type    | Target | Run Against Prod | Use Real DB |Need Data Cleanup |
-| -------- | ------- | ------- |------- |------- |
-| E2E | Whole UI | Yes | Yes | Yes |
-| Screenshot | Content | No | No | No |
-| Components | Page, Container, Content | No | No | No |
-| Unit | State, Utils | No | No | No |
-| Types Linting | API Contract Safety | No | No | No |
+| Type    | Target | Run Against Prod | Real API | Mock API | Need Data Cleanup |
+| -------- | ------- | ------- |------- |------- | ------- |
+| E2E | Whole UI | Yes | Yes | No | Yes |
+| Screenshot | Content | No | No | Yes | No |
+| Components | Page | No | No | Yes (optional) | No |
+|  | Container | No | No | Yes | No |
+|  | Content | No | No | No | No |
+| Unit | State, Utils | No | No | No | No |
+| Contract Linting | API Contract Safety | No | No | No | No |
 
 ### E2E
 
@@ -46,10 +48,10 @@ We try to write separate (atomic) realistic user paths scenarios in the system, 
 Before writing an E2E test, we describe a use case, for example:
 
 ```
-GIVEN empty time tracker table
+GIVEN user has completed the task and wants to track this in the time tracker
 WHEN user adds a new task entry
-AND user clicks on this task entry for update
-THEN user should see the updated task entry in the time tracking table
+AND user updates this task entry
+THEN user should see the updated task entry in the time tracker
 ```
 
 ```
@@ -92,7 +94,7 @@ We test components on all regular breakpoints: mobile, tablet, tablet-xl, deskto
 - Animations, videos
 - Components' behavior
 - Components between the breakpoints
-- All browsers, only in Electron
+- All browsers, only in Electron (we want to test it in different browsers in the future)
 - Api requests
 
 ### Components
@@ -114,6 +116,8 @@ For example:
 - The incoming data is saved to the state
 - If an error response comes back, it is shown on the UI
 
+During development, when the API is not yet available and E2E tests fail, you can start testing network requests in container tests by mocking requests.
+
 #### Content
 
 We test how components behave depending on the state or the page, and how different components interact with each other. For example, showing a loader, disabling buttons, showing errors, filtering, sorting, etc.
@@ -131,7 +135,7 @@ We test the component's logic and its edge cases separately from the feature/pag
 
 #### What we test
 
-We test edge cases of the state's behavior and the logic of helper functions. For example, a function that formats a decimal number to two decimal places, the default state, going through all validation cases in the state, and so on.
+We test edge cases of the state's behavior and the logic of helper functions. For example, a function that formats a decimal number to two decimal places, the default state, going through all validation cases in the state.
 
 #### What we don't test
 
@@ -139,11 +143,11 @@ We test edge cases of the state's behavior and the logic of helper functions. Fo
 - API request
 - Logic that is configured outside the UI (nginx)
 
-#### Types Linting
+#### Contract Linting
 
 This is a static type of testing which allows to automatically check the contract between UI & Backend.
 
-Types are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
+Types and HTTP-client are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
 
 #### What we test
 
