@@ -204,6 +204,8 @@ The fix adds the database constraint ck_entries_time_no_seconds and converts its
 
 We choose a test with a real database because the fix depends on a SQL constraint. A unit test or a mock cannot check that constraint. We do not add another E2E test for these negative cases. This test does not cover the HTTP error response.
 
+TODO: Mark tests for bugs
+
 ## Test data cleanup and stability
 
 TODO: Describe test data cleanup after successful, failed, and interrupted runs, and isolation during parallel execution.
