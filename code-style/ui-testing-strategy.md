@@ -234,3 +234,5 @@ To fix this bug, we changed the logic of the `concatDateAndTimeToMinute` utils. 
 | Scenario | Where we test it | Why? |
 | -------- | -------- | -------- |
 | Before sending data to the server, the time and date chosen by the user are combined into the right format | Unit: [dateAndTime](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/src/common/utils/date-and-time/dateAndTime.cy.ts) | Because this function is the one that processes the data before sending it to the server |
+
+TODO: Mark tests for bugs
