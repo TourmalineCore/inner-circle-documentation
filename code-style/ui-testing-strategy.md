@@ -23,7 +23,7 @@ But we want all tests to support concurrent parallel invocation. Thus, tests wil
 | Type    | Target | Run Against Prod | Real API | Mock API | Need Data Cleanup |
 | -------- | ------- | ------- |------- |------- | ------- |
 | E2E | Whole UI | Yes | Yes | No | Yes |
-| Screenshot | Content | No | No | Yes | No |
+| Screenshot | UI Content | No | No | Yes | No |
 | Components | Page | No | No | Yes (optional) | No |
 |  | Container | No | No | Yes | No |
 |  | Content | No | No | No | No |
@@ -88,8 +88,8 @@ We set the threshold to 0, because we want to detect any visual change to preven
 
 #### What we test
 
-Components with static data.
-If a component has several states, we can test all of them with screenshots, e.g. an accordion in both collapsed and open state.
+- Components with static data. If a component has several states, we can test all of them with screenshots, e.g. an accordion in both collapsed and open state.
+- The correct operation of the content component with the state.
 
 We disable animations if they are present and disable autoplay for a video to make it static.
 We test components on all regular breakpoints: mobile, tablet, tablet-xl, desktop, desktop-xl.
@@ -209,22 +209,18 @@ Example: workflow [sync-js-client-with-api.yml](http://github.com/TourmalineCore
 3. Choose the smallest test that can reproduce that behavior, using the test types above. 
 4. Check that each test protects a separate responsibility. We don't need every test type for every change. Two tests can use the same input if they check different things, for example, a validation rule and its HTTP error response.
 
-### Example: Take and Return Book Flow
+### Example: Return Book Flow
 
 User story: the book has already been added to the library. The user checks it out and notes it in the system. After reading it, they return it and leave a review.
 
-The API was already ready.
+The API and take feature were ready.
 The existing time-ui tests split the coverage as follows:
 
 | Scenario | Where we test it | Why? |
 | -------- | -------- | -------- |
-| Takes a book, sees their name listed as a reader, returns it after reading, leaves a review, and sees the review on the book's page, but they are not listed as a reader| E2E: [Take and Return Book Flow](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/cypress/e2e/take-and-return-book-flow.cy.ts) | This is the core user flow. We've verified that taking and returning a book and adding a review work correctly|
-| Keep unchanged make-up entries and replace changed entries with new records | Integrational with DB: [UpdateAwayWithMakeUpTimeEntryCommandTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryCommandTests.cs) | The E2E flow checks the visible result. This test checks which stored entries are preserved |
-| The total make-up time matches or does not match the absence duration | Unit: [MakeUpTimeValidatorTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Validators/MakeUpTimeValidatorTests.cs) | These are input combinations for a pure validation rule. They don't need HTTP or a database |
-| The handler rejects a plan with a different total make-up time | Integrational with DB: [CreateAwayWithMakeUpTimeEntryHandlerTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/CreateAwayWithMakeUpTimeEntry/CreateAwayWithMakeUpTimeEntryHandlerTests.cs) and [UpdateAwayWithMakeUpTimeEntryHandlerTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryHandlerTests.cs) | Checks that the handler applies the validator. One representative invalid case per handler is enough; the validator tests cover the combinations |
-| Creating a plan with mismatched total make-up time returns HTTP 400 with the expected error title and message | Integrational with HTTP: [TrackingControllerValidationTests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Api/Features/Tracking/TrackingControllerValidationTests.cs) | Checks how the application error is returned to the caller |
+| Takes a book, sees their name listed as a reader, returns it after reading, leaves a review, and sees the review on the book's page, but they are not listed as a reader | E2E: [Take and Return Book Flow](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/cypress/e2e/take-and-return-book-flow.cy.ts) | This is the core user flow. We've verified that taking and returning a book and adding a review work correctly|
+| We check that the right content is shown, that the data (from state and props) is correct, and that the layout matches the design | Screenshot: [ReturnBookScreenshotTest](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookScreenshotTest.cy.tsx) | We don't check all the content data in E2E, so we do it here. Also, this test is needed for TDD on the layout |
+| We check the default state and edge cases, if there are any | Unit: [ReturnBookState](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/state/ReturnBookState.cy.tsx) | These are edge cases of the state logic, testing all possible options |
+| We check the disabled states depending on the state: | Component content: [ReturnBookContent](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookContent.cy.tsx) | At this layer we check how the components on the page work together. These checks are too much for E2E, and in screenshot tests we don't check different states. |
 
-The [create handler tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/CreateAwayWithMakeUpTimeEntry/CreateAwayWithMakeUpTimeEntryHandlerTests.cs) and [update handler tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/Application/Features/Tracking/Handlers/UpdateAwayWithMakeUpTimeEntry/UpdateAwayWithMakeUpTimeEntryHandlerTests.cs) currently use IntegrationTestBase and real Commands.
-
-Access rules are covered by the separate [away with make-up time no permission tests](https://github.com/TourmalineCore/inner-circle-time-api/blob/master/e2e/away-with-make-up-time-entries-no-permissions-lead-to-unauthorized.feature).
-
+In unit tests for the state, it's better to test only edge cases. The main logic should be tested at higher levels (e2e, container, content). This is more reliable because there we check how the component works with the state. For example, if you wrote an initialize method in the state and tested it in unit tests, this doesn't guarantee that at the container level you used the data loading and passing this data to the state correctly. It also doesn't guarantee that you used the data from the state correctly in the content component.
