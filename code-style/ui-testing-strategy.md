@@ -72,7 +72,7 @@ Edge cases and negative scenarions.
 
 #### Example and location
 
-E2E tests are in the cypress/e2e folder. The [Sick Leave Entry Happy Path covers](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/cypress/e2e/sick-leave-entries-happy-path.cy.ts) the second use case above.
+E2E tests are in the cypress/e2e folder. The [Sick Leave Entry Happy Path](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/cypress/e2e/sick-leave-entries-happy-path.cy.ts) covers the second use case above.
 
 ### Screenshot
 
@@ -221,7 +221,7 @@ The existing time-ui tests split the coverage as follows:
 | Takes a book, sees their name listed as a reader, returns it after reading, leaves a review, and sees the review on the book's page, but they are not listed as a reader | E2E: [Take and Return Book Flow](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/cypress/e2e/take-and-return-book-flow.cy.ts) | This is the core user flow. We've verified that taking and returning a book and adding a review work correctly|
 | We check that the right content is shown, that the data (from state and props) is correct, and that the layout matches the design | Screenshot: [ReturnBookScreenshotTest](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookScreenshotTest.cy.tsx) | We don't check all the content data in E2E, so we do it here. Also, this test is needed for TDD on the layout |
 | We check the default state and edge cases, if there are any | Unit: [ReturnBookState](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/state/ReturnBookState.cy.tsx) | These are edge cases of the state logic, testing all possible options |
-| We check the disabled states depending on the state: | Component content: [ReturnBookContent](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookContent.cy.tsx) | At this layer we check how the components on the page work together. These checks are too much for E2E, and in screenshot tests we don't check different states. |
+| We check the disabled states depending on the state | Component content: [ReturnBookContent](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookContent.cy.tsx) | At this layer we check how the components on the page work together. These checks are too much for E2E, and in screenshot tests we don't check different states. |
 
 In unit tests for the state, it's better to test only edge cases. The main logic should be tested at higher levels (e2e, container, content). This is more reliable because there we check how the component works with the state. For example, if you wrote an initialize method in the state and tested it in unit tests, this doesn't guarantee that at the container level you used the data loading and passing this data to the state correctly. It also doesn't guarantee that you used the data from the state correctly in the content component.
 
