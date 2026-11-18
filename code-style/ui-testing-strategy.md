@@ -224,3 +224,13 @@ The existing time-ui tests split the coverage as follows:
 | We check the disabled states depending on the state: | Component content: [ReturnBookContent](https://github.com/TourmalineCore/inner-circle-books-ui/blob/master/src/pages/return-book/ReturnBookContent.cy.tsx) | At this layer we check how the components on the page work together. These checks are too much for E2E, and in screenshot tests we don't check different states. |
 
 In unit tests for the state, it's better to test only edge cases. The main logic should be tested at higher levels (e2e, container, content). This is more reliable because there we check how the component works with the state. For example, if you wrote an initialize method in the state and tested it in unit tests, this doesn't guarantee that at the container level you used the data loading and passing this data to the state correctly. It also doesn't guarantee that you used the data from the state correctly in the content component.
+
+### Example: fixing time saved with seconds
+
+Bug: Tracked entries could be saved with seconds in their start or end time, although time must be stored with minute precision.
+
+To fix this bug, we changed the logic of the `concatDateAndTimeToMinute` utils. We added logic to clear the seconds before sending data to the server. The regression test covers the following cases:
+
+| Scenario | Where we test it | Why? |
+| -------- | -------- | -------- |
+| Before sending data to the server, the time and date chosen by the user are combined into the right format | Unit: [dateAndTime](https://github.com/TourmalineCore/inner-circle-time-ui/blob/master/src/common/utils/date-and-time/dateAndTime.cy.ts) | Because this function is the one that processes the data before sending it to the server |
