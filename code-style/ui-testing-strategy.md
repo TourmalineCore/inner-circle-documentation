@@ -2,6 +2,23 @@
 
 In principle we develop software according to Test-Driven Development (TDD). Inner Circle is not an exception from this rule.
 
+The TDD cycle consists of three repeating steps:
+
+1. **Test** — write a failing (red) test that describes the desired behaviour before any production code exists.
+2. **Code** — write the minimal amount of code needed to make the test pass.
+3. **Refactor** — сleaning up the code without changing its functionality, all tests must continue to pass (staying green).
+
+```mermaid
+flowchart LR
+    Refactor --> Test
+    Test[Test] --> Code[Code]
+    Code --> Refactor[Refactor]
+
+    style Test fill:#ff6b6b,color:#fff
+    style Code fill:#51cf66,color:#fff
+    style Refactor fill:#4dabf7,color:#fff
+```
+
 We have a set of tests examples across various projects and services, we have experience working like that in frontend and backend development. However, we are still struggling to make the right decisions while testing our code. This strategy should facilitate the decision making, reduce the efforts, explain how to write only needed tests, speed up onboarding of the new team members by standardizing the approaches.
 
 ## Objectives
@@ -11,6 +28,7 @@ We have a set of tests examples across various projects and services, we have ex
 - Minimize overlap of tests to reduce the efforts that we put into their writing and maintenance while keeping their high value. Tests are code, they come with a price, we need make an effort to make them maximally efficient yet reliable and automatically testable.
 - Make it a piece of cake to write the testing and functional code in the current infrastructural and methodological setup.
 - Tests must run stably. If a test is flaky, fixing it must be prioritized.
+- When fixing bugs, you should always first write a test that confirms the bug.
 
 ## Parallel Execution of Tests
 
@@ -30,7 +48,7 @@ But we want all tests to support concurrent parallel invocation. Thus, tests wil
 | Unit | State, Utils | No | No | No | No |
 | Contract Linting | API Contract Safety | No | No | No | No |
 
-All Cypress test types are contained in .cy.ts files.
+All Cypress test types are contained in .cy.ts or .cy.tsx files.
 
 ### E2E
 
@@ -68,7 +86,7 @@ Besides business cases, in E2E we also test that redirects works (for example, t
 
 #### What we don't test
 
-Edge cases and negative scenarions.
+Edge cases and negative scenarios.
 
 #### Example and location
 
@@ -79,7 +97,7 @@ E2E tests are in the cypress/e2e folder. The [Sick Leave Entry Happy Path](https
 We aim at creating a stable robust UI and want keep it under control when the project is growing. We want to make sure that new components or pages don't affect the existing ones.
 We also want to test manually as little as possible, including the stage of design conformance.
 
-We writes these tests when we start to write HTML and add styles for a component.
+We write these tests when we start to write HTML and add styles for a component.
 Besides, in case you need to update the component, you need to regenerate its screenshot so it was up-to-date with the component's new appearance.
 
 #### Threshold
@@ -92,7 +110,7 @@ We set the threshold to 0, because we want to detect any visual change to preven
 - The correct operation of the content component with the state.
 
 We disable animations if they are present and disable autoplay for a video to make it static.
-We test components on all regular breakpoints: mobile, tablet, tablet-xl, desktop, desktop-xl.
+We test components on all regular breakpoints: mobile 375px, tablet 768px, tablet-xl 1024px, desktop 1366px, desktop-xl 1920px.
 
 #### What we don't test
 
@@ -190,7 +208,7 @@ This is a static type of testing which allows to automatically check the contrac
 
 #### What we test
 
-API contract beetwen UI & API.
+API contract between UI & API.
 
 #### What we don't test
 
@@ -201,6 +219,9 @@ Nothing except the API contract.
 Types and HTTP-client are generated from the Swagger in the API. After new API changes get into master, an npm package is published, and then a PR is opened in the UI repository. Lint runs in this PR, and if there are no errors, the new version of the npm package goes into the UI master. This lets us use a ready and correct contract in the UI and quickly spot contract changes in case of a breaking change.
 
 Example: workflow [sync-js-client-with-api.yml](http://github.com/TourmalineCore/inner-circle-time-ui/blob/master/.github/workflows/sync-js-client-with-api.yml) from inner-circle-time-ui.
+
+
+TODO: Accessibility Testing (We want to add them in the future)
 
 ## How do we choose which tests to write?
 
