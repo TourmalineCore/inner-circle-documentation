@@ -647,6 +647,21 @@ public class GetToDoByIdQuery(AppDbContext context)
 }
 ```
 
+If the project has `QueryableAsNoTracking` stick to it instead of accessing `Set` and later call `AsNoTracking` which seems easier to forget to do.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(AppDbContext context)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    return context
+      .QueryableAsNoTracking<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
 **❌ Bad**
 ```c#
 public class GetToDoByIdQuery(AppDbContext context)
