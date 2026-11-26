@@ -7,6 +7,7 @@
   - [1.3. Handler](#13-handler)
   - [1.4. Command](#14-command)
   - [1.5. Query](#15-query)
+  - [1.6. Tenants](#16-tenants)
 - [2. Project Structure and Code Organization](#2-project-structure-and-code-organization)
   - [2.1. Feature Structure](#21-feature-structure)
   - [2.2. File and Folder Naming](#22-file-and-folder-naming)
@@ -325,6 +326,70 @@ public class GetToDoByIdQuery(AppDbContext context)
 ```
 
 **Rationale:** We split actions to `Queries` and `Commands` to separate concerns of writing and reading. It is influenced by the CQS principle and the Command GoF pattern but less demanding it terms of strictness.
+
+## 1.6. Tenants
+
+Our applications are built as multi-tenant by default. 
+>Note: Tenants aren't used in examples of the document anywhere else to make this document simpler by having no tenant concept to make code more concise and highlight only important bits.
+
+- All requests to `DbContext` may not call anything by tenants related overloads of Queryable extensions.
+
+**✅ Good**
+```c#
+public class GetToDoByIdQuery(
+  TenantAppDbContext context
+)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    // ✅ Query reads only from within the tenant from claims
+    return context
+      .QueryableWithinTenantAsNoTracking<ToDo>()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**✅ Good**
+```c#
+public class DeleteToDoCommand(TenantAppDbContext context)
+{
+  public async Task<bool> ExecuteAsync(long toDoId)
+  {
+    var toDoToDelete = await context
+      // ✅ Command reads with tracking only from within the tenant from claims
+      .QueryableWithinTenant<ToDo>()
+      .SingleAsync(x => x.Id == toDoId);
+
+    context.Set<ToDo>().Remove(toDoToDelete);
+
+    await context.SaveChangesAsync();
+
+    return true;
+  }
+}
+```
+
+**❌ Bad**
+```c#
+public class GetToDoByIdQuery(
+  TenantAppDbContext context,
+  IClaimsProvider claimsProvider
+)
+{
+  public Task<ToDo> GetAsync(long id)
+  {
+    // ❌ Query directly uses Set and duplicate TenantId filtration
+    return context
+      .Set<ToDo>()
+      .Where(x => x.TenantId == claimsProvider.TenantId)
+      .AsNoTracking()
+      .SingleAsync(x => x.Id == id);
+  }
+}
+```
+
+**Rationale:** We minimize the risk of forgetting to filter by `TenantId` in our business logic implementation. Thus, we reduce the attack surface when you can try to change an entity by its `Id` that belongs to a `Tenant` that you don't have access to. Additionally, it makes code cleaner and containing less boilerplate code of repeating filtration by `TenantId` that we used to have previously.
 
 # 2. Project Structure and Code Organization
 
