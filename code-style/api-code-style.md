@@ -57,7 +57,7 @@ graph LR
 
 ## 1.2. Controller
 
-A `controller` is the entry point to the application. Its only job is to receive an HTTP request, run it through a chain of decorators/middlewares (authentication, authorization, validation), and pass control to the `Application` layer through a `Handler`.
+A `Controller` is the entry point to the application. Its only job is to receive an HTTP request, run it through a chain of decorators/middlewares (authentication, authorization, validation), and pass control to the `Application` layer through a `Handler`.
 
 - A `controller` must always call only a `Handler` and nothing more.
 
@@ -97,13 +97,13 @@ public Task<CreateToDoResponse> CreateToDoAsync(
 }
 ```
 
-**Rationale:** TODO?
+**Rationale:** This separation of layers allows us to test orchestration logic of commands, queries, and other services that is a part of a handler without spinning up the entire API or one of its controllers. In this case controllers layer is only connecting requests handlers.
 
 ## 1.3. Handler
 
 `Handlers` are responsible for orchestrating work with commands, requests, and external services. Also, it is in handlers that API response mapping takes place.
 
-- A `Handler` may call only a `Command` or a `Query`.
+- A `Handler` may call a `Command` or a `Query` or a combination of them.
 - Only a `Handler` may build a response.
 
 **✅ Good**
@@ -207,7 +207,7 @@ public class GetToDosHandler(
 }
 ```
 
-**Rationale:** TODO?
+**Rationale:** Here we aim to decouple the flow of calling our services from their actual implementation. That allows us to test the flow in isolation in case it is not a trivial delegation of a call to a single command or query. That is where we can use mocks using `Moq` package and introducing interface for the injected commands and queries making the handler flow testable.
 
 ## 1.4. Command
 
@@ -281,7 +281,7 @@ public class DeleteToDoCommand(
 }
 ```
 
-**Rationale:** TODO?  
+**Rationale:** We don't want to mix responsibilities and making coding decision opinionated where we can avoid it. For now, we don't need to allow it, that is the job of `Handlers` to orchestrate this kind of calls. One more reason specifically to `Commands` querying data directly using `Queryable` calls with change tracking instead of trying to utilize not-tracked entities from queries and then adding them to `DbContext` for tracking, this seems a not expected way of utilizing read-only queries results.
 
 ## 1.5. Query
 
@@ -324,7 +324,7 @@ public class GetToDoByIdQuery(AppDbContext context)
 }
 ```
 
-**Rationale:** TODO?
+**Rationale:** We split actions to `Queries` and `Commands` to separate concerns of writing and reading. It is influenced by the CQS principle and the Command GoF pattern but less demanding it terms of strictness.
 
 # 2. Project Structure and Code Organization
 
